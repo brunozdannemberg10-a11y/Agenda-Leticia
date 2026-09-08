@@ -64,13 +64,13 @@
     .appt-block.status-EM_ATENDIMENTO{background:#f3e8ff;border-color:#9333ea;color:#7e22ce}
     .appt-block.status-CONCLUIDO{background:#dcfce7;border-color:#16a34a;color:#15803d}
     .appt-block.status-FALTA{background:#fee2e2;border-color:#dc2626;color:#b91c1c}
-    .appt-block.status-BLOQUEADO{background:#f1f5f9;border-color:#475569;color:#334155}
+    .appt-block.status-BLOQUEADO{background:repeating-linear-gradient(45deg,#f8fafc,#f8fafc 10px,#f1f5f9 10px,#f1f5f9 20px);border-color:#64748b;color:#334155;border-left:5px solid #475569}
     html.dark .appt-block.status-AGENDADO{background:#0c4a6e;border-color:#38bdf8;color:#e0f2fe}
     html.dark .appt-block.status-CONFIRMADO{background:#134e4a;border-color:#2dd4bf;color:#ccfbf1}
     html.dark .appt-block.status-EM_ATENDIMENTO{background:#581c87;border-color:#c084fc;color:#f3e8ff}
     html.dark .appt-block.status-CONCLUIDO{background:#14532d;border-color:#4ade80;color:#dcfce7}
     html.dark .appt-block.status-FALTA{background:#7f1d1d;border-color:#f87171;color:#fee2e2}
-    html.dark .appt-block.status-BLOQUEADO{background:#1e293b;border-color:#94a3b8;color:#e2e8f0}
+    html.dark .appt-block.status-BLOQUEADO{background:repeating-linear-gradient(45deg,#1e293b,#1e293b 10px,#0f172a 10px,#0f172a 20px);border-color:#64748b;color:#cbd5e1;border-left:5px solid #94a3b8}
     /* Popup */
     .appt-popup{position:fixed;z-index:60;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:20px;width:380px;max-width:92vw;animation:popIn .2s ease}
     html.dark .appt-popup{background:#1e293b;box-shadow:0 20px 60px rgba(0,0,0,.6)}
@@ -214,6 +214,18 @@
         </div>
         <!-- Dashboard KPI Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="dash-kpis"></div>
+
+        <!-- Detalhamento por Forma de Pagamento (Dinheiro, PIX, Débito, Crédito) -->
+        <div class="glass-card rounded-2xl p-3 md:p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-title uppercase font-mono flex items-center gap-1.5">
+              <i data-lucide="receipt" class="w-4 h-4 text-emerald-500"></i> Entradas por Forma de Pagamento (Receitas)
+            </h3>
+            <span class="text-[10px] font-mono text-muted">Dinheiro • PIX • Débito • Crédito</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3" id="dash-methods-breakdown"></div>
+        </div>
+
         <!-- Métricas & Gráficos Financeiros Semanais/Diários -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div class="glass-card rounded-2xl p-4 space-y-3">
@@ -283,6 +295,9 @@
                   <i data-lucide="calendar-plus" class="w-4 h-4 text-emerald-600"></i> Agendar
                 </span>
                 <div class="flex items-center gap-1">
+                  <button onclick="openBlockModal()" class="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-800" title="Bloquear Horário na Agenda">
+                    <i data-lucide="ban" class="w-3.5 h-3.5"></i>
+                  </button>
                   <button onclick="clearQuickBookingForm()" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-title" title="Limpar">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                   </button>
@@ -321,9 +336,9 @@
                   <input type="time" id="quick-appt-time" value="08:00" class="input-box border rounded-xl px-2 py-1.5 text-xs font-mono outline-none">
                 </div>
 
-                <!-- Duração -->
+                <!-- Duração (Até 9h para Cursos) -->
                 <div>
-                  <label class="text-[10px] font-bold text-muted block mb-0.5 font-mono">Duração</label>
+                  <label class="text-[10px] font-bold text-muted block mb-0.5 font-mono">Duração (Atendimentos & Cursos até 9h)</label>
                   <select id="quick-appt-duration" class="input-box w-full border rounded-xl px-2.5 py-1.5 text-xs outline-none font-mono">
                     <option value="30">30 minutos</option>
                     <option value="45">45 minutos</option>
@@ -333,6 +348,13 @@
                     <option value="120" selected>2 horas (120 min)</option>
                     <option value="150">2h30 (150 min)</option>
                     <option value="180">3 horas (180 min)</option>
+                    <option value="210">3h30 (210 min)</option>
+                    <option value="240">4 horas (240 min - Meio Período)</option>
+                    <option value="300">5 horas (300 min)</option>
+                    <option value="360">6 horas (360 min)</option>
+                    <option value="420">7 horas (420 min)</option>
+                    <option value="480">8 horas (480 min - Curso / Imersão)</option>
+                    <option value="540">9 horas (540 min - Curso Integral)</option>
                   </select>
                 </div>
 
@@ -360,6 +382,10 @@
                 <input type="date" id="selected-date-input" onchange="onDateChanged(this.value)" class="input-box border rounded-xl px-3 py-1.5 text-xs md:text-sm font-mono font-bold outline-none shadow-xs">
                 <button onclick="changeDate(1)" class="w-9 h-9 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 shadow-xs"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                 <button onclick="goToToday()" class="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-xs font-bold text-title">Hoje</button>
+                <button onclick="openBlockModal()" class="touch-btn px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                  <i data-lucide="ban" class="w-3.5 h-3.5"></i>
+                  <span>Bloquear Horário</span>
+                </button>
                 <span id="agenda-day-name" class="text-xs font-bold text-title font-mono hidden sm:inline pl-2 border-l border-slate-300 dark:border-slate-700">Segunda-feira</span>
               </div>
               <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700">
@@ -394,7 +420,11 @@
               <h2 class="text-base md:text-lg font-bold text-title flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-blue-600"></i><span>Gestão de Clientes & Prontuários</span></h2>
               <p class="text-xs text-muted">Base de dados completa com histórico, WhatsApp, previsão de retorno e crédito</p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
+              <button onclick="openSimplesAgendaImportModal()" class="touch-btn px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-title rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-700 shadow-xs">
+                <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-500"></i>
+                <span>Importar Simples Agenda</span>
+              </button>
               <button onclick="openClientModal()" class="touch-btn px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md"><i data-lucide="user-plus" class="w-4 h-4"></i><span>+ Novo Cliente</span></button>
             </div>
           </div>
@@ -529,6 +559,38 @@
           <div class="glass-card rounded-2xl p-4 border-l-4 border-emerald-500"><span class="text-[10px] uppercase font-mono text-muted">Total Receitas</span><div class="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="fin-total-receitas">R$ 0,00</div></div>
           <div class="glass-card rounded-2xl p-4 border-l-4 border-rose-500"><span class="text-[10px] uppercase font-mono text-muted">Total Despesas</span><div class="text-2xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1" id="fin-total-despesas">R$ 0,00</div></div>
           <div class="glass-card rounded-2xl p-4 border-l-4 border-blue-500"><span class="text-[10px] uppercase font-mono text-muted">Saldo Líquido</span><div class="text-2xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="fin-saldo-liquido">R$ 0,00</div></div>
+        </div>
+
+        <!-- Formas de Pagamento Recebidas (Dinheiro, PIX, Débito, Crédito) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3">
+          <div class="glass-card rounded-2xl p-3 border-l-4 border-emerald-500">
+            <div class="flex items-center justify-between text-muted text-[10px] uppercase font-mono font-bold">
+              <span>💵 Dinheiro</span>
+              <i data-lucide="banknote" class="w-3.5 h-3.5 text-emerald-500"></i>
+            </div>
+            <div class="text-lg md:text-xl font-bold font-mono text-title mt-1" id="fin-method-dinheiro">R$ 0,00</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 border-l-4 border-teal-500">
+            <div class="flex items-center justify-between text-muted text-[10px] uppercase font-mono font-bold">
+              <span>⚡ PIX</span>
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-teal-500"></i>
+            </div>
+            <div class="text-lg md:text-xl font-bold font-mono text-title mt-1" id="fin-method-pix">R$ 0,00</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 border-l-4 border-blue-500">
+            <div class="flex items-center justify-between text-muted text-[10px] uppercase font-mono font-bold">
+              <span>💳 Cartão Débito</span>
+              <i data-lucide="credit-card" class="w-3.5 h-3.5 text-blue-500"></i>
+            </div>
+            <div class="text-lg md:text-xl font-bold font-mono text-title mt-1" id="fin-method-debito">R$ 0,00</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 border-l-4 border-indigo-500">
+            <div class="flex items-center justify-between text-muted text-[10px] uppercase font-mono font-bold">
+              <span>💳 Cartão Crédito</span>
+              <i data-lucide="credit-card" class="w-3.5 h-3.5 text-indigo-500"></i>
+            </div>
+            <div class="text-lg md:text-xl font-bold font-mono text-title mt-1" id="fin-method-credito">R$ 0,00</div>
+          </div>
         </div>
 
         <!-- Open Finance & Conciliação Bancária Card -->
@@ -785,14 +847,38 @@
             </div>
           </div>
           <div class="glass-card rounded-2xl p-4 space-y-3">
-            <h3 class="text-xs font-bold text-title uppercase font-mono border-b border-slate-200 dark:border-slate-700 pb-2">Backup & Dados</h3>
-            <div class="space-y-2 text-xs">
-              <button onclick="exportDataBackup()" class="touch-btn w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center justify-center gap-2"><i data-lucide="download-cloud" class="w-4 h-4"></i> Exportar Backup JSON</button>
+            <h3 class="text-xs font-bold text-title uppercase font-mono border-b border-slate-200 dark:border-slate-700 pb-2 flex items-center justify-between">
+              <span>Migração, Dados & Backup</span>
+              <span class="text-[9px] px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold">Supabase Conectado</span>
+            </h3>
+
+            <!-- Assistente Simples Agenda -->
+            <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 space-y-1 text-xs">
+              <b class="text-blue-800 dark:text-blue-300 flex items-center gap-1.5"><i data-lucide="sparkles" class="w-4 h-4 text-blue-500"></i> Migração do Simples Agenda</b>
+              <p class="text-[11px] text-blue-700 dark:text-blue-300">Puxe clientes e agendamentos direto do Simples Agenda com 1 clique (arquivo ou copiar/colar).</p>
+              <button onclick="openSimplesAgendaImportModal()" class="touch-btn mt-2 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm text-xs">
+                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Importar do Simples Agenda
+              </button>
+            </div>
+
+            <!-- Zerar Agenda / Iniciar do Zero -->
+            <div class="space-y-2 text-xs pt-1">
+              <button onclick="clearAppointmentsOnly()" class="touch-btn w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-xs">
+                <i data-lucide="calendar-x" class="w-4 h-4"></i> Zerar Apenas Agendamentos (Iniciar Agenda Limpa)
+              </button>
+              <button onclick="clearAllDemoData()" class="touch-btn w-full py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-xs">
+                <i data-lucide="user-x" class="w-4 h-4"></i> Zerar Clientes & Agendamentos de Teste
+              </button>
+            </div>
+
+            <!-- Backup JSON tradicional -->
+            <div class="border-t border-slate-200 dark:border-slate-700 pt-2 space-y-2 text-xs">
+              <button onclick="exportDataBackup()" class="touch-btn w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center justify-center gap-2"><i data-lucide="download-cloud" class="w-4 h-4"></i> Exportar Backup JSON</button>
               <div class="relative">
-                <label class="font-bold text-title block mb-1">Importar Backup</label>
+                <label class="font-bold text-title block mb-1">Importar Backup JSON</label>
                 <input type="file" id="cfg-import-file" accept=".json" onchange="importDataBackup(event)" class="input-box w-full border rounded-xl px-3 py-2 outline-none text-xs">
               </div>
-              <button onclick="if(confirm('ATENÇÃO: Isso vai apagar TODOS os dados do sistema. Deseja continuar?')){localStorage.clear();location.reload()}" class="touch-btn w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold flex items-center justify-center gap-2"><i data-lucide="trash-2" class="w-4 h-4"></i> Limpar Todos os Dados</button>
+              <button onclick="if(confirm('ATENÇÃO: Isso vai apagar TODOS os dados do sistema. Deseja continuar?')){localStorage.clear();location.reload()}" class="touch-btn w-full py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold flex items-center justify-center gap-2"><i data-lucide="trash-2" class="w-4 h-4"></i> Limpar Todos os Dados</button>
             </div>
           </div>
         </div>
@@ -862,9 +948,21 @@
           <div><label class="font-bold text-title block mb-1">Hora *</label><input type="time" id="appt-time" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
           <div><label class="font-bold text-title block mb-1">Valor R$</label><input type="number" id="appt-price" step="0.01" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="font-bold text-title block mb-1">Duração (min)</label><input type="number" id="appt-duration" value="120" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
-          <div><label class="font-bold text-title block mb-1">Status</label><select id="appt-status" class="input-box w-full border rounded-xl px-3 py-2 outline-none"><option value="AGENDADO">Agendado</option><option value="CONFIRMADO">Confirmado</option><option value="EM_ATENDIMENTO">Em Atendimento</option><option value="CONCLUIDO">Concluído</option><option value="FALTA">Falta</option><option value="BLOQUEADO">Bloqueado</option></select></div>
+        <div>
+          <label class="font-bold text-title block mb-1">Duração & Status (Cursos até 9h / 540 min)</label>
+          <div class="grid grid-cols-2 gap-3">
+            <div><input type="number" id="appt-duration" value="120" min="15" max="540" placeholder="Minutos" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
+            <div><select id="appt-status" class="input-box w-full border rounded-xl px-3 py-2 outline-none"><option value="AGENDADO">Agendado</option><option value="CONFIRMADO">Confirmado</option><option value="EM_ATENDIMENTO">Em Atendimento</option><option value="CONCLUIDO">Concluído</option><option value="FALTA">Falta</option><option value="BLOQUEADO">Bloqueado</option></select></div>
+          </div>
+          <div class="flex flex-wrap gap-1 mt-1.5 font-mono">
+            <button type="button" onclick="document.getElementById('appt-duration').value=60" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[10px] rounded-lg">1h</button>
+            <button type="button" onclick="document.getElementById('appt-duration').value=120" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[10px] rounded-lg">2h</button>
+            <button type="button" onclick="document.getElementById('appt-duration').value=180" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[10px] rounded-lg">3h</button>
+            <button type="button" onclick="document.getElementById('appt-duration').value=240" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[10px] rounded-lg">4h</button>
+            <button type="button" onclick="document.getElementById('appt-duration').value=360" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[10px] rounded-lg">6h</button>
+            <button type="button" onclick="document.getElementById('appt-duration').value=480" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-[10px] rounded-lg">8h Curso</button>
+            <button type="button" onclick="document.getElementById('appt-duration').value=540" class="px-2 py-0.5 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-200 text-[10px] rounded-lg font-bold">9h Integral</button>
+          </div>
         </div>
         <div><label class="font-bold text-title block mb-1">Observações</label><input type="text" id="appt-obs" placeholder="Obs..." class="input-box w-full border rounded-xl px-3 py-2 outline-none"></div>
       </div>
@@ -919,7 +1017,14 @@
         <div><label class="font-bold text-title block mb-1">Nome *</label><input type="text" id="service-name" placeholder="Ex: Alongamento em Fibra" class="input-box w-full border rounded-xl px-3 py-2 outline-none"></div>
         <div class="grid grid-cols-2 gap-3">
           <div><label class="font-bold text-title block mb-1">Preço R$</label><input type="number" id="service-price" step="0.01" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
-          <div><label class="font-bold text-title block mb-1">Duração (min)</label><input type="number" id="service-duration" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
+          <div><label class="font-bold text-title block mb-1">Duração (min)</label><input type="number" id="service-duration" min="15" max="540" placeholder="Ex: 120" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
+        </div>
+        <div class="flex flex-wrap gap-1 font-mono">
+          <button type="button" onclick="document.getElementById('service-duration').value=60" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[10px] rounded-lg">1h</button>
+          <button type="button" onclick="document.getElementById('service-duration').value=120" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[10px] rounded-lg">2h</button>
+          <button type="button" onclick="document.getElementById('service-duration').value=240" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[10px] rounded-lg">4h</button>
+          <button type="button" onclick="document.getElementById('service-duration').value=480" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-[10px] rounded-lg">8h Curso</button>
+          <button type="button" onclick="document.getElementById('service-duration').value=540" class="px-2 py-0.5 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 hover:bg-amber-200 text-[10px] rounded-lg font-bold">9h Integral</button>
         </div>
       </div>
       <div class="pt-3 flex justify-end gap-2"><button onclick="closeModal('modal-service')" class="px-4 py-2 text-xs font-semibold text-muted">Cancelar</button><button onclick="saveService()" class="touch-btn px-6 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl">Salvar</button></div>
@@ -1132,6 +1237,141 @@
       <div class="pt-3 flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800">
         <button onclick="closeModal('modal-banksync')" class="px-4 py-2 text-xs font-semibold text-muted">Cancelar</button>
         <button onclick="saveBankConnection()" class="touch-btn px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md">Conectar & Sincronizar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BLOQUEAR HORÁRIO NA AGENDA -->
+  <div id="modal-block" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2">
+          <i data-lucide="ban" class="w-4 h-4 text-rose-500"></i> Bloquear Horário na Agenda
+        </h3>
+        <button onclick="closeModal('modal-block')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div class="p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-xl text-rose-700 dark:text-rose-300">
+          <p class="font-medium">Bloqueie horários para compromissos pessoais, almoço, cursos, médico ou folgas para evitar agendamentos nesses horários.</p>
+        </div>
+        <div>
+          <label class="font-bold text-title block mb-1">Motivo / Tipo de Compromisso *</label>
+          <select id="block-reason-select" onchange="onBlockReasonChanged()" class="input-box w-full border rounded-xl px-3 py-2 outline-none font-semibold">
+            <option value="🍽️ Almoço / Intervalo">🍽️ Almoço / Intervalo</option>
+            <option value="🩺 Compromisso Médico / Consulta">🩺 Médico / Consulta / Dentista</option>
+            <option value="🎓 Curso / Treinamento / Workshop">🎓 Curso / Treinamento / Workshop</option>
+            <option value="⭐ Compromisso Pessoal / Família">⭐ Compromisso Pessoal / Família</option>
+            <option value="✈️ Viagem / Folga / Feriado">✈️ Viagem / Folga / Feriado</option>
+            <option value="Outro">✏️ Outro (digitar motivo)</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-bold text-title block mb-1">Título do Bloqueio na Grade *</label>
+          <input type="text" id="block-title" value="🍽️ Almoço / Intervalo" placeholder="Ex: Almoço, Médico, Viagem..." class="input-box w-full border rounded-xl px-3 py-2 outline-none font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-title block mb-1">Data *</label>
+            <input type="date" id="block-date" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+          </div>
+          <div>
+            <label class="font-bold text-title block mb-1">Hora de Início *</label>
+            <input type="time" id="block-time" value="12:00" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="font-bold text-title block mb-1">Duração do Bloqueio</label>
+          <select id="block-duration" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+            <option value="30">30 minutos</option>
+            <option value="60" selected>1 hora (60 min)</option>
+            <option value="90">1h30 (90 min)</option>
+            <option value="120">2 horas (120 min)</option>
+            <option value="180">3 horas (180 min)</option>
+            <option value="240">4 horas (Manhã / Tarde toda)</option>
+            <option value="480">8 horas (Dia Quase Todo)</option>
+            <option value="540">9 horas (Dia Todo Integral)</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-bold text-title block mb-1">Observações / Detalhes</label>
+          <textarea id="block-obs" rows="2" placeholder="Observações opcionais sobre o compromisso..." class="input-box w-full border rounded-xl px-3 py-2 outline-none"></textarea>
+        </div>
+      </div>
+      <div class="pt-3 flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-block')" class="px-4 py-2 text-xs font-semibold text-muted">Cancelar</button>
+        <button onclick="saveBlockSlot()" class="touch-btn px-6 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-1.5">
+          <i data-lucide="ban" class="w-4 h-4"></i>
+          <span>Confirmar Bloqueio</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: IMPORTADOR DO SIMPLES AGENDA -->
+  <div id="modal-import-simples-agenda" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-xl w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[94vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5 text-blue-500"></i> Importar do Simples Agenda
+          </h3>
+          <span class="text-[11px] text-muted">Migre clientes, telefones e agendamentos automaticamente</span>
+        </div>
+        <button onclick="closeModal('modal-import-simples-agenda')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="p-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 rounded-xl space-y-1">
+          <b class="text-blue-800 dark:text-blue-300 flex items-center gap-1"><i data-lucide="info" class="w-4 h-4"></i> Como migrar em 2 passos fáceis:</b>
+          <ol class="text-[11px] text-blue-700 dark:text-blue-300 list-decimal pl-4 space-y-1">
+            <li>No Simples Agenda: acesse <b>Clientes</b> ou <b>Relatórios &gt; Agendamentos</b> e clique em <b>Exportar (Excel ou CSV)</b>.</li>
+            <li>Suba o arquivo aqui embaixo OU abra a planilha no Excel, selecione tudo (Ctrl+A), copie (Ctrl+C) e cole no campo de texto!</li>
+          </ol>
+        </div>
+
+        <div>
+          <label class="font-bold text-title block mb-1">Opção 1: Selecionar Arquivo (.CSV ou .TXT)</label>
+          <input type="file" id="simples-agenda-file-input" accept=".csv,.txt,.tsv" onchange="handleSimplesAgendaFile(event)" class="input-box w-full border rounded-xl px-3 py-2 outline-none text-xs">
+        </div>
+
+        <div class="flex items-center gap-3 my-1">
+          <div class="h-px flex-1 bg-slate-200 dark:border-slate-800"></div>
+          <span class="text-[10px] font-mono text-muted uppercase font-bold">OU</span>
+          <div class="h-px flex-1 bg-slate-200 dark:border-slate-800"></div>
+        </div>
+
+        <div>
+          <label class="font-bold text-title block mb-1">Opção 2: Copiar do Excel e Colar aqui</label>
+          <textarea id="simples-agenda-paste-box" rows="5" oninput="parseSimplesAgendaInput(this.value)" placeholder="Cole as linhas copiadas do Simples Agenda ou Excel aqui...&#10;Exemplo: Nome;Telefone;Data;Horario;Procedimento;Valor" class="input-box w-full border rounded-xl px-3 py-2 font-mono text-xs outline-none leading-relaxed"></textarea>
+        </div>
+
+        <div class="flex items-center gap-4 pt-1">
+          <label class="flex items-center gap-2 cursor-pointer font-bold text-title">
+            <input type="checkbox" id="import-check-clients" checked class="rounded text-blue-600">
+            <span>Importar Clientes</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer font-bold text-title">
+            <input type="checkbox" id="import-check-appts" checked class="rounded text-emerald-600">
+            <span>Importar Agendamentos</span>
+          </label>
+        </div>
+
+        <!-- Preview Status -->
+        <div id="import-preview-container" class="hidden border rounded-2xl p-3 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-xs text-title font-mono" id="import-preview-summary">Pronto para importar</span>
+            <span class="text-[10px] text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-lg border border-emerald-500/30">Auto-Detectado</span>
+          </div>
+          <div id="import-preview-table-wrap" class="max-h-36 overflow-y-auto text-[11px] font-mono"></div>
+        </div>
+      </div>
+
+      <div class="pt-3 flex items-center justify-between border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-import-simples-agenda')" class="px-4 py-2 text-xs font-semibold text-muted">Cancelar</button>
+        <button onclick="executeSimplesAgendaImport()" id="btn-run-import" disabled class="touch-btn px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span>Confirmar & Sincronizar Tudo</span>
+        </button>
       </div>
     </div>
   </div>
@@ -1353,6 +1593,48 @@
           <div class="text-lg font-bold font-mono text-title">${k.val}</div>
         </div>
       `).join('');
+
+      // Formas de Pagamento Recebidas (Receitas)
+      const methodTotals = { DINHEIRO: 0, PIX: 0, CARTAO_DEBITO: 0, CARTAO_CREDITO: 0 };
+      state.financial.filter(f => f.type === 'RECEITA').forEach(f => {
+        const m = (f.method || 'PIX').toUpperCase();
+        const v = Number(f.value) || 0;
+        if (m.includes('DINHEIRO')) methodTotals.DINHEIRO += v;
+        else if (m.includes('PIX')) methodTotals.PIX += v;
+        else if (m.includes('DEBITO') || m.includes('DÉBITO')) methodTotals.CARTAO_DEBITO += v;
+        else if (m.includes('CREDITO') || m.includes('CRÉDITO')) methodTotals.CARTAO_CREDITO += v;
+        else methodTotals.PIX += v;
+      });
+
+      const mBreakdownEl = document.getElementById('dash-methods-breakdown');
+      if (mBreakdownEl) {
+        mBreakdownEl.innerHTML = `
+          <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center justify-between text-muted text-[10px] uppercase font-mono font-bold">
+              <span>💵 Dinheiro</span>
+            </div>
+            <div class="text-base md:text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">${fmt(methodTotals.DINHEIRO)}</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center justify-between text-muted text-[10px] uppercase font-mono font-bold">
+              <span>⚡ PIX</span>
+            </div>
+            <div class="text-base md:text-lg font-bold font-mono text-teal-600 dark:text-teal-400 mt-0.5">${fmt(methodTotals.PIX)}</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center justify-between text-muted text-[10px] uppercase font-mono font-bold">
+              <span>💳 Débito</span>
+            </div>
+            <div class="text-base md:text-lg font-bold font-mono text-blue-600 dark:text-blue-400 mt-0.5">${fmt(methodTotals.CARTAO_DEBITO)}</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center justify-between text-muted text-[10px] uppercase font-mono font-bold">
+              <span>💳 Crédito</span>
+            </div>
+            <div class="text-base md:text-lg font-bold font-mono text-indigo-600 dark:text-indigo-400 mt-0.5">${fmt(methodTotals.CARTAO_CREDITO)}</div>
+          </div>
+        `;
+      }
 
       // Agenda de Hoje
       const agHoje=document.getElementById('dash-agenda-hoje');
@@ -1659,7 +1941,7 @@
     function renderDayView(dayApps){
       const container=document.getElementById('agenda-container-day');
       if(!container) return;
-      const START_HOUR=8, END_HOUR=20;
+      const START_HOUR=7, END_HOUR=22;
       const ROW_H=54; // px por hora
 
       let gridHtml=`
@@ -1671,7 +1953,7 @@
               <div class="flex-1 py-2.5 px-4 text-xs font-bold text-title flex items-center justify-between">
                 <span class="flex items-center gap-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm"></span>
-                  <span>Letícia Hermann — Atendimentos do Dia</span>
+                  <span>Letícia Hermann — Atendimentos & Cursos</span>
                 </span>
                 <span class="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-lg border border-emerald-500/20">
                   ${dayApps.length} agendamento(s)
@@ -1722,6 +2004,7 @@
         const topOffset = ((aH - START_HOUR) * 60 + aM) / 60 * ROW_H;
         const blockH = Math.max(38, (dur / 60) * ROW_H - 4);
         const timeFormatted = `${app.time} às ${endH.toString().padStart(2,'0')}:${endM.toString().padStart(2,'0')}`;
+        const isBlocked = app.status === 'BLOQUEADO';
 
         gridHtml += `
           <div class="appt-block status-${app.status}" 
@@ -1729,11 +2012,11 @@
                onclick="event.stopPropagation(); showAppPopup('${app.id}', event)">
             <div class="flex items-center justify-between font-mono text-[10px] font-bold opacity-90">
               <span>${timeFormatted}</span>
-              <span class="uppercase text-[9px] px-1.5 py-0.2 rounded bg-black/10 dark:bg-white/10 font-mono">${app.status}</span>
+              <span class="uppercase text-[9px] px-1.5 py-0.2 rounded bg-black/10 dark:bg-white/10 font-mono font-bold">${isBlocked ? 'BLOQUEADO' : app.status}</span>
             </div>
-            <div class="font-extrabold text-xs md:text-sm mt-0.5 truncate text-slate-900 dark:text-white">${app.clientName}</div>
-            ${blockH > 44 ? `<div class="text-[10px] opacity-90 truncate font-sans">💅 ${app.serviceNames}</div>` : ''}
-            ${blockH > 68 ? `<div class="text-[10px] font-mono opacity-90 mt-0.5 font-bold">${fmt(app.price)}</div>` : ''}
+            <div class="font-extrabold text-xs md:text-sm mt-0.5 truncate ${isBlocked ? 'text-slate-700 dark:text-slate-200' : 'text-slate-900 dark:text-white'}">${app.clientName}</div>
+            ${blockH > 44 ? `<div class="text-[10px] opacity-90 truncate font-sans">${isBlocked ? (app.obs || 'Horário Reservado / Indisponível') : '💅 ' + app.serviceNames}</div>` : ''}
+            ${blockH > 68 && !isBlocked ? `<div class="text-[10px] font-mono opacity-90 mt-0.5 font-bold">${fmt(app.price)}</div>` : ''}
           </div>
         `;
       });
@@ -1779,6 +2062,34 @@
       const y=Math.min(event.clientY,window.innerHeight-320);
       popup.style.left=Math.max(10,x)+'px';
       popup.style.top=Math.max(10,y)+'px';
+
+      if(app.status==='BLOQUEADO'){
+        popup.innerHTML=`
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-rose-200 dark:border-rose-900/50">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 font-bold text-xs">⛔ HORÁRIO BLOQUEADO</span>
+              <span class="text-xs font-bold text-title font-mono">${app.time} às ${endH.toString().padStart(2,'0')}:${endMn.toString().padStart(2,'0')}</span>
+            </div>
+            <button onclick="closeAppPopup()" class="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 hover:text-rose-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="space-y-2 text-xs mb-4">
+            <div><span class="text-[10px] text-muted uppercase font-bold block">Motivo do Bloqueio:</span><b class="text-title text-sm">${app.serviceNames||app.clientName}</b></div>
+            <div class="text-muted font-mono">${fmtDate(app.date)} • Duração: <b>${app.duration} min</b></div>
+            ${app.obs?`<div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 text-title border border-slate-200 dark:border-slate-700"><b class="block text-[10px] text-muted uppercase mb-0.5">Observação:</b>${app.obs}</div>`:''}
+          </div>
+          <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <button onclick="closeAppPopup();editAppointment('${app.id}')" class="px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-title text-xs font-bold rounded-xl">Editar</button>
+            <button onclick="unblockSlot('${app.id}')" class="touch-btn px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-md">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+              <span>Desbloquear Horário</span>
+            </button>
+          </div>
+        `;
+        document.body.appendChild(popup);
+        return;
+      }
 
       popup.innerHTML=`
         <div class="flex items-center justify-between mb-4">
@@ -1856,7 +2167,7 @@
       const monday=new Date(d);monday.setDate(d.getDate()-((dayOfWeek+6)%7));
       const container=document.getElementById('agenda-container-week');
       const dayNames=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
-      const START_H=8, END_H=20, ROW_H=50;
+      const START_H=7, END_H=22, ROW_H=50;
 
       let html=`
         <div class="overflow-x-auto">
@@ -1922,13 +2233,14 @@
           const dur=app.duration||60;
           const topOffset=((aH-START_H)*60+aM)/60*ROW_H;
           const blockH=Math.max(34,(dur/60)*ROW_H-2);
+          const isBlocked=app.status==='BLOQUEADO';
           html+=`
             <div class="appt-block status-${app.status}" 
                  style="top:${topOffset+1}px; height:${blockH}px; left:2px; right:2px; padding:3px 5px; font-size:10px" 
                  onclick="event.stopPropagation(); showAppPopup('${app.id}', event)">
               <div class="font-mono font-bold truncate opacity-90">${app.time}</div>
-              <div class="font-extrabold truncate text-slate-900 dark:text-white leading-tight">${app.clientName}</div>
-              ${blockH>40?`<div class="truncate opacity-85 text-[9px]">💅 ${app.serviceNames}</div>`:''}
+              <div class="font-extrabold truncate ${isBlocked ? 'text-slate-700 dark:text-slate-200' : 'text-slate-900 dark:text-white'} leading-tight">${app.clientName}</div>
+              ${blockH>40?`<div class="truncate opacity-85 text-[9px]">${isBlocked ? (app.obs || 'Bloqueado') : '💅 ' + app.serviceNames}</div>`:''}
             </div>
           `;
         });
@@ -2218,6 +2530,22 @@
       document.getElementById('fin-total-receitas').innerText=fmt(totalR);
       document.getElementById('fin-total-despesas').innerText=fmt(totalD);
       document.getElementById('fin-saldo-liquido').innerText=fmt(totalR-totalD);
+
+      // Totais por Forma de Pagamento (Receitas)
+      const methodTotals = { DINHEIRO: 0, PIX: 0, CARTAO_DEBITO: 0, CARTAO_CREDITO: 0 };
+      state.financial.filter(f => f.type === 'RECEITA').forEach(f => {
+        const m = (f.method || 'PIX').toUpperCase();
+        const v = Number(f.value) || 0;
+        if (m.includes('DINHEIRO')) methodTotals.DINHEIRO += v;
+        else if (m.includes('PIX')) methodTotals.PIX += v;
+        else if (m.includes('DEBITO') || m.includes('DÉBITO')) methodTotals.CARTAO_DEBITO += v;
+        else if (m.includes('CREDITO') || m.includes('CRÉDITO')) methodTotals.CARTAO_CREDITO += v;
+        else methodTotals.PIX += v;
+      });
+      if(document.getElementById('fin-method-dinheiro')) document.getElementById('fin-method-dinheiro').innerText = fmt(methodTotals.DINHEIRO);
+      if(document.getElementById('fin-method-pix')) document.getElementById('fin-method-pix').innerText = fmt(methodTotals.PIX);
+      if(document.getElementById('fin-method-debito')) document.getElementById('fin-method-debito').innerText = fmt(methodTotals.CARTAO_DEBITO);
+      if(document.getElementById('fin-method-credito')) document.getElementById('fin-method-credito').innerText = fmt(methodTotals.CARTAO_CREDITO);
       // Update filter buttons
       ['ALL','RECEITA','DESPESA'].forEach(x=>{
         const btn=document.getElementById('fin-btn-'+x.toLowerCase());
@@ -2539,6 +2867,334 @@
         }catch(err){alert('Erro ao importar backup: '+err.message);}
       };
       reader.readAsText(file);
+    }
+
+    // ============== RESET & LIMPAR AGENDA ==============
+    function clearAppointmentsOnly(){
+      if(!confirm('Tem certeza que deseja zerar todos os agendamentos da agenda?\n\nOs clientes, serviços e configurações NÃO serão apagados. A agenda ficará limpa para você começar do zero.')) return;
+      state.appointments = [];
+      persistState();
+      renderAgenda();
+      renderDashboard();
+      alert('Agenda zerada com sucesso! ✨ Agora você pode cadastrar seus agendamentos ou importar do Simples Agenda.');
+    }
+
+    function clearAllDemoData(){
+      if(!confirm('Deseja zerar os agendamentos e clientes de demonstração?\n\nIsso deixará a sua conta novinha em folha para você começar a usar com seus dados reais.')) return;
+      state.appointments = [];
+      state.clients = [];
+      persistState();
+      renderAgenda();
+      renderClients();
+      renderDashboard();
+      alert('Dados de demonstração zerados com sucesso! ✨ Tudo pronto para você cadastrar seus dados reais.');
+    }
+
+    // ============== BLOQUEIO DE HORÁRIOS ==============
+    function openBlockModal(date, time){
+      document.getElementById('block-date').value = date || state.selectedDate || todayStr;
+      document.getElementById('block-time').value = time || '12:00';
+      document.getElementById('block-reason-select').value = '🍽️ Almoço / Intervalo';
+      document.getElementById('block-title').value = '🍽️ Almoço / Intervalo';
+      document.getElementById('block-obs').value = '';
+      document.getElementById('block-duration').value = '60';
+      openModal('modal-block');
+    }
+
+    function onBlockReasonChanged(){
+      const sel = document.getElementById('block-reason-select').value;
+      if(sel !== 'Outro') document.getElementById('block-title').value = sel;
+      else document.getElementById('block-title').value = '';
+    }
+
+    function saveBlockSlot(){
+      const date = document.getElementById('block-date').value;
+      const time = document.getElementById('block-time').value;
+      const title = document.getElementById('block-title').value.trim() || 'Bloqueio de Horário';
+      const dur = parseInt(document.getElementById('block-duration').value) || 60;
+      const obs = document.getElementById('block-obs').value.trim();
+
+      if(!date || !time){
+        alert('Por favor, informe data e horário.');
+        return;
+      }
+
+      const blockApp = {
+        id: 'block_' + Date.now(),
+        clientName: '⛔ ' + title,
+        clientPhone: '',
+        serviceNames: title,
+        date: date,
+        time: time,
+        price: 0,
+        duration: dur,
+        status: 'BLOQUEADO',
+        obs: obs || title
+      };
+
+      state.appointments.push(blockApp);
+      persistState();
+      closeModal('modal-block');
+      renderAgenda();
+      alert('Horário bloqueado com sucesso na agenda! ⛔');
+    }
+
+    function unblockSlot(id){
+      if(!confirm('Deseja realmente desbloquear este horário e liberar na agenda?')) return;
+      state.appointments = state.appointments.filter(a => a.id !== id);
+      persistState();
+      closeAppPopup();
+      renderAgenda();
+      alert('Horário liberado na agenda! ✅');
+    }
+
+    // ============== SIMPLES AGENDA MIGRATION & IMPORT ENGINE ==============
+    let simplesAgendaParsedData = { clients: [], appointments: [], services: [] };
+
+    function openSimplesAgendaImportModal(){
+      simplesAgendaParsedData = { clients: [], appointments: [], services: [] };
+      const pasteBox = document.getElementById('simples-agenda-paste-box');
+      if(pasteBox) pasteBox.value = '';
+      const fileInp = document.getElementById('simples-agenda-file-input');
+      if(fileInp) fileInp.value = '';
+      const prevBox = document.getElementById('import-preview-container');
+      if(prevBox) prevBox.classList.add('hidden');
+      const btn = document.getElementById('btn-run-import');
+      if(btn) btn.disabled = true;
+      openModal('modal-import-simples-agenda');
+    }
+
+    function handleSimplesAgendaFile(event){
+      const file = event.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e){
+        const content = e.target.result;
+        document.getElementById('simples-agenda-paste-box').value = content;
+        parseSimplesAgendaInput(content);
+      };
+      reader.readAsText(file, 'ISO-8859-1');
+    }
+
+    function parseSimplesAgendaInput(text){
+      if(!text || !text.trim()){
+        const pCont = document.getElementById('import-preview-container');
+        if(pCont) pCont.classList.add('hidden');
+        const rBtn = document.getElementById('btn-run-import');
+        if(rBtn) rBtn.disabled = true;
+        simplesAgendaParsedData = { clients: [], appointments: [], services: [] };
+        return;
+      }
+
+      const lines = text.trim().split(/\r\n|\r|\n/);
+      if(lines.length === 0) return;
+
+      // Detect separator: ';' or '\t' or ','
+      const firstLine = lines[0];
+      let sep = ';';
+      if(firstLine.split('\t').length > firstLine.split(';').length && firstLine.split('\t').length > 1){
+        sep = '\t';
+      } else if(firstLine.split(',').length > firstLine.split(';').length && firstLine.split(',').length > 1){
+        sep = ',';
+      }
+
+      // Parse headers
+      const rawHeaders = lines[0].split(sep).map(h => h.trim().replace(/^["']|["']$/g, '').toLowerCase());
+      const normalize = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      const normHeaders = rawHeaders.map(normalize);
+
+      // Map columns
+      let colName = normHeaders.findIndex(h => h.includes('nome') || h.includes('cliente') || h.includes('paciente'));
+      let colPhone = normHeaders.findIndex(h => h.includes('tel') || h.includes('cel') || h.includes('fone') || h.includes('whats') || h.includes('contato'));
+      let colEmail = normHeaders.findIndex(h => h.includes('email') || h.includes('e-mail'));
+      let colDate = normHeaders.findIndex(h => h.includes('data') || h.includes('dia'));
+      let colTime = normHeaders.findIndex(h => h.includes('hora') || h.includes('inicio'));
+      let colService = normHeaders.findIndex(h => h.includes('servi') || h.includes('proced') || h.includes('trat'));
+      let colPrice = normHeaders.findIndex(h => h.includes('valor') || h.includes('preco') || h.includes('total'));
+      let colDur = normHeaders.findIndex(h => h.includes('dura') || h.includes('tempo'));
+      let colObs = normHeaders.findIndex(h => h.includes('obs') || h.includes('nota') || h.includes('detalhe'));
+
+      let startRow = 1;
+      if(colName === -1 && colPhone === -1 && colService === -1 && colDate === -1){
+        startRow = 0;
+        colName = 0;
+        if(firstLine.split(sep).length > 1) colPhone = 1;
+        if(firstLine.split(sep).length > 2) colService = 2;
+      }
+
+      const detectedClients = [];
+      const detectedApps = [];
+      const detectedServices = new Set();
+
+      for(let i = startRow; i < lines.length; i++){
+        const row = lines[i].split(sep).map(c => c.trim().replace(/^["']|["']$/g, ''));
+        if(row.length === 0 || (row.length === 1 && !row[0])) continue;
+
+        const name = colName >= 0 && row[colName] ? row[colName] : '';
+        if(!name) continue;
+
+        const phone = colPhone >= 0 && row[colPhone] ? row[colPhone] : '';
+        const email = colEmail >= 0 && row[colEmail] ? row[colEmail] : '';
+        const service = colService >= 0 && row[colService] ? row[colService] : 'Atendimento';
+        let rawDate = colDate >= 0 && row[colDate] ? row[colDate] : '';
+        let rawTime = colTime >= 0 && row[colTime] ? row[colTime] : '09:00';
+        let rawPrice = colPrice >= 0 && row[colPrice] ? row[colPrice] : '0';
+        let rawDur = colDur >= 0 && row[colDur] ? row[colDur] : '120';
+        let obs = colObs >= 0 && row[colObs] ? row[colObs] : '';
+
+        // Format Date (DD/MM/YYYY to YYYY-MM-DD)
+        let formattedDate = todayStr;
+        if(rawDate){
+          const dParts = rawDate.split(/[\/\-\.]/);
+          if(dParts.length === 3){
+            if(dParts[0].length === 4) formattedDate = `${dParts[0]}-${dParts[1].padStart(2,'0')}-${dParts[2].padStart(2,'0')}`;
+            else formattedDate = `${dParts[2].padStart(4,'2026')}-${dParts[1].padStart(2,'0')}-${dParts[0].padStart(2,'0')}`;
+          }
+        }
+
+        // Format Time
+        let formattedTime = '09:00';
+        if(rawTime){
+          const tMatch = rawTime.match(/(\d{1,2})[:h](\d{2})/);
+          if(tMatch) formattedTime = `${tMatch[1].padStart(2,'0')}:${tMatch[2]}`;
+        }
+
+        let cleanPrice = parseFloat(rawPrice.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+        let cleanDur = parseInt(rawDur.replace(/[^\d]/g, '')) || 120;
+
+        // Client
+        if(!detectedClients.some(c => c.name.toLowerCase() === name.toLowerCase())){
+          detectedClients.push({
+            id: 'c_' + Date.now() + '_' + detectedClients.length,
+            name: name,
+            phone: phone,
+            email: email,
+            birth: '',
+            cpf: '',
+            lastVisit: formattedDate,
+            returnDue: '',
+            credit: 0,
+            isVip: false,
+            isAluna: false,
+            notes: 'Importado do Simples Agenda'
+          });
+        }
+
+        if(service && service !== 'Atendimento') detectedServices.add(service);
+
+        // Appointment
+        if(colDate >= 0 || colTime >= 0 || colService >= 0){
+          detectedApps.push({
+            id: 'app_' + Date.now() + '_' + detectedApps.length,
+            clientName: name,
+            clientPhone: phone,
+            serviceNames: service,
+            date: formattedDate,
+            time: formattedTime,
+            price: cleanPrice,
+            duration: cleanDur,
+            status: 'AGENDADO',
+            obs: obs
+          });
+        }
+      }
+
+      simplesAgendaParsedData = {
+        clients: detectedClients,
+        appointments: detectedApps,
+        services: Array.from(detectedServices)
+      };
+
+      const prevBox = document.getElementById('import-preview-container');
+      if(prevBox) prevBox.classList.remove('hidden');
+
+      const summaryText = `Detectados: <b>${detectedClients.length}</b> cliente(s)` +
+        (detectedApps.length > 0 ? `, <b>${detectedApps.length}</b> agendamento(s)` : '') +
+        (detectedServices.size > 0 ? ` e <b>${detectedServices.size}</b> serviço(s)` : '') + '!';
+      const sumEl = document.getElementById('import-preview-summary');
+      if(sumEl) sumEl.innerHTML = summaryText;
+
+      const previewRows = (detectedApps.length > 0 ? detectedApps : detectedClients).slice(0, 5);
+      const wrap = document.getElementById('import-preview-table-wrap');
+      if(wrap){
+        wrap.innerHTML = `
+          <table class="w-full text-left">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-[10px] text-muted">
+                <th class="py-1">Nome / Cliente</th>
+                <th class="py-1">Telefone</th>
+                ${detectedApps.length > 0 ? '<th class="py-1">Data/Hora</th><th class="py-1">Serviço</th><th class="py-1 text-right">Valor</th>' : ''}
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+              ${previewRows.map(r => `
+                <tr>
+                  <td class="py-1 font-bold text-title">${r.name || r.clientName}</td>
+                  <td class="py-1 text-muted">${r.phone || r.clientPhone || '—'}</td>
+                  ${detectedApps.length > 0 ? `
+                    <td class="py-1 text-muted">${fmtDate(r.date)} ${r.time}</td>
+                    <td class="py-1 text-title truncate max-w-[120px]">${r.serviceNames}</td>
+                    <td class="py-1 text-right font-bold text-emerald-600">${fmt(r.price)}</td>
+                  ` : ''}
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      const runBtn = document.getElementById('btn-run-import');
+      if(runBtn) runBtn.disabled = (detectedClients.length === 0 && detectedApps.length === 0);
+    }
+
+    function executeSimplesAgendaImport(){
+      const checkClients = document.getElementById('import-check-clients');
+      const checkApps = document.getElementById('import-check-appts');
+      const importClients = checkClients ? checkClients.checked : true;
+      const importApps = checkApps ? checkApps.checked : true;
+
+      let addedClients = 0;
+      let addedApps = 0;
+
+      if(importClients && simplesAgendaParsedData.clients.length > 0){
+        simplesAgendaParsedData.clients.forEach(c => {
+          const exists = state.clients.find(x => x.name.toLowerCase() === c.name.toLowerCase() || (c.phone && x.phone && x.phone.replace(/\D/g,'') === c.phone.replace(/\D/g,'')));
+          if(!exists){
+            state.clients.push(c);
+            addedClients++;
+          }
+        });
+      }
+
+      if(importApps && simplesAgendaParsedData.appointments.length > 0){
+        simplesAgendaParsedData.appointments.forEach(a => {
+          state.appointments.push(a);
+          addedApps++;
+        });
+      }
+
+      if(simplesAgendaParsedData.services && simplesAgendaParsedData.services.length > 0){
+        simplesAgendaParsedData.services.forEach(sName => {
+          const exists = state.services.find(s => s.name.toLowerCase() === sName.toLowerCase());
+          if(!exists){
+            state.services.push({
+              id: 's_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+              name: sName,
+              price: 100,
+              duration: 120
+            });
+          }
+        });
+      }
+
+      persistState();
+      closeModal('modal-import-simples-agenda');
+      renderClients();
+      renderAgenda();
+      renderDashboard();
+      confetti({ particleCount: 50, spread: 60 });
+
+      alert(`Importação concluída com sucesso! ✨\n\n- ${addedClients} cliente(s) adicionados\n- ${addedApps} agendamento(s) inseridos na agenda\n\nTodos os dados foram salvos e sincronizados com a nuvem Supabase!`);
     }
 
     // ============== WHATSAPP BROADCAST & AUTOMATIONS ==============
