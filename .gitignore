@@ -9,6 +9,10 @@ out/
 build/
 dist/
 
+# Sub-projects
+MazyOS/
+dashboard/
+
 # Environment Variables
 .env
 .env.local
