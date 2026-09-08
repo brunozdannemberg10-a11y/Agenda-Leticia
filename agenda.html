@@ -10,18 +10,22 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Inter','-apple-system','BlinkMacSystemFont','sans-serif'],mono:['JetBrains Mono','monospace']}}}}
   </script>
   <style>
     *{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
     body{transition:background-color .2s ease,color .2s ease;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-    html.light body{background-color:#ececeb;color:#0f172a}
-    html.light .glass-card{background:#fff;border:1px solid #e2e8f0;box-shadow:0 4px 20px -4px rgba(0,0,0,.05)}
-    html.light .app-sidebar-bg{background-color:#fff;border-color:#e2e8f0}
-    html.light .text-muted{color:#475569!important}
-    html.light .text-title{color:#0f172a!important}
-    html.light .input-box{background-color:#fff;border-color:#cbd5e1;color:#0f172a}
+    html.light body{background-color:#f1f5f9;color:#0f172a}
+    html.light .glass-card{background:#ffffff;border:1px solid #e2e8f0;box-shadow:0 4px 20px -4px rgba(0,0,0,.06)}
+    html.light .app-sidebar-bg{background-color:#ffffff;border-color:#e2e8f0}
+    html.light .text-muted{color:#334155!important;font-weight:600}
+    html.light .text-title{color:#0f172a!important;font-weight:700}
+    html.light .font-mono{color:#0f172a}
+    html.light .input-box{background-color:#ffffff;border-color:#cbd5e1;color:#0f172a;font-weight:500}
+    html.light input, html.light select, html.light textarea{color:#0f172a!important}
     html.dark body{background-color:#0b0f19;color:#f8fafc}
     html.dark .glass-card{background:#1e293b;border:1px solid #334155;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
     html.dark .app-sidebar-bg{background-color:#111827;border-color:#1f2937}
@@ -192,23 +196,51 @@
 
       <!-- ===================== DASHBOARD ===================== -->
       <section id="tab-dashboard" class="space-y-4">
-        <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-5 bg-gradient-to-r from-slate-900 to-slate-800 text-white">
+        <!-- Banner de Meta Mensal com alto contraste garantido -->
+        <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white shadow-lg">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div class="space-y-1 w-full md:w-auto">
               <span class="text-[10px] uppercase font-mono tracking-wider text-emerald-400 font-bold">Meta de Faturamento Mensal</span>
-              <div class="text-2xl md:text-3xl font-extrabold font-mono flex items-center gap-3">
-                <span id="dash-faturamento">R$ 0,00</span>
-                <span class="text-xs font-normal text-slate-400">/ meta <span id="dash-meta-val">R$ 8.000,00</span></span>
+              <div class="text-2xl md:text-3xl font-extrabold font-mono flex items-center gap-3 text-white">
+                <span id="dash-faturamento" class="text-white font-bold">R$ 0,00</span>
+                <span class="text-xs font-normal text-slate-300">/ meta <span id="dash-meta-val" class="text-slate-200 font-bold">R$ 8.000,00</span></span>
               </div>
-              <div class="w-full md:w-72 bg-slate-700 rounded-full h-2.5 overflow-hidden mt-2">
+              <div class="w-full md:w-72 bg-slate-700/80 rounded-full h-2.5 overflow-hidden mt-2">
                 <div id="dash-progress-bar" class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-2.5 rounded-full" style="width:0%"></div>
               </div>
             </div>
-            <span id="dash-progress-text" class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full font-mono font-bold">0% Atingido</span>
+            <span id="dash-progress-text" class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3.5 py-1 rounded-full font-mono font-bold">0% Atingido</span>
           </div>
         </div>
         <!-- Dashboard KPI Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="dash-kpis"></div>
+        <!-- Métricas & Gráficos Financeiros Semanais/Diários -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="glass-card rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+              <h3 class="text-xs font-bold text-title uppercase font-mono flex items-center gap-2">
+                <i data-lucide="trending-up" class="w-4 h-4 text-emerald-500"></i> Faturamento Diário (Últimos 7 Dias)
+              </h3>
+              <span class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold" id="dash-chart-total-week">Total: R$ 0,00</span>
+            </div>
+            <div class="relative h-48 w-full">
+              <canvas id="chart-faturamento-semanal"></canvas>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+              <h3 class="text-xs font-bold text-title uppercase font-mono flex items-center gap-2">
+                <i data-lucide="pie-chart" class="w-4 h-4 text-purple-500"></i> Distribuição de Receitas por Procedimento
+              </h3>
+              <span class="text-[10px] font-mono text-muted">Mais Lucrativos</span>
+            </div>
+            <div class="relative h-48 w-full flex items-center justify-center">
+              <canvas id="chart-servicos-pizza"></canvas>
+            </div>
+          </div>
+        </div>
+
         <!-- Agenda de Hoje & Alertas -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div class="glass-card rounded-2xl p-4 space-y-3">
@@ -1166,6 +1198,65 @@
       config:JSON.parse(localStorage.getItem('zp_config'))||{nome:'Letícia Hermann Manicure',whatsapp:'(54) 99100-0000',endereco:'',instagram:'@leticiahermannunhas',pix:'54991000000',banco:'Nubank',meta:8000,horaAbre:'08:00',horaFecha:'19:00',intervalo:30}
     };
 
+    // ============== SUPABASE INTEGRATION ==============
+    const SUPABASE_URL = "https://pqwtzpvzihbehxymxpct.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_4v4HrQE_jv__ppwxkRNIDg_lRG1gOQp";
+    let supabaseClient = null;
+
+    try {
+      if(window.supabase){
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log("Supabase inicializado com sucesso!");
+      }
+    } catch(err) {
+      console.warn("Supabase não carregado, usando persistência local:", err);
+    }
+
+    async function syncToSupabase(){
+      if(!supabaseClient) return;
+      try {
+        await supabaseClient.from('salons_state').upsert({
+          id: 'leticia_hermann',
+          updated_at: new Date().toISOString(),
+          data: {
+            clients: state.clients,
+            appointments: state.appointments,
+            financial: state.financial,
+            stock: state.stock,
+            services: state.services,
+            config: state.config,
+            cursos: state.cursos,
+            alunas: state.alunas
+          }
+        });
+      } catch(e) {
+        // Silent catch to keep offline first capability
+        console.log("Sync cloud status: local fallback active");
+      }
+    }
+
+    async function loadFromSupabase(){
+      if(!supabaseClient) return;
+      try {
+        const { data, error } = await supabaseClient.from('salons_state').select('data').eq('id', 'leticia_hermann').single();
+        if(data && data.data){
+          const cloudData = data.data;
+          if(cloudData.clients) state.clients = cloudData.clients;
+          if(cloudData.appointments) state.appointments = cloudData.appointments;
+          if(cloudData.financial) state.financial = cloudData.financial;
+          if(cloudData.stock) state.stock = cloudData.stock;
+          if(cloudData.services) state.services = cloudData.services;
+          if(cloudData.cursos) state.cursos = cloudData.cursos;
+          if(cloudData.alunas) state.alunas = cloudData.alunas;
+          persistState();
+          renderDashboard();
+          console.log("Dados sincronizados da nuvem Supabase!");
+        }
+      } catch(e){
+        console.log("Cloud read fallback:", e);
+      }
+    }
+
     function persistState(){
       localStorage.setItem('zp_services',JSON.stringify(state.services));
       localStorage.setItem('zp_clients',JSON.stringify(state.clients));
@@ -1179,6 +1270,8 @@
       localStorage.setItem('zp_alunas',JSON.stringify(state.alunas));
       localStorage.setItem('zp_messages',JSON.stringify(state.messages));
       localStorage.setItem('zp_config',JSON.stringify(state.config));
+      // Cloud background sync
+      syncToSupabase();
     }
 
     function fmt(v){return'R$ '+(v||0).toFixed(2).replace('.',',')}
@@ -1191,7 +1284,11 @@
       else{h.classList.remove('dark');h.classList.add('light');document.getElementById('theme-icon-sun').classList.add('hidden');document.getElementById('theme-icon-moon').classList.remove('hidden');}
       persistState();
     }
-    function toggleTheme(){state.theme=state.theme==='dark'?'light':'dark';applyTheme();}
+    function toggleTheme(){
+      state.theme=state.theme==='dark'?'light':'dark';
+      applyTheme();
+      if(state.currentTab==='dashboard') renderDashboard();
+    }
 
     // ============== NAV ==============
     function toggleMobileSidebar(){document.getElementById('app-sidebar').classList.toggle('-translate-x-full');document.getElementById('mobile-sidebar-overlay').classList.toggle('hidden');}
@@ -1285,7 +1382,134 @@
           <span class="font-bold ${f.type==='RECEITA'?'text-emerald-600 dark:text-emerald-400':'text-rose-600 dark:text-rose-400'}">${fmt(f.value)}</span>
         </div>
       `).join('');}
+      // Render Financial Charts
+      try { renderDashboardCharts(); } catch(e){ console.error('Dashboard charts error:', e); }
+
       lucide.createIcons();
+    }
+
+    let chartFaturamentoInstance = null;
+    let chartServicosInstance = null;
+
+    function renderDashboardCharts(){
+      if(!window.Chart) return;
+
+      // 1. Weekly revenue trend (last 7 days)
+      const ctxFaturamento = document.getElementById('chart-faturamento-semanal');
+      if(ctxFaturamento){
+        const labels = [];
+        const dataValues = [];
+        let weekTotal = 0;
+
+        for(let i=6; i>=0; i--){
+          const dt = new Date();
+          dt.setDate(dt.getDate() - i);
+          const ds = dt.toISOString().split('T')[0];
+          const dLabel = `${dt.getDate()}/${dt.getMonth()+1}`;
+          labels.push(dLabel);
+
+          // Sum financial receitas of that day + appointments of that day
+          const dayFin = state.financial.filter(f => f.type === 'RECEITA' && f.date === ds).reduce((s,f) => s + f.value, 0);
+          const dayApps = state.appointments.filter(a => a.date === ds && a.status !== 'CANCELADO').reduce((s,a) => s + (a.price || 0), 0);
+          const val = Math.max(dayFin, dayApps);
+          dataValues.push(val);
+          weekTotal += val;
+        }
+
+        const totalEl = document.getElementById('dash-chart-total-week');
+        if(totalEl) totalEl.innerText = `Total 7 dias: ${fmt(weekTotal)}`;
+
+        if(chartFaturamentoInstance) chartFaturamentoInstance.destroy();
+
+        chartFaturamentoInstance = new Chart(ctxFaturamento, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Faturamento R$',
+              data: dataValues,
+              backgroundColor: 'rgba(16, 185, 129, 0.75)',
+              borderColor: '#10b981',
+              borderWidth: 1.5,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: val => 'R$ ' + val,
+                  font: { size: 10 }
+                },
+                grid: { color: state.theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }
+              },
+              x: {
+                ticks: { font: { size: 10 } },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Services breakdown donut chart
+      const ctxServicos = document.getElementById('chart-servicos-pizza');
+      if(ctxServicos){
+        const counts = {};
+        state.appointments.forEach(a => {
+          const sName = (a.serviceNames || 'Manutenção').split(' — ')[0];
+          counts[sName] = (counts[sName] || 0) + (a.price || 100);
+        });
+
+        const sLabels = Object.keys(counts).slice(0, 5);
+        const sData = sLabels.map(k => counts[k]);
+
+        if(sLabels.length === 0){
+          sLabels.push('Alongamento Fibra', 'Manutenção Gel', 'Esmaltação');
+          sData.push(320, 220, 150);
+        }
+
+        if(chartServicosInstance) chartServicosInstance.destroy();
+
+        chartServicosInstance = new Chart(ctxServicos, {
+          type: 'doughnut',
+          data: {
+            labels: sLabels,
+            datasets: [{
+              data: sData,
+              backgroundColor: [
+                '#3b82f6',
+                '#10b981',
+                '#a855f7',
+                '#f59e0b',
+                '#ec4899'
+              ],
+              borderWidth: 2,
+              borderColor: state.theme === 'dark' ? '#1e293b' : '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: {
+                  boxWidth: 10,
+                  font: { size: 10 },
+                  color: state.theme === 'dark' ? '#cbd5e1' : '#334155'
+                }
+              }
+            }
+          }
+        });
+      }
     }
 
     // ============== AGENDA ==============
@@ -1630,22 +1854,94 @@
       const d=new Date(state.selectedDate+'T00:00:00');
       const dayOfWeek=d.getDay();
       const monday=new Date(d);monday.setDate(d.getDate()-((dayOfWeek+6)%7));
-      const container=document.getElementById('week-grid-container');
-      const dayAbbr=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
-      let html='';
+      const container=document.getElementById('agenda-container-week');
+      const dayNames=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+      const START_H=8, END_H=20, ROW_H=50;
+
+      let html=`
+        <div class="overflow-x-auto">
+          <div class="min-w-[850px] border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-white dark:bg-slate-900 shadow-xs">
+            <!-- Week Header Columns -->
+            <div class="grid grid-cols-8 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 text-center font-mono text-xs">
+              <div class="p-2 border-r border-slate-200 dark:border-slate-700 text-muted font-bold">HORA</div>
+      `;
+
+      // 7 Day Headers
+      const weekDates=[];
       for(let i=0;i<7;i++){
         const wd=new Date(monday);wd.setDate(monday.getDate()+i);
         const ds=wd.toISOString().split('T')[0];
-        const apps=state.appointments.filter(a=>a.date===ds);
+        weekDates.push(ds);
         const isToday=ds===todayStr;
-        html+=`<div class="space-y-2">
-          <div class="text-center text-[10px] font-mono font-bold ${isToday?'text-emerald-600 dark:text-emerald-400':'text-muted'} uppercase">${dayAbbr[i]}<br><span class="text-sm text-title">${wd.getDate()}</span></div>
-          ${apps.length===0?`<div onclick="openNewAppointmentModal('${ds}','')" class="p-2 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center text-[10px] text-muted hover:border-emerald-500 cursor-pointer">Livre</div>`:''}
-          ${apps.map(a=>`<div class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] space-y-1 cursor-pointer" onclick="editAppointment('${a.id}')">
-            <div class="font-bold text-title">${a.time}</div><div class="text-muted truncate">${a.clientName}</div><div class="font-mono text-emerald-600 dark:text-emerald-400 font-bold">${fmt(a.price)}</div>
-          </div>`).join('')}
-        </div>`;
+        const isSelected=ds===state.selectedDate;
+
+        html+=`
+          <div class="p-2 border-r border-slate-200 dark:border-slate-700 ${isToday?'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold':isSelected?'bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold':'text-title'}">
+            <div class="text-[10px] uppercase">${dayNames[i]}</div>
+            <div class="text-sm font-bold">${wd.getDate()}/${wd.getMonth()+1}</div>
+          </div>
+        `;
       }
+
+      html+=`
+            </div>
+            <!-- Week Grid Body -->
+            <div class="grid grid-cols-8 relative" style="height:${(END_H-START_H)*ROW_H}px">
+              <!-- Hours Col -->
+              <div class="border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 font-mono text-xs text-center font-bold text-slate-400">
+      `;
+
+      for(let h=START_H;h<END_H;h++){
+        html+=`<div class="h-[50px] border-b border-slate-200 dark:border-slate-800 pt-1.5">${h.toString().padStart(2,'0')}:00</div>`;
+      }
+
+      html+=`
+              </div>
+      `;
+
+      // 7 Columns for Days
+      weekDates.forEach((ds, dayIdx)=>{
+        const apps=state.appointments.filter(a=>a.date===ds);
+        html+=`
+          <div class="relative border-r border-slate-200 dark:border-slate-700 bg-transparent">
+        `;
+
+        // Clickable hour cells
+        for(let h=START_H;h<END_H;h++){
+          const hStr=h.toString().padStart(2,'0')+':00';
+          html+=`
+            <div class="h-[50px] border-b border-slate-100 dark:border-slate-800/80 hover:bg-emerald-50/25 dark:hover:bg-emerald-950/15 cursor-pointer" 
+                 onclick="openNewAppointmentModal('${ds}','${hStr}')"
+                 title="Agendar para ${ds} às ${hStr}"></div>
+          `;
+        }
+
+        // Render appointments in day column
+        apps.forEach(app=>{
+          const [aH,aM]=(app.time||'09:00').split(':').map(Number);
+          const dur=app.duration||60;
+          const topOffset=((aH-START_H)*60+aM)/60*ROW_H;
+          const blockH=Math.max(34,(dur/60)*ROW_H-2);
+          html+=`
+            <div class="appt-block status-${app.status}" 
+                 style="top:${topOffset+1}px; height:${blockH}px; left:2px; right:2px; padding:3px 5px; font-size:10px" 
+                 onclick="event.stopPropagation(); showAppPopup('${app.id}', event)">
+              <div class="font-mono font-bold truncate opacity-90">${app.time}</div>
+              <div class="font-extrabold truncate text-slate-900 dark:text-white leading-tight">${app.clientName}</div>
+              ${blockH>40?`<div class="truncate opacity-85 text-[9px]">💅 ${app.serviceNames}</div>`:''}
+            </div>
+          `;
+        });
+
+        html+=`</div>`;
+      });
+
+      html+=`
+            </div>
+          </div>
+        </div>
+      `;
+
       container.innerHTML=html;
     }
 
@@ -2442,6 +2738,7 @@
     window.onload=()=>{
       applyTheme();
       switchTab('dashboard');
+      loadFromSupabase();
     };
   </script>
 </body>
