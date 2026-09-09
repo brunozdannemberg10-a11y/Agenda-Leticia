@@ -1269,28 +1269,67 @@
           <label class="font-bold text-title block mb-1">Título do Bloqueio na Grade *</label>
           <input type="text" id="block-title" value="🍽️ Almoço / Intervalo" placeholder="Ex: Almoço, Médico, Viagem..." class="input-box w-full border rounded-xl px-3 py-2 outline-none font-bold">
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="font-bold text-title block mb-1">Data *</label>
-            <input type="date" id="block-date" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+            <label class="font-bold text-title block mb-1">Data do Bloqueio *</label>
+            <input type="date" id="block-date" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none text-xs">
           </div>
           <div>
-            <label class="font-bold text-title block mb-1">Hora de Início *</label>
-            <input type="time" id="block-time" value="12:00" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+            <label class="font-bold text-title block mb-1">Horário de Início (Qual Horário) *</label>
+            <select id="block-time-start" onchange="onBlockTimeOrDurationChanged('start')" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none text-xs font-bold">
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-title block mb-1">Duração do Bloqueio (Quanto Tempo) *</label>
+            <select id="block-duration" onchange="onBlockTimeOrDurationChanged('duration')" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none text-xs font-semibold">
+              <option value="15">15 minutos</option>
+              <option value="30">30 minutos</option>
+              <option value="45">45 minutos</option>
+              <option value="60" selected>1 hora (60 min)</option>
+              <option value="75">1h15 (75 min)</option>
+              <option value="90">1h30 (90 min)</option>
+              <option value="105">1h45 (105 min)</option>
+              <option value="120">2 horas (120 min)</option>
+              <option value="150">2h30 (150 min)</option>
+              <option value="180">3 horas (180 min)</option>
+              <option value="210">3h30 (210 min)</option>
+              <option value="240">4 horas (240 min - Meio Período)</option>
+              <option value="270">4h30 (270 min)</option>
+              <option value="300">5 horas (300 min)</option>
+              <option value="330">5h30 (330 min)</option>
+              <option value="360">6 horas (360 min)</option>
+              <option value="390">6h30 (390 min)</option>
+              <option value="420">7 horas (420 min)</option>
+              <option value="450">7h30 (450 min)</option>
+              <option value="480">8 horas (480 min - Quase o dia todo)</option>
+              <option value="510">8h30 (510 min)</option>
+              <option value="540">9 horas (540 min - Dia Todo / Cursos)</option>
+              <option value="600">10 horas (600 min)</option>
+              <option value="660">11 horas (660 min)</option>
+              <option value="720">12 horas (720 min)</option>
+              <option value="780">13 horas (780 min)</option>
+              <option value="840">14 horas (840 min)</option>
+              <option value="900">15 horas (07h às 22h - Dia Completo)</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-title block mb-1">Horário de Término (Bloquear Até)</label>
+            <select id="block-time-end" onchange="onBlockTimeOrDurationChanged('end')" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none text-xs font-bold text-rose-600 dark:text-rose-400">
+            </select>
           </div>
         </div>
         <div>
-          <label class="font-bold text-title block mb-1">Duração do Bloqueio</label>
-          <select id="block-duration" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
-            <option value="30">30 minutos</option>
-            <option value="60" selected>1 hora (60 min)</option>
-            <option value="90">1h30 (90 min)</option>
-            <option value="120">2 horas (120 min)</option>
-            <option value="180">3 horas (180 min)</option>
-            <option value="240">4 horas (Manhã / Tarde toda)</option>
-            <option value="480">8 horas (Dia Quase Todo)</option>
-            <option value="540">9 horas (Dia Todo Integral)</option>
-          </select>
+          <span class="text-[10px] font-bold text-muted uppercase tracking-wider block mb-1">Atalhos Rápidos de Duração:</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="setBlockQuickDuration(30)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-950/60 hover:text-rose-600 text-[11px] font-semibold transition-colors">30 min</button>
+            <button type="button" onclick="setBlockQuickDuration(60)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-950/60 hover:text-rose-600 text-[11px] font-semibold transition-colors">1 hora</button>
+            <button type="button" onclick="setBlockQuickDuration(120)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-950/60 hover:text-rose-600 text-[11px] font-semibold transition-colors">2 horas</button>
+            <button type="button" onclick="setBlockQuickDuration(240)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-950/60 hover:text-rose-600 text-[11px] font-semibold transition-colors">4 horas (Tarde/Manhã)</button>
+            <button type="button" onclick="setBlockQuickDuration(540)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-950/60 hover:text-rose-600 text-[11px] font-semibold transition-colors">9h (Curso)</button>
+            <button type="button" onclick="setBlockQuickDuration(900)" class="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-bold border border-rose-200 dark:border-rose-900/50 hover:bg-rose-100 text-[11px] transition-colors">Dia Todo (07h às 22h)</button>
+          </div>
         </div>
         <div>
           <label class="font-bold text-title block mb-1">Observações / Detalhes</label>
@@ -2891,13 +2930,97 @@
     }
 
     // ============== BLOQUEIO DE HORÁRIOS ==============
+    function populateBlockTimeSelects(){
+      const startSel = document.getElementById('block-time-start');
+      const endSel = document.getElementById('block-time-end');
+      if(!startSel || !endSel) return;
+
+      const times = [];
+      for(let h = 7; h <= 22; h++){
+        const hh = h.toString().padStart(2, '0');
+        times.push(`${hh}:00`);
+        if(h < 22) times.push(`${hh}:30`);
+      }
+      startSel.innerHTML = times.map(t => `<option value="${t}">${t}</option>`).join('');
+
+      const endTimes = [];
+      for(let h = 7; h <= 22; h++){
+        const hh = h.toString().padStart(2, '0');
+        if(h > 7) endTimes.push(`${hh}:00`);
+        endTimes.push(`${hh}:30`);
+      }
+      endTimes.push('22:00');
+      const uniqueEndTimes = [...new Set(endTimes)];
+      endSel.innerHTML = uniqueEndTimes.map(t => `<option value="${t}">${t}</option>`).join('');
+    }
+
+    function timeToMinutes(t){
+      const [h, m] = (t || '00:00').split(':').map(Number);
+      return (h * 60) + (m || 0);
+    }
+
+    function minutesToTime(mins){
+      const clamped = Math.max(7 * 60, Math.min(22 * 60, mins));
+      const h = Math.floor(clamped / 60).toString().padStart(2, '0');
+      const m = (clamped % 60).toString().padStart(2, '0');
+      return `${h}:${m}`;
+    }
+
+    function onBlockTimeOrDurationChanged(source){
+      const startSel = document.getElementById('block-time-start');
+      const endSel = document.getElementById('block-time-end');
+      const durSel = document.getElementById('block-duration');
+      if(!startSel || !endSel || !durSel) return;
+
+      const startMins = timeToMinutes(startSel.value);
+
+      if(source === 'start' || source === 'duration'){
+        const dur = parseInt(durSel.value) || 60;
+        const endMins = startMins + dur;
+        endSel.value = minutesToTime(endMins);
+      } else if(source === 'end'){
+        const endMins = timeToMinutes(endSel.value);
+        let diff = endMins - startMins;
+        if(diff <= 0){
+          diff = 30;
+          endSel.value = minutesToTime(startMins + 30);
+        }
+        let matched = false;
+        for(const opt of durSel.options){
+          if(parseInt(opt.value) === diff){
+            durSel.value = opt.value;
+            matched = true;
+            break;
+          }
+        }
+        if(!matched){
+          const label = diff >= 60 ? `${Math.floor(diff/60)}h${diff%60 > 0 ? (diff%60)+'min' : ''} (${diff} min)` : `${diff} minutos`;
+          const opt = new Option(label, diff, true, true);
+          durSel.add(opt);
+          durSel.value = diff;
+        }
+      }
+    }
+
+    function setBlockQuickDuration(mins){
+      const durSel = document.getElementById('block-duration');
+      if(durSel){
+        durSel.value = mins;
+        onBlockTimeOrDurationChanged('duration');
+      }
+    }
+
     function openBlockModal(date, time){
+      populateBlockTimeSelects();
       document.getElementById('block-date').value = date || state.selectedDate || todayStr;
-      document.getElementById('block-time').value = time || '12:00';
+      const t = time || '12:00';
+      const startSel = document.getElementById('block-time-start');
+      if(startSel) startSel.value = t;
       document.getElementById('block-reason-select').value = '🍽️ Almoço / Intervalo';
       document.getElementById('block-title').value = '🍽️ Almoço / Intervalo';
       document.getElementById('block-obs').value = '';
       document.getElementById('block-duration').value = '60';
+      onBlockTimeOrDurationChanged('duration');
       openModal('modal-block');
     }
 
@@ -2909,7 +3032,8 @@
 
     function saveBlockSlot(){
       const date = document.getElementById('block-date').value;
-      const time = document.getElementById('block-time').value;
+      const startSel = document.getElementById('block-time-start');
+      const time = startSel ? startSel.value : '12:00';
       const title = document.getElementById('block-title').value.trim() || 'Bloqueio de Horário';
       const dur = parseInt(document.getElementById('block-duration').value) || 60;
       const obs = document.getElementById('block-obs').value.trim();
