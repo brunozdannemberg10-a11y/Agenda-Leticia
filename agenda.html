@@ -152,9 +152,6 @@
         <button onclick="switchTab('clientes');closeMobileSidebar()" id="nav-clientes" class="sidebar-menu-btn">
           <span class="flex items-center gap-2.5"><i data-lucide="users" class="w-4 h-4 text-blue-500"></i><span>Clientes & Prontuários</span></span>
         </button>
-        <button onclick="switchTab('profissionais');closeMobileSidebar()" id="nav-profissionais" class="sidebar-menu-btn">
-          <span class="flex items-center gap-2.5"><i data-lucide="user-check" class="w-4 h-4 text-pink-500"></i><span>Profissionais & Equipe</span></span>
-        </button>
         <button onclick="switchTab('caixa');closeMobileSidebar()" id="nav-caixa" class="sidebar-menu-btn">
           <span class="flex items-center gap-2.5"><i data-lucide="shopping-cart" class="w-4 h-4 text-emerald-500"></i><span>Caixa & PDV</span></span>
           <span class="text-[9px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-1.5 py-0.5 rounded font-mono" id="badge-caixa-status">ABERTO</span>
@@ -170,12 +167,6 @@
             <button onclick="switchTab('fechamento-caixa');closeMobileSidebar()">Meus Caixas & Fechamento</button>
           </div>
         </div>
-        <button onclick="switchTab('cadastros-gerais');closeMobileSidebar()" id="nav-cadastros-gerais" class="sidebar-menu-btn">
-          <span class="flex items-center gap-2.5"><i data-lucide="layers" class="w-4 h-4 text-indigo-500"></i><span>Cadastros Gerais</span></span>
-        </button>
-        <button onclick="switchTab('consultas');closeMobileSidebar()" id="nav-consultas" class="sidebar-menu-btn">
-          <span class="flex items-center gap-2.5"><i data-lucide="bar-chart-2" class="w-4 h-4 text-cyan-500"></i><span>Consultas & Relatórios</span></span>
-        </button>
         <button onclick="switchTab('cursos');closeMobileSidebar()" id="nav-cursos" class="sidebar-menu-btn">
           <span class="flex items-center gap-2.5"><i data-lucide="award" class="w-4 h-4 text-indigo-500"></i><span>Cursos & Alunas</span></span>
         </button>
@@ -367,12 +358,10 @@
                   </select>
                 </div>
 
-                <!-- Profissional -->
+                <!-- Profissional fixo -->
                 <div>
                   <label class="text-[10px] font-bold text-muted block mb-0.5 font-mono">Profissional</label>
-                  <select id="quick-appt-prof" class="input-box w-full border rounded-xl px-2.5 py-1.5 text-xs font-bold outline-none">
-                    <option value="Letícia Hermann">Letícia Hermann</option>
-                  </select>
+                  <input type="text" value="Letícia Hermann" readonly class="input-box w-full border rounded-xl px-2.5 py-1.5 text-xs font-bold opacity-85">
                 </div>
 
                 <!-- Observação -->
@@ -398,10 +387,6 @@
                   <span>Bloquear Horário</span>
                 </button>
                 <span id="agenda-day-name" class="text-xs font-bold text-title font-mono hidden sm:inline pl-2 border-l border-slate-300 dark:border-slate-700">Segunda-feira</span>
-                <select id="agenda-prof-filter" onchange="onAgendaProfFilterChanged(this.value)" class="input-box border rounded-xl px-2.5 py-1.5 text-xs font-bold font-mono outline-none shadow-xs">
-                  <option value="ALL">Todas as Profissionais</option>
-                  <option value="Letícia Hermann">Letícia Hermann</option>
-                </select>
               </div>
               <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700">
                 <button onclick="setAgendaView('day')" id="btn-view-day" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-700 text-title shadow-xs">Dia</button>
@@ -473,24 +458,6 @@
             </thead>
             <tbody id="clients-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 font-mono"></tbody>
           </table>
-        </div>
-      </section>
-
-      <!-- ===================== PROFISSIONAIS & EQUIPE ===================== -->
-      <section id="tab-profissionais" class="hidden space-y-4">
-        <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-5 space-y-4">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-            <div>
-              <h2 class="text-base font-bold text-title flex items-center gap-2">
-                <i data-lucide="user-check" class="w-5 h-5 text-pink-500"></i> Profissionais & Equipe do Salão
-              </h2>
-              <p class="text-xs text-muted mt-0.5">Cadastre colaboradoras, defina comissão individual (%) e vincule à agenda</p>
-            </div>
-            <button onclick="openProfessionalModal()" class="touch-btn px-4 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-md">
-              <i data-lucide="plus" class="w-4 h-4"></i> + Nova Profissional
-            </button>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4" id="professionals-grid"></div>
         </div>
       </section>
 
@@ -723,66 +690,6 @@
         <div class="glass-card rounded-2xl p-4 space-y-3 max-w-2xl mx-auto">
           <h3 class="text-xs font-bold text-title uppercase font-mono">Histórico de Caixas Fechados</h3>
           <div id="historico-caixas" class="space-y-2 text-xs font-mono"></div>
-        </div>
-      </section>
-
-      <!-- ===================== CADASTROS GERAIS ===================== -->
-      <section id="tab-cadastros-gerais" class="hidden space-y-4">
-        <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-5 space-y-4">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-            <div>
-              <h2 class="text-base font-bold text-title flex items-center gap-2">
-                <i data-lucide="layers" class="w-5 h-5 text-indigo-500"></i> Cadastros Gerais do Salão
-              </h2>
-              <p class="text-xs text-muted mt-0.5">Gerenciamento de fichas de anamnese, equipamentos, marcas, feriados e salas</p>
-            </div>
-            <button onclick="openNewCadastroGeralItemModal()" class="touch-btn px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-md">
-              <i data-lucide="plus" class="w-4 h-4"></i> + Novo Registro
-            </button>
-          </div>
-
-          <!-- Sub-abas dos Cadastros Gerais -->
-          <div class="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200 dark:border-slate-800 text-xs font-mono" id="cadastros-subtabs-nav">
-            <button onclick="switchCadastrosSubTab('anamnese')" id="csub-anamnese" class="px-3 py-1.5 rounded-xl font-bold bg-indigo-600 text-white shadow-xs shrink-0">Anamnese & Contratos</button>
-            <button onclick="switchCadastrosSubTab('campos')" id="csub-campos" class="px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">Campos Personalizados</button>
-            <button onclick="switchCadastrosSubTab('origem')" id="csub-origem" class="px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">Como nos Conheceu</button>
-            <button onclick="switchCadastrosSubTab('equipamentos')" id="csub-equipamentos" class="px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">Equipamentos</button>
-            <button onclick="switchCadastrosSubTab('feriados')" id="csub-feriados" class="px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">Feriados</button>
-            <button onclick="switchCadastrosSubTab('grupos')" id="csub-grupos" class="px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">Grupos de Serviços</button>
-            <button onclick="switchCadastrosSubTab('marcas')" id="csub-marcas" class="px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">Marcas</button>
-            <button onclick="switchCadastrosSubTab('salas')" id="csub-salas" class="px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">Salas & Bancadas</button>
-          </div>
-
-          <div id="cadastros-gerais-content" class="min-h-[220px]"></div>
-        </div>
-      </section>
-
-      <!-- ===================== CONSULTAS & RELATÓRIOS ===================== -->
-      <section id="tab-consultas" class="hidden space-y-4">
-        <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-5 space-y-4">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-800">
-            <div>
-              <h2 class="text-base font-bold text-title flex items-center gap-2">
-                <i data-lucide="bar-chart-2" class="w-5 h-5 text-cyan-500"></i> Consultas, Comissões & Relatórios
-              </h2>
-              <p class="text-xs text-muted mt-0.5">Relatórios analíticos de comissão por profissional, retorno e vendas</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <select id="consulta-prof-filter" onchange="renderConsulta()" class="input-box border rounded-xl px-3 py-1.5 text-xs font-mono font-bold outline-none">
-                <option value="ALL">Todas as Profissionais</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Sub-abas de Consulta -->
-          <div class="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200 dark:border-slate-800 text-xs font-mono" id="consulta-subtabs-nav">
-            <button onclick="switchConsultaSubTab('comissao')" id="qsub-comissao" class="px-3 py-1.5 rounded-xl font-bold bg-cyan-600 text-white shadow-xs shrink-0">Comissão por Profissional</button>
-            <button onclick="switchConsultaSubTab('retorno')" id="qsub-retorno" class="px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">Previsão de Retorno (+20 dias)</button>
-            <button onclick="switchConsultaSubTab('vendas')" id="qsub-vendas" class="px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">Vendas por Cliente</button>
-            <button onclick="switchConsultaSubTab('auditoria')" id="qsub-auditoria" class="px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">Auditoria da Agenda</button>
-          </div>
-
-          <div id="consulta-content" class="min-h-[220px]"></div>
         </div>
       </section>
 
@@ -1036,12 +943,6 @@
         <div><label class="font-bold text-title block mb-1">Cliente *</label><input type="text" id="appt-client" list="appt-clients-datalist" placeholder="Nome da cliente..." class="input-box w-full border rounded-xl px-3 py-2 outline-none"><datalist id="appt-clients-datalist"></datalist></div>
         <div><label class="font-bold text-title block mb-1">WhatsApp</label><input type="text" id="appt-phone" placeholder="(54) 99123-4567" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
         <div><label class="font-bold text-title block mb-1">Serviço *</label><select id="appt-service" onchange="onApptServiceChanged()" class="input-box w-full border rounded-xl px-3 py-2 outline-none"></select></div>
-        <div>
-          <label class="font-bold text-title block mb-1">Profissional Responsável *</label>
-          <select id="appt-prof" class="input-box w-full border rounded-xl px-3 py-2 outline-none font-bold">
-            <option value="Letícia Hermann">Letícia Hermann</option>
-          </select>
-        </div>
         <div class="grid grid-cols-3 gap-3">
           <div><label class="font-bold text-title block mb-1">Data *</label><input type="date" id="appt-date" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
           <div><label class="font-bold text-title block mb-1">Hora *</label><input type="time" id="appt-time" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
@@ -1368,64 +1269,27 @@
           <label class="font-bold text-title block mb-1">Título do Bloqueio na Grade *</label>
           <input type="text" id="block-title" value="🍽️ Almoço / Intervalo" placeholder="Ex: Almoço, Médico, Viagem..." class="input-box w-full border rounded-xl px-3 py-2 outline-none font-bold">
         </div>
-        <div>
-          <label class="font-bold text-title block mb-1">Data *</label>
-          <input type="date" id="block-date" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
-        </div>
-        <div>
-          <label class="font-bold text-title block mb-1">Horário do Bloqueio (De hora em hora) *</label>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="text-[10px] font-bold text-muted block mb-1 font-mono">Das (Início)</label>
-              <select id="block-time-start" onchange="onBlockHoursChanged()" class="input-box w-full border rounded-xl px-3 py-2 font-mono font-bold outline-none">
-                <option value="07:00">07:00</option>
-                <option value="08:00">08:00</option>
-                <option value="09:00">09:00</option>
-                <option value="10:00">10:00</option>
-                <option value="11:00">11:00</option>
-                <option value="12:00" selected>12:00</option>
-                <option value="13:00">13:00</option>
-                <option value="14:00">14:00</option>
-                <option value="15:00">15:00</option>
-                <option value="16:00">16:00</option>
-                <option value="17:00">17:00</option>
-                <option value="18:00">18:00</option>
-                <option value="19:00">19:00</option>
-                <option value="20:00">20:00</option>
-                <option value="21:00">21:00</option>
-                <option value="22:00">22:00</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-[10px] font-bold text-muted block mb-1 font-mono">Às (Término)</label>
-              <select id="block-time-end" onchange="onBlockHoursChanged()" class="input-box w-full border rounded-xl px-3 py-2 font-mono font-bold outline-none">
-                <option value="08:00">08:00</option>
-                <option value="09:00">09:00</option>
-                <option value="10:00">10:00</option>
-                <option value="11:00">11:00</option>
-                <option value="12:00">12:00</option>
-                <option value="13:00">13:00</option>
-                <option value="14:00" selected>14:00</option>
-                <option value="15:00">15:00</option>
-                <option value="16:00">16:00</option>
-                <option value="17:00">17:00</option>
-                <option value="18:00">18:00</option>
-                <option value="19:00">19:00</option>
-                <option value="20:00">20:00</option>
-                <option value="21:00">21:00</option>
-                <option value="22:00">22:00</option>
-                <option value="23:00">23:00</option>
-              </select>
-            </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-title block mb-1">Data *</label>
+            <input type="date" id="block-date" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
           </div>
-          <div class="mt-1.5 flex items-center justify-between text-[11px] font-mono">
-            <span class="text-rose-600 dark:text-rose-400 font-bold" id="block-duration-calculated">⏱️ Duração calculada: 2h (120 min)</span>
+          <div>
+            <label class="font-bold text-title block mb-1">Hora de Início *</label>
+            <input type="time" id="block-time" value="12:00" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
           </div>
         </div>
         <div>
-          <label class="font-bold text-title block mb-1">Profissional Responsável</label>
-          <select id="block-prof" class="input-box w-full border rounded-xl px-3 py-2 outline-none font-bold">
-            <option value="Letícia Hermann">Letícia Hermann</option>
+          <label class="font-bold text-title block mb-1">Duração do Bloqueio</label>
+          <select id="block-duration" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+            <option value="30">30 minutos</option>
+            <option value="60" selected>1 hora (60 min)</option>
+            <option value="90">1h30 (90 min)</option>
+            <option value="120">2 horas (120 min)</option>
+            <option value="180">3 horas (180 min)</option>
+            <option value="240">4 horas (Manhã / Tarde toda)</option>
+            <option value="480">8 horas (Dia Quase Todo)</option>
+            <option value="540">9 horas (Dia Todo Integral)</option>
           </select>
         </div>
         <div>
@@ -1512,72 +1376,6 @@
     </div>
   </div>
 
-  <!-- MODAL: PROFISSIONAL / COLABORADORA -->
-  <div id="modal-professional" class="modal-overlay">
-    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[94vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="prof-modal-title">
-          <i data-lucide="user-check" class="w-5 h-5 text-pink-500"></i> Nova Profissional
-        </h3>
-        <button onclick="closeModal('modal-professional')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <input type="hidden" id="prof-edit-id" value="">
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="font-bold text-title block mb-1">Nome Completo *</label>
-          <input type="text" id="prof-name" placeholder="Ex: Camila Silva" class="input-box w-full border rounded-xl px-3 py-2 outline-none font-bold">
-        </div>
-        <div>
-          <label class="font-bold text-title block mb-1">Função / Especialidade</label>
-          <input type="text" id="prof-role" placeholder="Ex: Nail Designer, Manicure, Instrutora" class="input-box w-full border rounded-xl px-3 py-2 outline-none">
-        </div>
-        <div>
-          <label class="font-bold text-title block mb-1">WhatsApp / Celular</label>
-          <input type="text" id="prof-phone" placeholder="(54) 9____-____" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="font-bold text-title block mb-1">Comissão (%)</label>
-            <input type="number" id="prof-comissao" min="0" max="100" value="50" class="input-box w-full border rounded-xl px-3 py-2 font-mono font-bold outline-none">
-          </div>
-          <div>
-            <label class="font-bold text-title block mb-1">Cor na Agenda</label>
-            <input type="color" id="prof-color" value="#ec4899" class="input-box w-full h-10 border rounded-xl p-1 outline-none cursor-pointer">
-          </div>
-        </div>
-        <div>
-          <label class="font-bold text-title block mb-1">Status</label>
-          <select id="prof-status" class="input-box w-full border rounded-xl px-3 py-2 outline-none font-semibold">
-            <option value="true">Ativa (Recebe agendamentos)</option>
-            <option value="false">Inativa / Licença</option>
-          </select>
-        </div>
-      </div>
-      <div class="pt-3 flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800">
-        <button onclick="closeModal('modal-professional')" class="px-4 py-2 text-xs font-semibold text-muted">Cancelar</button>
-        <button onclick="saveProfessional()" class="touch-btn px-6 py-2 bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold rounded-xl shadow-md">Salvar Profissional</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: NOVO CADASTRO GERAL -->
-  <div id="modal-cadastro-geral" class="modal-overlay">
-    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[94vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="cadger-modal-title">
-          <i data-lucide="layers" class="w-5 h-5 text-indigo-500"></i> Novo Registro
-        </h3>
-        <button onclick="closeModal('modal-cadastro-geral')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <input type="hidden" id="cadger-category" value="anamnese">
-      <div class="space-y-3 text-xs" id="cadger-form-fields"></div>
-      <div class="pt-3 flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800">
-        <button onclick="closeModal('modal-cadastro-geral')" class="px-4 py-2 text-xs font-semibold text-muted">Cancelar</button>
-        <button onclick="saveCadastroGeralItem()" class="touch-btn px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md">Salvar</button>
-      </div>
-    </div>
-  </div>
-
   <!-- ==================== APPLICATION ENGINE ==================== -->
   <script>
     const DEFAULT_SERVICES=[
@@ -1604,83 +1402,16 @@
     const todayStr=new Date().toISOString().split('T')[0];
     const todayBR=todayStr.split('-').reverse().join('/');
 
-    // Garantir que a entrega inicie 100% zerada para a Letícia
-    const DATA_VERSION = 'v2_clean_zero';
-    if(localStorage.getItem('zp_data_version') !== DATA_VERSION){
-      localStorage.removeItem('zp_clients');
-      localStorage.removeItem('zp_appointments');
-      localStorage.removeItem('zp_financial');
-      localStorage.removeItem('zp_alunas');
-      localStorage.removeItem('zp_caixas_fechados');
-      localStorage.setItem('zp_caixa', JSON.stringify({isOpen:true,number:1,currentBalance:0}));
-      localStorage.setItem('zp_data_version', DATA_VERSION);
-    }
-
     let state={
       currentTab:'dashboard',agendaView:'day',selectedDate:todayStr,
       currentMonth:new Date().getMonth(),currentYear:new Date().getFullYear(),
       theme:localStorage.getItem('zanettia_theme')||'light',
       services:JSON.parse(localStorage.getItem('zp_services'))||DEFAULT_SERVICES,
-      professionals:JSON.parse(localStorage.getItem('zp_professionals'))||[
-        {id:'prof_leticia',name:'Letícia Hermann',role:'Proprietária & Master Nail Designer',phone:'(54) 99123-4567',comissao:100,color:'#10b981',active:true}
+      clients:JSON.parse(localStorage.getItem('zp_clients'))||[
+        {id:'c1',name:'Camila Zanetti',phone:'(54) 99123-4567',email:'camila@email.com',birth:'1996-09-15',cpf:'',lastVisit:'2026-08-15',returnDue:'2026-09-04',credit:20,isVip:true,isAluna:false,notes:'Prefere formato amendoado'},
+        {id:'c2',name:'Ana Paula Silveira',phone:'(54) 98876-5432',email:'anapaula@email.com',birth:'1998-09-22',cpf:'',lastVisit:'2026-08-18',returnDue:'2026-09-07',credit:0,isVip:true,isAluna:true,notes:'Aluna do curso de fibra'},
+        {id:'c3',name:'Juliana Mendes',phone:'(54) 99911-2233',email:'juliana@email.com',birth:'1992-04-10',cpf:'',lastVisit:'2026-08-10',returnDue:'2026-08-30',credit:0,isVip:false,isAluna:false,notes:''}
       ],
-      cadastrosGerais:JSON.parse(localStorage.getItem('zp_cadastros_gerais'))||{
-        anamnese:[
-          {id:'an1',title:'Ficha de Avaliação e Anamnese de Unhas',questions:'Diabetes, Alergias, Micose, Onicofagia, Gestante',required:true},
-          {id:'an2',title:'Termo de Consentimento e Manutenção',questions:'Garantia de 7 dias, Retorno em até 28 dias',required:true}
-        ],
-        campos:[
-          {id:'cp1',name:'Formato Preferido',type:'Seleção (Quadrada, Almond, Bailarina)',target:'Cliente'},
-          {id:'cp2',name:'Sensibilidade a Cabine LED',type:'Sim / Não',target:'Procedimento'}
-        ],
-        comoConheceu:[
-          {id:'cc1',name:'Instagram (@leticiahermannunhas)',active:true},
-          {id:'cc2',name:'Indicação de Cliente / Amiga',active:true},
-          {id:'cc3',name:'Passando em frente ao Espaço',active:true},
-          {id:'cc4',name:'Google / Redes Sociais',active:true},
-          {id:'cc5',name:'Aluna de Curso',active:true}
-        ],
-        equipamentos:[
-          {id:'eq1',name:'Cabine LED/UV Sun 48W',serial:'CAB-01',status:'Em uso'},
-          {id:'eq2',name:'Motor Lixadeira Drill Strong 210',serial:'MOT-01',status:'Em uso'},
-          {id:'eq3',name:'Coletor de Pó Exaustor Profissional',serial:'EXA-01',status:'Em uso'},
-          {id:'eq4',name:'Autoclave Cristófoli 12L (Esterilização)',serial:'AUT-01',status:'Em dia'}
-        ],
-        feriados:[
-          {id:'fer1',date:'2026-01-01',name:'Confraternização Universal'},
-          {id:'fer2',date:'2026-04-21',name:'Tiradentes'},
-          {id:'fer3',date:'2026-05-01',name:'Dia do Trabalho'},
-          {id:'fer4',date:'2026-09-07',name:'Independência do Brasil'},
-          {id:'fer5',date:'2026-10-12',name:'Nossa Senhora Aparecida'},
-          {id:'fer6',date:'2026-11-02',name:'Finados'},
-          {id:'fer7',date:'2026-11-15',name:'Proclamação da República'},
-          {id:'fer8',date:'2026-12-25',name:'Natal'}
-        ],
-        grupos:[
-          {id:'gr1',name:'Alongamentos & Estruturas',color:'#10b981'},
-          {id:'gr2',name:'Manutenções Periódicas',color:'#0284c7'},
-          {id:'gr3',name:'Nail Art & Decorações',color:'#ec4899'},
-          {id:'gr4',name:'Esmaltações e Cuidados Naturais',color:'#8b5cf6'},
-          {id:'gr5',name:'Cursos & Capacitações',color:'#f59e0b'}
-        ],
-        marcas:[
-          {id:'mk1',name:'Vòlia Cosméticos',category:'Géis e Preparadores'},
-          {id:'mk2',name:'Cuccio Pro',category:'Finalizadores e Tratamento'},
-          {id:'mk3',name:'D&Z',category:'Tips, Moldes e Brocas'},
-          {id:'mk4',name:'Beltrat',category:'Linha Gel e Top Coat'},
-          {id:'mk5',name:'Staleks Pro',category:'Alicates e Instrumentos'}
-        ],
-        salas:[
-          {id:'sl1',name:'Mesa Principal (Letícia Hermann)',type:'Bancada Manicure'},
-          {id:'sl2',name:'Mesa Auxiliar / Colaboradora 2',type:'Bancada Manicure'},
-          {id:'sl3',name:'Sala de Esterilização & Desinfecção',type:'Autoclave e Assepsia'},
-          {id:'sl4',name:'Espaço Cursos & Workshops VIP',type:'Treinamento e Prática'}
-        ]
-      },
-      currentCadastrosSubTab:'anamnese',
-      currentConsultaSubTab:'comissao',
-      selectedProfFilter:'ALL',
-      clients:JSON.parse(localStorage.getItem('zp_clients'))||[],
       stock:JSON.parse(localStorage.getItem('zp_stock'))||[
         {id:'st1',name:'Gel Construtor Vòlia Classic Nude 24g',cat:'Géis',qty:3,min:2,cost:68},
         {id:'st2',name:'Top Coat Selante Sem Goma',cat:'Finalizadores',qty:1,min:2,cost:35},
@@ -1688,10 +1419,16 @@
         {id:'st4',name:'Primer Ácido 15ml',cat:'Preparadores',qty:2,min:1,cost:22},
         {id:'st5',name:'Fibra de Vidro Rolo 50m',cat:'Fibras',qty:1,min:2,cost:45}
       ],
-      appointments:JSON.parse(localStorage.getItem('zp_appointments'))||[],
-      financial:JSON.parse(localStorage.getItem('zp_financial'))||[],
+      appointments:JSON.parse(localStorage.getItem('zp_appointments'))||[
+        {id:'app_1',clientName:'Camila Zanetti',clientPhone:'(54) 99123-4567',serviceNames:'Manutenção Fibra de Vidro',date:todayStr,time:'09:00',duration:120,price:110,status:'CONFIRMADO',obs:''},
+        {id:'app_2',clientName:'Ana Paula Silveira',clientPhone:'(54) 98876-5432',serviceNames:'Esmaltação em Gel',date:todayStr,time:'14:00',duration:60,price:75,status:'AGENDADO',obs:''}
+      ],
+      financial:JSON.parse(localStorage.getItem('zp_financial'))||[
+        {id:'f1',date:todayStr,type:'RECEITA',category:'Atendimentos',desc:'Fundo Inicial de Troco',method:'DINHEIRO',value:100},
+        {id:'f2',date:todayStr,type:'RECEITA',category:'Atendimentos',desc:'Camila Zanetti - Manutenção Fibra',method:'PIX',value:110}
+      ],
       financialFilter:'ALL',
-      caixa:JSON.parse(localStorage.getItem('zp_caixa'))||{isOpen:true,number:1,currentBalance:0},
+      caixa:JSON.parse(localStorage.getItem('zp_caixa'))||{isOpen:true,number:13,currentBalance:210},
       caixasFechados:JSON.parse(localStorage.getItem('zp_caixas_fechados'))||[],
       pdvSale:{clientName:'',clientPhone:'',items:[],total:0},
       modalFinType:'RECEITA',
@@ -1727,8 +1464,6 @@
             financial: state.financial,
             stock: state.stock,
             services: state.services,
-            professionals: state.professionals,
-            cadastrosGerais: state.cadastrosGerais,
             config: state.config,
             cursos: state.cursos,
             alunas: state.alunas
@@ -1751,12 +1486,9 @@
           if(cloudData.financial) state.financial = cloudData.financial;
           if(cloudData.stock) state.stock = cloudData.stock;
           if(cloudData.services) state.services = cloudData.services;
-          if(cloudData.professionals) state.professionals = cloudData.professionals;
-          if(cloudData.cadastrosGerais) state.cadastrosGerais = cloudData.cadastrosGerais;
           if(cloudData.cursos) state.cursos = cloudData.cursos;
           if(cloudData.alunas) state.alunas = cloudData.alunas;
           persistState();
-          populateProfessionalSelects();
           renderDashboard();
           console.log("Dados sincronizados da nuvem Supabase!");
         }
@@ -1771,8 +1503,6 @@
       localStorage.setItem('zp_stock',JSON.stringify(state.stock));
       localStorage.setItem('zp_appointments',JSON.stringify(state.appointments));
       localStorage.setItem('zp_financial',JSON.stringify(state.financial));
-      localStorage.setItem('zp_professionals',JSON.stringify(state.professionals));
-      localStorage.setItem('zp_cadastros_gerais',JSON.stringify(state.cadastrosGerais));
       localStorage.setItem('zp_caixa',JSON.stringify(state.caixa));
       localStorage.setItem('zp_caixas_fechados',JSON.stringify(state.caixasFechados));
       localStorage.setItem('zanettia_theme',state.theme);
@@ -1806,11 +1536,8 @@
     function closeModal(id){document.getElementById(id).classList.remove('open');}
     function openModal(id){document.getElementById(id).classList.add('open');lucide.createIcons();}
 
-    function switchTab(tabId, subTab){
+    function switchTab(tabId){
       state.currentTab=tabId;
-      if(subTab && tabId==='cadastros-gerais') state.currentCadastrosSubTab = subTab;
-      if(subTab && tabId==='consultas') state.currentConsultaSubTab = subTab;
-
       document.querySelectorAll('main > section').forEach(s=>s.classList.add('hidden'));
       const t=document.getElementById('tab-'+tabId);if(t)t.classList.remove('hidden');
       document.querySelectorAll('.sidebar-menu-btn').forEach(b=>b.classList.remove('active'));
@@ -1822,13 +1549,10 @@
       if(tabId==='dashboard')renderDashboard();
       if(tabId==='agenda')renderAgenda();
       if(tabId==='clientes')renderClients();
-      if(tabId==='profissionais')renderProfessionals();
       if(tabId==='caixa')renderPDV();
       if(tabId==='financeiro-lancamentos')renderFinancialScreen();
       if(tabId==='financeiro-dre')renderDRE();
       if(tabId==='fechamento-caixa')renderFechamento();
-      if(tabId==='cadastros-gerais')renderCadastrosGeraisContent();
-      if(tabId==='consultas')renderConsulta();
       if(tabId==='produtos-servicos')renderServices();
       if(tabId==='estoque')renderStock();
       if(tabId==='cursos')renderCursos();
@@ -2091,10 +1815,7 @@
       const dayNameEl = document.getElementById('agenda-day-name');
       if(dayNameEl) dayNameEl.innerText = dayNames[d.getDay()];
 
-      let dayApps = state.appointments.filter(a => a.date === state.selectedDate);
-      if(state.selectedProfFilter && state.selectedProfFilter !== 'ALL'){
-        dayApps = dayApps.filter(a => (a.prof || 'Letícia Hermann') === state.selectedProfFilter);
-      }
+      const dayApps = state.appointments.filter(a => a.date === state.selectedDate);
       let totalRev = 0;
       dayApps.forEach(a => { totalRev += (a.price || 0); });
 
@@ -2136,8 +1857,6 @@
         dl.innerHTML=state.clients.map(c=>`<option value="${c.name}">`).join('');
       }
 
-      populateProfessionalSelects();
-
       // Auto-fill phone when typing client name
       const clientInp=document.getElementById('quick-appt-client');
       if(clientInp&&!clientInp.oninput){
@@ -2171,7 +1890,6 @@
       const time=document.getElementById('quick-appt-time').value||'08:00';
       const duration=parseInt(document.getElementById('quick-appt-duration').value)||120;
       const obs=document.getElementById('quick-appt-obs').value.trim();
-      const prof=document.getElementById('quick-appt-prof')?.value||'Letícia Hermann';
       const svcSel=document.getElementById('quick-appt-service');
       const opt=svcSel.selectedOptions[0];
       const price=opt&&opt.dataset.price?parseFloat(opt.dataset.price):110;
@@ -2206,7 +1924,6 @@
         clientName,
         clientPhone:clientPhone||client.phone||'',
         serviceNames:svcName,
-        prof,
         date,
         time,
         price,
@@ -2643,7 +2360,6 @@
       document.getElementById('appt-duration').value=a.duration;
       document.getElementById('appt-status').value=a.status;
       document.getElementById('appt-obs').value=a.obs||'';
-      if(document.getElementById('appt-prof')) document.getElementById('appt-prof').value = a.prof || 'Letícia Hermann';
       document.getElementById('appt-modal-title').innerHTML='<i data-lucide="edit-3" class="w-5 h-5 text-blue-500"></i> Editar Agendamento';
       populateApptServiceSelect();
       populateApptClientsList();
@@ -2659,7 +2375,6 @@
       const duration=parseInt(document.getElementById('appt-duration').value)||120;
       const status=document.getElementById('appt-status').value;
       const obs=document.getElementById('appt-obs').value.trim();
-      const prof=document.getElementById('appt-prof')?.value||'Letícia Hermann';
       const selSvc=document.getElementById('appt-service');
       const svcName=selSvc.selectedOptions[0]?.text?.split(' — ')[0]||'Procedimento';
 
@@ -2668,43 +2383,15 @@
 
       if(editId){
         const a=state.appointments.find(x=>x.id===editId);
-        if(a){Object.assign(a,{clientName,clientPhone,serviceNames:svcName,prof,date,time,price,duration,status,obs});}
+        if(a){Object.assign(a,{clientName,clientPhone,serviceNames:svcName,date,time,price,duration,status,obs});}
       }else{
-        state.appointments.push({id:'app_'+Date.now(),clientName,clientPhone,serviceNames:svcName,prof,date,time,price,duration,status,obs});
+        state.appointments.push({id:'app_'+Date.now(),clientName,clientPhone,serviceNames:svcName,date,time,price,duration,status,obs});
       }
       persistState();closeModal('modal-appointment');renderAgenda();
       confetti({particleCount:25,spread:40});
     }
     function deleteAppointment(id){if(confirm('Excluir este agendamento?')){state.appointments=state.appointments.filter(x=>x.id!==id);persistState();renderAgenda();}}
-    function updateAppStatus(id,status){
-      const a=state.appointments.find(x=>x.id===id);
-      if(a){
-        a.status=status;
-        if(status==='CONCLUIDO' && (a.price||0) > 0){
-          const exists = state.financial.find(f => f.apptId === a.id);
-          if(!exists){
-            state.financial.push({
-              id: 'f_app_' + a.id,
-              apptId: a.id,
-              date: a.date || todayStr,
-              type: 'RECEITA',
-              category: 'Atendimentos',
-              desc: (a.clientName || 'Cliente') + ' — ' + (a.serviceNames || 'Procedimento'),
-              method: 'PIX',
-              value: a.price,
-              prof: a.prof || 'Letícia Hermann'
-            });
-            if(state.caixa && state.caixa.isOpen){
-              state.caixa.currentBalance += a.price;
-            }
-          }
-        }
-        persistState();
-        renderAgenda();
-        renderDashboard();
-        renderFinancialScreen();
-      }
-    }
+    function updateAppStatus(id,status){const a=state.appointments.find(x=>x.id===id);if(a){a.status=status;persistState();renderAgenda();}}
 
     // ============== CLIENTS ==============
     function renderClients(){
@@ -3193,65 +2880,25 @@
     }
 
     function clearAllDemoData(){
-      if(!confirm('Deseja zerar os agendamentos, clientes e lançamentos de teste?\n\nIsso deixará a sua conta 100% limpa para você começar a usar com seus dados reais.')) return;
+      if(!confirm('Deseja zerar os agendamentos e clientes de demonstração?\n\nIsso deixará a sua conta novinha em folha para você começar a usar com seus dados reais.')) return;
       state.appointments = [];
       state.clients = [];
-      state.financial = [];
-      state.alunas = [];
-      state.caixasFechados = [];
-      state.caixa = {isOpen:true,number:1,currentBalance:0};
       persistState();
       renderAgenda();
       renderClients();
       renderDashboard();
-      renderFinancialScreen();
-      alert('Tudo zerado com sucesso! ✨ A conta da Letícia está pronta para começar do zero.');
+      alert('Dados de demonstração zerados com sucesso! ✨ Tudo pronto para você cadastrar seus dados reais.');
     }
 
-    // ============== BLOQUEIO DE HORÁRIOS (DE HORA EM HORA) ==============
+    // ============== BLOQUEIO DE HORÁRIOS ==============
     function openBlockModal(date, time){
       document.getElementById('block-date').value = date || state.selectedDate || todayStr;
-      const startH = time ? (time.split(':')[0].padStart(2,'0') + ':00') : '12:00';
-      let endHourNum = parseInt(startH.split(':')[0]) + 2;
-      if(endHourNum > 23) endHourNum = 23;
-      const endH = endHourNum.toString().padStart(2,'0') + ':00';
-
-      const sSel = document.getElementById('block-time-start');
-      const eSel = document.getElementById('block-time-end');
-      if(sSel && sSel.querySelector(`option[value="${startH}"]`)) sSel.value = startH;
-      if(eSel && eSel.querySelector(`option[value="${endH}"]`)) eSel.value = endH;
-
+      document.getElementById('block-time').value = time || '12:00';
       document.getElementById('block-reason-select').value = '🍽️ Almoço / Intervalo';
       document.getElementById('block-title').value = '🍽️ Almoço / Intervalo';
       document.getElementById('block-obs').value = '';
-      populateBlockProfSelect();
-      onBlockHoursChanged();
+      document.getElementById('block-duration').value = '60';
       openModal('modal-block');
-    }
-
-    function populateBlockProfSelect(){
-      const el = document.getElementById('block-prof');
-      if(!el) return;
-      el.innerHTML = (state.professionals || []).map(p => `<option value="${p.name}">${p.name}</option>`).join('');
-    }
-
-    function onBlockHoursChanged(){
-      const s = document.getElementById('block-time-start')?.value || '12:00';
-      const e = document.getElementById('block-time-end')?.value || '14:00';
-      const sH = parseInt(s.split(':')[0]);
-      const eH = parseInt(e.split(':')[0]);
-      let diff = eH - sH;
-      if(diff <= 0){
-        diff = 1;
-        const newEH = (sH + 1).toString().padStart(2,'0') + ':00';
-        const eSel = document.getElementById('block-time-end');
-        if(eSel && eSel.querySelector(`option[value="${newEH}"]`)) eSel.value = newEH;
-      }
-      const durMin = diff * 60;
-      const calcEl = document.getElementById('block-duration-calculated');
-      if(calcEl){
-        calcEl.innerText = `⏱️ Duração calculada: ${diff}h (${durMin} min)`;
-      }
     }
 
     function onBlockReasonChanged(){
@@ -3262,17 +2909,13 @@
 
     function saveBlockSlot(){
       const date = document.getElementById('block-date').value;
-      const start = document.getElementById('block-time-start')?.value || '12:00';
-      const end = document.getElementById('block-time-end')?.value || '14:00';
-      const sH = parseInt(start.split(':')[0]);
-      const eH = parseInt(end.split(':')[0]);
-      const dur = Math.max(1, eH - sH) * 60;
+      const time = document.getElementById('block-time').value;
       const title = document.getElementById('block-title').value.trim() || 'Bloqueio de Horário';
+      const dur = parseInt(document.getElementById('block-duration').value) || 60;
       const obs = document.getElementById('block-obs').value.trim();
-      const prof = document.getElementById('block-prof')?.value || 'Letícia Hermann';
 
-      if(!date){
-        alert('Por favor, informe a data.');
+      if(!date || !time){
+        alert('Por favor, informe data e horário.');
         return;
       }
 
@@ -3280,21 +2923,20 @@
         id: 'block_' + Date.now(),
         clientName: '⛔ ' + title,
         clientPhone: '',
-        serviceNames: title + ` (Das ${start} às ${end})`,
-        prof: prof,
+        serviceNames: title,
         date: date,
-        time: start,
+        time: time,
         price: 0,
         duration: dur,
         status: 'BLOQUEADO',
-        obs: obs ? (obs + ` • Profissional: ${prof}`) : `Bloqueado para ${prof}`
+        obs: obs || title
       };
 
       state.appointments.push(blockApp);
       persistState();
       closeModal('modal-block');
       renderAgenda();
-      alert(`Horário bloqueado com sucesso das ${start} às ${end}! ⛔`);
+      alert('Horário bloqueado com sucesso na agenda! ⛔');
     }
 
     function unblockSlot(id){
@@ -3747,409 +3389,10 @@
       reader.readAsText(file);
     }
 
-    // ============== PROFISSIONAIS & EQUIPE ==============
-    function renderProfessionals(){
-      const container = document.getElementById('professionals-grid');
-      if(!container) return;
-      if(!state.professionals || state.professionals.length === 0){
-        state.professionals = [
-          {id:'prof_leticia',name:'Letícia Hermann',role:'Proprietária & Master Nail Designer',phone:'(54) 99123-4567',comissao:100,color:'#10b981',active:true}
-        ];
-      }
-
-      container.innerHTML = state.professionals.map(p => `
-        <div class="glass-card rounded-2xl p-4 space-y-3 border-l-4" style="border-left-color:${p.color || '#ec4899'}">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shadow-sm" style="background-color:${p.color || '#ec4899'}">
-                ${p.name.substring(0,2).toUpperCase()}
-              </div>
-              <div>
-                <h4 class="text-xs font-bold text-title">${p.name}</h4>
-                <span class="text-[10px] text-muted">${p.role || 'Profissional'}</span>
-              </div>
-            </div>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded-md font-bold ${p.active !== false ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}">
-              ${p.active !== false ? 'ATIVA' : 'INATIVA'}
-            </span>
-          </div>
-          <div class="grid grid-cols-2 gap-2 text-[11px] font-mono pt-2 border-t border-slate-200 dark:border-slate-800">
-            <div>
-              <span class="text-muted block text-[9px] uppercase">Comissão</span>
-              <b class="text-emerald-600 dark:text-emerald-400 text-sm font-bold">${p.comissao || 50}%</b>
-            </div>
-            <div>
-              <span class="text-muted block text-[9px] uppercase">WhatsApp</span>
-              <span class="text-title font-semibold truncate block">${p.phone || '—'}</span>
-            </div>
-          </div>
-          <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-            <button onclick="openProfessionalModal('${p.id}')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-title text-[11px] font-bold flex items-center gap-1">
-              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Editar
-            </button>
-            ${p.id !== 'prof_leticia' ? `
-              <button onclick="deleteProfessional('${p.id}')" class="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-600 text-[11px] font-bold flex items-center gap-1">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Excluir
-              </button>
-            ` : ''}
-          </div>
-        </div>
-      `).join('');
-
-      populateProfessionalSelects();
-      lucide.createIcons();
-    }
-
-    function populateProfessionalSelects(){
-      const opts = (state.professionals || []).map(p => `<option value="${p.name}">${p.name}</option>`).join('');
-      const filterOpts = '<option value="ALL">Todas as Profissionais</option>' + opts;
-
-      const qSel = document.getElementById('quick-appt-prof');
-      if(qSel) qSel.innerHTML = opts;
-
-      const aSel = document.getElementById('appt-prof');
-      if(aSel) aSel.innerHTML = opts;
-
-      const fSel = document.getElementById('agenda-prof-filter');
-      if(fSel) fSel.innerHTML = filterOpts;
-
-      const cSel = document.getElementById('consulta-prof-filter');
-      if(cSel) cSel.innerHTML = filterOpts;
-
-      populateBlockProfSelect();
-    }
-
-    function onAgendaProfFilterChanged(val){
-      state.selectedProfFilter = val;
-      renderAgenda();
-    }
-
-    function openProfessionalModal(id){
-      if(id){
-        const p = state.professionals.find(x => x.id === id);
-        if(!p) return;
-        document.getElementById('prof-edit-id').value = p.id;
-        document.getElementById('prof-name').value = p.name;
-        document.getElementById('prof-role').value = p.role || '';
-        document.getElementById('prof-phone').value = p.phone || '';
-        document.getElementById('prof-comissao').value = p.comissao || 50;
-        document.getElementById('prof-color').value = p.color || '#ec4899';
-        document.getElementById('prof-status').value = p.active !== false ? 'true' : 'false';
-        document.getElementById('prof-modal-title').innerHTML = '<i data-lucide="edit-3" class="w-4 h-4 text-pink-500"></i> Editar Profissional';
-      } else {
-        document.getElementById('prof-edit-id').value = '';
-        document.getElementById('prof-name').value = '';
-        document.getElementById('prof-role').value = '';
-        document.getElementById('prof-phone').value = '';
-        document.getElementById('prof-comissao').value = '50';
-        document.getElementById('prof-color').value = '#ec4899';
-        document.getElementById('prof-status').value = 'true';
-        document.getElementById('prof-modal-title').innerHTML = '<i data-lucide="user-plus" class="w-4 h-4 text-pink-500"></i> Nova Profissional';
-      }
-      openModal('modal-professional');
-    }
-
-    function saveProfessional(){
-      const editId = document.getElementById('prof-edit-id').value;
-      const name = document.getElementById('prof-name').value.trim();
-      const role = document.getElementById('prof-role').value.trim();
-      const phone = document.getElementById('prof-phone').value.trim();
-      const comissao = parseFloat(document.getElementById('prof-comissao').value) || 0;
-      const color = document.getElementById('prof-color').value;
-      const active = document.getElementById('prof-status').value === 'true';
-
-      if(!name) return alert('Por favor, informe o nome da profissional!');
-
-      if(editId){
-        const p = state.professionals.find(x => x.id === editId);
-        if(p) Object.assign(p, { name, role, phone, comissao, color, active });
-      } else {
-        state.professionals.push({
-          id: 'prof_' + Date.now(),
-          name, role, phone, comissao, color, active
-        });
-      }
-
-      persistState();
-      closeModal('modal-professional');
-      renderProfessionals();
-      confetti({ particleCount: 30, spread: 45 });
-      alert('Profissional salva com sucesso! ✅');
-    }
-
-    function deleteProfessional(id){
-      if(id === 'prof_leticia') return alert('A profissional proprietária não pode ser excluída.');
-      if(!confirm('Deseja excluir esta profissional da equipe?')) return;
-      state.professionals = state.professionals.filter(p => p.id !== id);
-      persistState();
-      renderProfessionals();
-    }
-
-    // ============== CADASTROS GERAIS ==============
-    function switchCadastrosSubTab(sub){
-      state.currentCadastrosSubTab = sub;
-      document.querySelectorAll('#cadastros-subtabs-nav button').forEach(b => {
-        b.className = 'px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0';
-      });
-      const activeBtn = document.getElementById('csub-' + sub);
-      if(activeBtn) activeBtn.className = 'px-3 py-1.5 rounded-xl font-bold bg-indigo-600 text-white shadow-xs shrink-0';
-      renderCadastrosGeraisContent();
-    }
-
-    function renderCadastrosGeraisContent(){
-      const sub = state.currentCadastrosSubTab || 'anamnese';
-      const c = document.getElementById('cadastros-gerais-content');
-      if(!c) return;
-
-      const items = (state.cadastrosGerais && state.cadastrosGerais[sub]) || [];
-
-      if(items.length === 0){
-        c.innerHTML = `
-          <div class="text-center py-10 space-y-2">
-            <p class="text-muted text-xs">Nenhum registro cadastrado nesta categoria.</p>
-            <button onclick="openNewCadastroGeralItemModal()" class="touch-btn px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold inline-flex items-center gap-1.5">
-              <i data-lucide="plus" class="w-4 h-4"></i> Adicionar Primeiro Registro
-            </button>
-          </div>
-        `;
-        lucide.createIcons();
-        return;
-      }
-
-      if(sub === 'anamnese'){
-        c.innerHTML = `
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            ${items.map(it => `
-              <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
-                <div class="flex items-center justify-between">
-                  <b class="text-xs text-title font-bold flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4 text-indigo-500"></i> ${it.title}</b>
-                  <button onclick="deleteCadastroGeralItem('anamnese','${it.id}')" class="text-slate-400 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                </div>
-                <p class="text-[11px] text-muted">${it.questions || 'Ficha padrão'}</p>
-                <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold">Obrigatória no Atendimento</span>
-              </div>
-            `).join('')}
-          </div>
-        `;
-      } else if(sub === 'equipamentos'){
-        c.innerHTML = `
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            ${items.map(it => `
-              <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
-                <div class="flex items-center justify-between">
-                  <b class="text-xs text-title font-bold flex items-center gap-1"><i data-lucide="cpu" class="w-4 h-4 text-amber-500"></i> ${it.name}</b>
-                  <button onclick="deleteCadastroGeralItem('equipamentos','${it.id}')" class="text-slate-400 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                </div>
-                <div class="text-[10px] font-mono text-muted">Série: <b>${it.serial || '—'}</b></div>
-                <span class="text-[9px] px-2 py-0.5 rounded font-bold bg-emerald-100 text-emerald-700">${it.status || 'Ativo'}</span>
-              </div>
-            `).join('')}
-          </div>
-        `;
-      } else if(sub === 'marcas'){
-        c.innerHTML = `
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
-            ${items.map(it => `
-              <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                <div>
-                  <b class="text-xs text-title block">${it.name}</b>
-                  <span class="text-[10px] text-muted">${it.category || 'Geral'}</span>
-                </div>
-                <button onclick="deleteCadastroGeralItem('marcas','${it.id}')" class="text-slate-400 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-              </div>
-            `).join('')}
-          </div>
-        `;
-      } else {
-        c.innerHTML = `
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            ${items.map(it => `
-              <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs">
-                <div>
-                  <b class="text-title block">${it.name || it.title || it.date}</b>
-                  <span class="text-[10px] text-muted">${it.type || it.target || it.category || ''}</span>
-                </div>
-                <button onclick="deleteCadastroGeralItem('${sub}','${it.id}')" class="text-slate-400 hover:text-rose-500"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-              </div>
-            `).join('')}
-          </div>
-        `;
-      }
-
-      lucide.createIcons();
-    }
-
-    function openNewCadastroGeralItemModal(){
-      const sub = state.currentCadastrosSubTab || 'anamnese';
-      document.getElementById('cadger-category').value = sub;
-      const f = document.getElementById('cadger-form-fields');
-
-      if(sub === 'anamnese'){
-        f.innerHTML = `
-          <div><label class="font-bold text-title block mb-1">Título do Documento / Ficha *</label><input type="text" id="cg-f1" placeholder="Ex: Termo de Garantia e Cuidados" class="input-box w-full border rounded-xl px-3 py-2 outline-none"></div>
-          <div><label class="font-bold text-title block mb-1">Perguntas / Termos Chave</label><textarea id="cg-f2" rows="2" placeholder="Alergias, Cuidados com água quente..." class="input-box w-full border rounded-xl px-3 py-2 outline-none"></textarea></div>
-        `;
-      } else if(sub === 'equipamentos'){
-        f.innerHTML = `
-          <div><label class="font-bold text-title block mb-1">Nome do Equipamento *</label><input type="text" id="cg-f1" placeholder="Ex: Cabine Sun 5 Plus" class="input-box w-full border rounded-xl px-3 py-2 outline-none"></div>
-          <div><label class="font-bold text-title block mb-1">Número de Série / Identificador</label><input type="text" id="cg-f2" placeholder="Ex: CAB-02" class="input-box w-full border rounded-xl px-3 py-2 outline-none font-mono"></div>
-        `;
-      } else {
-        f.innerHTML = `
-          <div><label class="font-bold text-title block mb-1">Nome / Descrição *</label><input type="text" id="cg-f1" placeholder="Ex: Nome do item" class="input-box w-full border rounded-xl px-3 py-2 outline-none"></div>
-          <div><label class="font-bold text-title block mb-1">Detalhes / Categoria</label><input type="text" id="cg-f2" placeholder="Ex: Detalhe complementar" class="input-box w-full border rounded-xl px-3 py-2 outline-none"></div>
-        `;
-      }
-      openModal('modal-cadastro-geral');
-    }
-
-    function saveCadastroGeralItem(){
-      const sub = document.getElementById('cadger-category').value || 'anamnese';
-      const f1 = document.getElementById('cg-f1')?.value.trim();
-      const f2 = document.getElementById('cg-f2')?.value.trim();
-
-      if(!f1) return alert('Por favor, preencha o nome do registro!');
-
-      if(!state.cadastrosGerais) state.cadastrosGerais = {};
-      if(!state.cadastrosGerais[sub]) state.cadastrosGerais[sub] = [];
-
-      const newItem = { id: 'cg_' + Date.now() };
-      if(sub === 'anamnese'){
-        newItem.title = f1;
-        newItem.questions = f2;
-        newItem.required = true;
-      } else if(sub === 'equipamentos'){
-        newItem.name = f1;
-        newItem.serial = f2;
-        newItem.status = 'Em uso';
-      } else {
-        newItem.name = f1;
-        newItem.category = f2;
-        newItem.type = f2;
-      }
-
-      state.cadastrosGerais[sub].push(newItem);
-      persistState();
-      closeModal('modal-cadastro-geral');
-      renderCadastrosGeraisContent();
-      alert('Registro salvo com sucesso! ✅');
-    }
-
-    function deleteCadastroGeralItem(cat, id){
-      if(!confirm('Excluir este registro?')) return;
-      if(state.cadastrosGerais && state.cadastrosGerais[cat]){
-        state.cadastrosGerais[cat] = state.cadastrosGerais[cat].filter(x => x.id !== id);
-        persistState();
-        renderCadastrosGeraisContent();
-      }
-    }
-
-    // ============== CONSULTAS & RELATÓRIOS ==============
-    function switchConsultaSubTab(sub){
-      state.currentConsultaSubTab = sub;
-      document.querySelectorAll('#consulta-subtabs-nav button').forEach(b => {
-        b.className = 'px-3 py-1.5 rounded-xl font-semibold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0';
-      });
-      const activeBtn = document.getElementById('qsub-' + sub);
-      if(activeBtn) activeBtn.className = 'px-3 py-1.5 rounded-xl font-bold bg-cyan-600 text-white shadow-xs shrink-0';
-      renderConsulta();
-    }
-
-    function renderConsulta(){
-      const sub = state.currentConsultaSubTab || 'comissao';
-      const c = document.getElementById('consulta-content');
-      if(!c) return;
-
-      const profFilter = document.getElementById('consulta-prof-filter')?.value || 'ALL';
-
-      if(sub === 'comissao'){
-        let projs = state.professionals || [];
-        if(profFilter !== 'ALL') projs = projs.filter(p => p.name === profFilter);
-
-        c.innerHTML = `
-          <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              ${projs.map(p => {
-                const appts = state.appointments.filter(a => (a.prof || 'Letícia Hermann') === p.name && (a.status === 'CONCLUIDO' || a.status === 'CONFIRMADO'));
-                const totalBruto = appts.reduce((s, a) => s + (a.price || 0), 0);
-                const comissaoVal = (totalBruto * (p.comissao || 50)) / 100;
-                return `
-                  <div class="glass-card rounded-2xl p-4 border-l-4 space-y-2.5" style="border-left-color:${p.color || '#ec4899'}">
-                    <div class="flex items-center justify-between">
-                      <b class="text-xs text-title font-bold">${p.name}</b>
-                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-bold">${p.comissao || 50}% comissão</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-xs font-mono pt-1">
-                      <div><span class="text-[10px] text-muted block">Faturamento</span><b class="text-title">${fmt(totalBruto)}</b></div>
-                      <div><span class="text-[10px] text-muted block">A Repassar</span><b class="text-emerald-600 dark:text-emerald-400 font-bold">${fmt(comissaoVal)}</b></div>
-                    </div>
-                    <div class="text-[10px] text-muted font-mono pt-1 border-t border-slate-200 dark:border-slate-800">
-                      ${appts.length} procedimento(s) realizados
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-        `;
-      } else if(sub === 'retorno'){
-        const overdue = state.clients.filter(cl => cl.returnDue && cl.returnDue <= todayStr);
-        if(overdue.length === 0){
-          c.innerHTML = '<p class="text-muted text-center py-8">Nenhuma cliente com retorno vencido no momento. Tudo em dia! ✨</p>';
-        } else {
-          c.innerHTML = `
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs font-mono">
-                <thead><tr class="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase text-[10px]"><th class="pb-2">Cliente</th><th class="pb-2">WhatsApp</th><th class="pb-2">Última Visita</th><th class="pb-2">Venceu em</th><th class="pb-2 text-right">Ação</th></tr></thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                  ${overdue.map(cl => `
-                    <tr>
-                      <td class="py-2.5 font-bold text-title">${cl.name}</td>
-                      <td class="py-2.5 text-muted">${cl.phone}</td>
-                      <td class="py-2.5 text-muted">${fmtDate(cl.lastVisit)}</td>
-                      <td class="py-2.5 text-rose-600 dark:text-rose-400 font-bold">${fmtDate(cl.returnDue)}</td>
-                      <td class="py-2.5 text-right">
-                        <button onclick="zapReminder('${cl.phone}','${cl.name}')" class="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded-lg font-bold text-[11px] inline-flex items-center gap-1">
-                          <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Avisar Zap
-                        </button>
-                      </td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-          `;
-        }
-      } else {
-        c.innerHTML = `
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs font-mono">
-              <thead><tr class="border-b border-slate-200 dark:border-slate-700 text-slate-400 uppercase text-[10px]"><th class="pb-2">Data/Hora</th><th class="pb-2">Cliente</th><th class="pb-2">Procedimento</th><th class="pb-2">Profissional</th><th class="pb-2">Valor</th><th class="pb-2">Status</th></tr></thead>
-              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                ${state.appointments.map(a => `
-                  <tr>
-                    <td class="py-2 text-muted">${fmtDate(a.date)} ${a.time}</td>
-                    <td class="py-2 font-bold text-title">${a.clientName}</td>
-                    <td class="py-2 text-title">${a.serviceNames}</td>
-                    <td class="py-2 text-muted font-bold">${a.prof || 'Letícia Hermann'}</td>
-                    <td class="py-2 font-bold text-emerald-600">${fmt(a.price)}</td>
-                    <td class="py-2"><span class="px-1.5 py-0.5 rounded text-[9px] bg-slate-100 dark:bg-slate-800 font-bold">${a.status}</span></td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        `;
-      }
-
-      lucide.createIcons();
-    }
-
     // ============== INIT ==============
 
     window.onload=()=>{
       applyTheme();
-      populateProfessionalSelects();
       switchTab('dashboard');
       loadFromSupabase();
     };
