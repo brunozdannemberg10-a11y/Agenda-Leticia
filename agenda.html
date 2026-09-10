@@ -7200,6 +7200,11 @@
         const { data, error } = await supabaseClient.from('salons_state').select('data').eq('id', 'leticia_hermann').single();
         if(data && data.data){
           const cloudData = data.data;
+          // Se o usuário executou a limpeza do painel, não permitir restauração de demos antigas da nuvem
+          if (localStorage.getItem('zp_painel_resetado') === 'true') {
+            syncToSupabase();
+            return;
+          }
           if(cloudData.clients) state.clients = cloudData.clients;
           if(cloudData.appointments) state.appointments = cloudData.appointments;
           if(cloudData.financial) state.financial = cloudData.financial;
@@ -13174,7 +13179,7 @@
     // ============== BACKUP ==============
     function exportDataBackup(){
       const dataStr="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(state,null,2));
-      const a=document.createElement('a');a.setAttribute("href",dataStr);a.setAttribute("download",`backup_zanettia_${todayStr}.json`);document.body.appendChild(a);a.click();a.remove();
+      const a=document.createElement('a');a.setAttribute("href",dataStr);a.setAttribute("download",`backup_techopro_${todayStr}.json`);document.body.appendChild(a);a.click();a.remove();
       alert('Backup exportado com sucesso! ✅');
     }
     function importDataBackup(event){
@@ -14357,21 +14362,22 @@
       if (migracaoState.tipo === 'backup' && migracaoState.parsedJson) {
         const json = migracaoState.parsedJson;
         if (confirm('Deseja restaurar este backup no Techo PRO? Os novos dados serão incorporados ao sistema.')) {
-          if (Array.isArray(json.clients) && json.clients.length > 0) {
-            state.clients = json.clients;
-          }
-          if (Array.isArray(json.services) && json.services.length > 0) {
-            state.services = json.services;
-          }
-          if (Array.isArray(json.appointments) && json.appointments.length > 0) {
-            state.appointments = json.appointments;
-          }
-          if (Array.isArray(json.products) && json.products.length > 0) {
-            state.products = json.products;
-          }
-          if (Array.isArray(json.financialRecords) && json.financialRecords.length > 0) {
-            state.financialRecords = json.financialRecords;
-          }
+          if (Array.isArray(json.clients)) state.clients = json.clients;
+          if (Array.isArray(json.services)) state.services = json.services;
+          if (Array.isArray(json.appointments)) state.appointments = json.appointments;
+          if (Array.isArray(json.stock)) state.stock = json.stock;
+          else if (Array.isArray(json.products)) state.stock = json.products;
+          if (Array.isArray(json.financial)) state.financial = json.financial;
+          else if (Array.isArray(json.financialRecords)) state.financial = json.financialRecords;
+          if (json.caixa) state.caixa = json.caixa;
+          if (Array.isArray(json.caixasFechados)) state.caixasFechados = json.caixasFechados;
+          if (Array.isArray(json.caixaMovs)) state.caixaMovs = json.caixaMovs;
+          if (Array.isArray(json.fornecedores)) state.fornecedores = json.fornecedores;
+          if (Array.isArray(json.compras)) state.compras = json.compras;
+          if (Array.isArray(json.cursos)) state.cursos = json.cursos;
+          if (Array.isArray(json.alunas)) state.alunas = json.alunas;
+
+          localStorage.removeItem('zp_painel_resetado');
           persistState();
           if (typeof syncToSupabase === 'function') syncToSupabase();
           alert('Backup restaurado com sucesso no Techo PRO!');
@@ -14509,37 +14515,37 @@
         let importadosNovos = 0;
         let atualizados = 0;
 
-        if (!Array.isArray(state.products)) state.products = [];
+        if (!Array.isArray(state.stock)) state.stock = [];
 
         records.forEach(r => {
           const cleanName = String(r.name || '').trim().toLowerCase();
-          const existing = state.products.find(p => String(p.name || '').trim().toLowerCase() === cleanName);
+          const existing = state.stock.find(p => String(p.name || '').trim().toLowerCase() === cleanName);
 
           if (existing) {
             if (atualize) {
-              if (r.salePrice) existing.salePrice = r.salePrice;
-              if (r.costPrice) existing.costPrice = r.costPrice;
-              if (r.stock !== undefined) existing.stock = r.stock;
+              if (r.costPrice) existing.cost = r.costPrice;
+              if (r.stock !== undefined) existing.qty = r.stock;
               atualizados++;
             }
           } else {
-            state.products.push({
-              id: 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            state.stock.push({
+              id: 'st_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
               name: r.name,
-              salePrice: r.salePrice || 0,
-              costPrice: r.costPrice || 0,
-              stock: r.stock || 0,
-              category: r.category || 'Revenda'
+              cat: r.category || 'Geral',
+              qty: r.stock || 1,
+              min: 2,
+              cost: r.costPrice || 0
             });
             importadosNovos++;
           }
         });
 
+        localStorage.removeItem('zp_painel_resetado');
         persistState();
         if (typeof syncToSupabase === 'function') syncToSupabase();
-        if (typeof renderEstoque === 'function') renderEstoque();
+        if (typeof renderStock === 'function') renderStock();
 
-        alert(`🎉 Estoque Importado!\n\nNovos produtos puxados: ${importadosNovos}\nProdutos atualizados: ${atualizados}`);
+        alert(`🎉 Estoque Importado com Sucesso!\n\nNovos produtos puxados: ${importadosNovos}\nProdutos atualizados: ${atualizados}`);
         limparArquivoMigracao();
         switchTab('estoque');
         return;
@@ -14586,7 +14592,7 @@
       const BOM = '\uFEFF';
 
       if (tipo === 'clientes') {
-        filename = 'clientes_zanettia_' + new Date().toISOString().slice(0,10) + '.csv';
+        filename = 'clientes_techopro_' + new Date().toISOString().slice(0,10) + '.csv';
         const headers = ['ID', 'Nome', 'Telefone', 'CPF', 'Email', 'Data Nascimento', 'Observacoes'];
         csv = headers.join(';') + '\r\n';
 
@@ -14598,13 +14604,13 @@
             ('"' + (c.phone || '').replace(/"/g, '""') + '"'),
             ('"' + (c.cpf || '').replace(/"/g, '""') + '"'),
             ('"' + (c.email || '').replace(/"/g, '""') + '"'),
-            ('"' + (c.birthdate || '').replace(/"/g, '""') + '"'),
+            ('"' + (c.birth || c.birthdate || '').replace(/"/g, '""') + '"'),
             ('"' + (c.notes || '').replace(/"/g, '""') + '"')
           ];
           csv += row.join(';') + '\r\n';
         });
       } else if (tipo === 'servicos') {
-        filename = 'servicos_zanettia_' + new Date().toISOString().slice(0,10) + '.csv';
+        filename = 'servicos_techopro_' + new Date().toISOString().slice(0,10) + '.csv';
         const headers = ['ID', 'Nome do Servico', 'Preco (R$)', 'Duracao (min)', 'Categoria'];
         csv = headers.join(';') + '\r\n';
 
@@ -14620,62 +14626,55 @@
           csv += row.join(';') + '\r\n';
         });
       } else if (tipo === 'produtos') {
-        filename = 'estoque_produtos_zanettia_' + new Date().toISOString().slice(0,10) + '.csv';
-        const headers = ['ID', 'Nome do Produto', 'Preco Venda (R$)', 'Preco Custo (R$)', 'Estoque Atual', 'Categoria'];
+        filename = 'estoque_produtos_techopro_' + new Date().toISOString().slice(0,10) + '.csv';
+        const headers = ['ID', 'Nome do Produto', 'Preco Custo (R$)', 'Estoque Atual', 'Estoque Minimo', 'Categoria'];
         csv = headers.join(';') + '\r\n';
 
-        const list = state.products || [];
+        const list = state.stock || [];
         list.forEach(p => {
           const row = [
             p.id || '',
             ('"' + (p.name || '').replace(/"/g, '""') + '"'),
-            (p.salePrice || 0).toFixed(2).replace('.', ','),
-            (p.costPrice || 0).toFixed(2).replace('.', ','),
-            (p.stock || 0),
-            ('"' + (p.category || 'Revenda').replace(/"/g, '""') + '"')
+            (p.cost || 0).toFixed(2).replace('.', ','),
+            (p.qty || 0),
+            (p.min || 0),
+            ('"' + (p.cat || 'Geral').replace(/"/g, '""') + '"')
           ];
           csv += row.join(';') + '\r\n';
         });
       } else if (tipo === 'agendamentos') {
-        filename = 'agendamentos_zanettia_' + new Date().toISOString().slice(0,10) + '.csv';
-        const headers = ['ID', 'Data', 'Horario', 'Cliente', 'Procedimento', 'Profissional', 'Valor (R$)', 'Status'];
+        filename = 'agendamentos_techopro_' + new Date().toISOString().slice(0,10) + '.csv';
+        const headers = ['ID', 'Data', 'Horario', 'Cliente', 'Procedimento', 'Valor (R$)', 'Status'];
         csv = headers.join(';') + '\r\n';
 
         const list = state.appointments || [];
         list.forEach(a => {
-          const client = (state.clients || []).find(c => c.id === a.clientId) || { name: a.clientName || 'Cliente' };
-          const serv = (state.services || []).find(s => s.id === a.serviceId) || { name: a.serviceName || 'Serviço' };
-          const prof = (state.professionals || []).find(p => p.id === a.professionalId) || { name: a.professionalName || 'Geral' };
-
           const row = [
             a.id || '',
             a.date || '',
             a.time || '',
-            ('"' + (client.name || '').replace(/"/g, '""') + '"'),
-            ('"' + (serv.name || '').replace(/"/g, '""') + '"'),
-            ('"' + (prof.name || '').replace(/"/g, '""') + '"'),
-            (a.price || serv.price || 0).toFixed(2).replace('.', ','),
+            ('"' + (a.clientName || '').replace(/"/g, '""') + '"'),
+            ('"' + (a.serviceNames || a.serviceName || '').replace(/"/g, '""') + '"'),
+            (a.price || 0).toFixed(2).replace('.', ','),
             a.status || 'Agendado'
           ];
           csv += row.join(';') + '\r\n';
         });
       } else if (tipo === 'financeiro') {
-        filename = 'financeiro_zanettia_' + new Date().toISOString().slice(0,10) + '.csv';
-        const headers = ['ID', 'Data', 'Tipo', 'Descricao', 'Valor (R$)', 'Categoria', 'Forma Pagamento', 'Conta', 'Status'];
+        filename = 'financeiro_techopro_' + new Date().toISOString().slice(0,10) + '.csv';
+        const headers = ['ID', 'Data', 'Tipo', 'Descricao', 'Valor (R$)', 'Categoria', 'Forma Pagamento'];
         csv = headers.join(';') + '\r\n';
 
-        const list = state.financialRecords || [];
+        const list = state.financial || [];
         list.forEach(f => {
           const row = [
             f.id || '',
             f.date || '',
-            f.type || 'Receita',
-            ('"' + (f.description || '').replace(/"/g, '""') + '"'),
-            (f.amount || 0).toFixed(2).replace('.', ','),
-            ('"' + (f.category || 'Geral').replace(/"/g, '""') + '"'),
-            ('"' + (f.paymentMethod || 'PIX').replace(/"/g, '""') + '"'),
-            ('"' + (f.account || 'Caixa Geral').replace(/"/g, '""') + '"'),
-            f.status || 'Confirmado'
+            f.type || 'RECEITA',
+            ('"' + (f.desc || f.description || '').replace(/"/g, '""') + '"'),
+            (f.value || f.amount || 0).toFixed(2).replace('.', ','),
+            ('"' + (f.category || 'Atendimentos').replace(/"/g, '""') + '"'),
+            ('"' + (f.method || 'PIX').replace(/"/g, '""') + '"')
           ];
           csv += row.join(';') + '\r\n';
         });
@@ -14704,31 +14703,87 @@
     }
 
     // Reiniciar Painel / Limpar Dados de Demonstração
-    function executarLimpezaPainel(tipo) {
+    async function executarLimpezaPainel(tipo) {
       if (tipo === 'movimentacoes') {
         const conf = confirm(
           "✨ Deseja zerar os agendamentos, clientes de teste e caixa?\n\n" +
-          "• Seus procedimentos, categorias e profissionais SERÃO PRESERVADOS.\n" +
-          "• A agenda e o financeiro ficarão zerados e prontos para apresentação comercial.\n\n" +
+          "• Seus procedimentos, categorias, formas de pagamento e profissionais SERÃO PRESERVADOS.\n" +
+          "• A agenda, clientes, extrato financeiro, vendas no PDV e caixa serão 100% zerados para você apresentar comercialmente.\n\n" +
           "Deseja continuar?"
         );
         if (!conf) return;
 
+        // 1. Zera agendamentos
         state.appointments = [];
-        state.clients = [];
-        state.financialRecords = [];
-        if (state.pdvSales) state.pdvSales = [];
-        if (state.cashRegisters) state.cashRegisters = [];
-        if (state.nfse && Array.isArray(state.nfse.invoices)) state.nfse.invoices = [];
 
+        // 2. Zera clientes
+        state.clients = [];
+
+        // 3. Zera lançamentos financeiros (receitas, despesas, extrato)
+        state.financial = [];
+
+        // 4. Zera o Caixa & PDV
+        state.caixa = {
+          isOpen: true,
+          number: 1,
+          currentBalance: 0,
+          openedAt: '08:00',
+          initialBalance: 0
+        };
+        state.caixaMovs = [];
+        state.caixasFechados = [];
+        state.pdvSale = { clientName: '', clientPhone: '', items: [], total: 0 };
+        const elPdvTot = document.getElementById('pdv-sale-total');
+        if (elPdvTot) elPdvTot.value = 'R$ 0,00';
+        const elPdvCli = document.getElementById('pdv-client-name');
+        if (elPdvCli) elPdvCli.value = '';
+        const elPdvPho = document.getElementById('pdv-client-phone');
+        if (elPdvPho) elPdvPho.value = '';
+
+        // 5. Zera pacotes, orçamentos e alunas de demonstração
+        state.pacotesCliente = [];
+        state.orcamentos = [];
+        state.alunas = [];
+
+        // 6. Zera notas fiscais emitidas
+        if (state.nfse && Array.isArray(state.nfse.invoices)) {
+          state.nfse.invoices = [];
+        }
+
+        // 7. Marca flag de painel limpo no localStorage
+        localStorage.setItem('zp_painel_resetado', 'true');
+
+        // 8. Persiste localmente
         persistState();
-        if (typeof syncToSupabase === 'function') syncToSupabase();
+
+        // 9. Sincroniza nuvem Supabase se disponível
+        try {
+          if (typeof syncToSupabase === 'function') await syncToSupabase();
+        } catch(e) {
+          console.warn('Sync cloud status:', e);
+        }
+
+        // 10. Atualiza todas as telas e indicadores visuais
         if (typeof renderAgenda === 'function') renderAgenda();
         if (typeof renderClients === 'function') renderClients();
         if (typeof renderDashboard === 'function') renderDashboard();
         if (typeof renderPDV === 'function') renderPDV();
+        if (typeof renderPDVItems === 'function') renderPDVItems();
+        if (typeof renderVendasHoje === 'function') renderVendasHoje();
+        if (typeof renderFinancialScreen === 'function') renderFinancialScreen();
+        if (typeof renderMeusCaixas === 'function') renderMeusCaixas();
+        if (typeof renderDRE === 'function') renderDRE();
+        if (typeof renderCursos === 'function') renderCursos();
 
-        alert("🎉 Painel Reiniciado com Sucesso!\n\nA agenda, clientes de teste e o caixa foram zerados. O sistema está limpo e impecável para você apresentar!");
+        const badgeAgenda = document.getElementById('badge-agenda-count');
+        if (badgeAgenda) badgeAgenda.innerText = '0 hoje';
+
+        const badgeCaixa = document.getElementById('badge-caixa-status');
+        if (badgeCaixa) badgeCaixa.innerText = 'ABERTO';
+
+        if (window.lucide) lucide.createIcons();
+
+        alert("🎉 Painel Reiniciado com Sucesso!\n\n• Agenda: 0 agendamentos\n• Clientes: 0 cadastros\n• Extrato Financeiro: R$ 0,00 (Zerado)\n• Caixa Gaveta: Aberto com Saldo R$ 0,00\n\nSeu catálogo de procedimentos e equipe continuam preservados. O sistema está 100% limpo e pronto para apresentação!");
         switchTab('dashboard');
         return;
       }
@@ -14736,46 +14791,85 @@
       if (tipo === 'total') {
         const conf = confirm(
           "⚠️ ATENÇÃO: Deseja realizar um RESET TOTAL no sistema?\n\n" +
-          "Todos os agendamentos, clientes, estoque, lançamentos financeiros, pedidos de compras e notas fiscais serão zerados.\n\n" +
-          "Esta ação deixará a conta 100% como nova de fábrica."
+          "Todos os agendamentos, clientes, estoque, lançamentos financeiros, pedidos de compras, fornecedores e notas fiscais serão apagados.\n\n" +
+          "Esta ação deixará o Techo PRO 100% limpo, como novo de fábrica.\n\n" +
+          "Deseja continuar?"
         );
         if (!conf) return;
 
+        // Limpa tudo da Opção 1
         state.appointments = [];
         state.clients = [];
-        state.financialRecords = [];
-        if (state.products) {
-          state.products.forEach(p => p.stock = 0);
-        }
-        if (state.compras) {
-          state.compras.compras = [];
-          state.compras.cotacoes = [];
-        }
-        if (state.nfse) {
+        state.financial = [];
+        state.caixa = {
+          isOpen: true,
+          number: 1,
+          currentBalance: 0,
+          openedAt: '08:00',
+          initialBalance: 0
+        };
+        state.caixaMovs = [];
+        state.caixasFechados = [];
+        state.pdvSale = { clientName: '', clientPhone: '', items: [], total: 0 };
+        const elPdvTot = document.getElementById('pdv-sale-total');
+        if (elPdvTot) elPdvTot.value = 'R$ 0,00';
+        const elPdvCli = document.getElementById('pdv-client-name');
+        if (elPdvCli) elPdvCli.value = '';
+        const elPdvPho = document.getElementById('pdv-client-phone');
+        if (elPdvPho) elPdvPho.value = '';
+        state.pacotesCliente = [];
+        state.orcamentos = [];
+        state.alunas = [];
+
+        // Limpa Estoque, Compras, Fornecedores e Cursos
+        state.stock = [];
+        state.compras = [];
+        state.fornecedores = [];
+        state.cursos = [];
+        if (state.nfse && Array.isArray(state.nfse.invoices)) {
           state.nfse.invoices = [];
         }
-        if (state.pdvSales) state.pdvSales = [];
-        if (state.cashRegisters) state.cashRegisters = [];
 
+        // Marca flag
+        localStorage.setItem('zp_painel_resetado', 'true');
+
+        // Persiste
         persistState();
-        if (typeof syncToSupabase === 'function') syncToSupabase();
+
+        // Sincroniza na nuvem
+        try {
+          if (typeof syncToSupabase === 'function') await syncToSupabase();
+        } catch(e) {
+          console.warn('Sync cloud status:', e);
+        }
+
+        // Atualização de telas
         if (typeof renderAgenda === 'function') renderAgenda();
         if (typeof renderClients === 'function') renderClients();
         if (typeof renderDashboard === 'function') renderDashboard();
+        if (typeof renderPDV === 'function') renderPDV();
+        if (typeof renderPDVItems === 'function') renderPDVItems();
+        if (typeof renderVendasHoje === 'function') renderVendasHoje();
+        if (typeof renderFinancialScreen === 'function') renderFinancialScreen();
+        if (typeof renderMeusCaixas === 'function') renderMeusCaixas();
+        if (typeof renderDRE === 'function') renderDRE();
+        if (typeof renderStock === 'function') renderStock();
+        if (typeof renderCompras === 'function') renderCompras();
+        if (typeof renderFornecedores === 'function') renderFornecedores();
+        if (typeof renderCursos === 'function') renderCursos();
 
-        alert("✨ Reset Geral Concluído! O sistema foi zerado e está 100% pronto para início.");
+        const badgeAgenda = document.getElementById('badge-agenda-count');
+        if (badgeAgenda) badgeAgenda.innerText = '0 hoje';
+
+        if (window.lucide) lucide.createIcons();
+
+        alert("✨ Reset Geral Concluído com Sucesso!\n\nO sistema foi 100% zerado e está limpo como uma instalação nova de fábrica.");
         switchTab('dashboard');
         return;
       }
     }
 
-    // Modal de Guias Rápidos
-    function exibirGuiaRapidoModal(origem){
-      switchMigracaoSubTab('caminhos');
-    }
-
-
-        // ============== MODULO NFS-E (NOTA FISCAL DE SERVIÇOS ELETRÔNICA) ==============
+    // ============== MODULO NFS-E (NOTA FISCAL DE SERVIÇOS ELETRÔNICA) ==============
     const DEFAULT_LC116 = [
       { code: '06.01', name: 'Barbearia, cabeleireiros, manicuros, pedicuros e congêneres', aliqMin: 2, aliqMax: 5, category: 'Serviços de Cuidados Pessoais' },
       { code: '06.02', name: 'Estética, massagens, depilação e congêneres', aliqMin: 2, aliqMax: 5, category: 'Serviços de Cuidados Pessoais' },
