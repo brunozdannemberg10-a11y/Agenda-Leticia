@@ -303,6 +303,24 @@
           </div>
         </div>
 
+        <!-- NFS-E ACCORDION SUBMENU -->
+        <div>
+          <button onclick="toggleSubmenu('sub-nfse')" id="nav-nfse" class="sidebar-menu-btn">
+            <span class="flex items-center gap-2.5">
+              <i data-lucide="file-check" class="w-4 h-4 text-sky-500"></i>
+              <span>NFS-e</span>
+            </span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+          <div id="sub-nfse" class="sidebar-submenu hidden">
+            <button onclick="switchTab('nfse-config');closeMobileSidebar()" id="subnav-nfse-config" class="flex items-center justify-between w-full"><span>Configurações</span><i data-lucide="settings" class="w-3.5 h-3.5 text-slate-500"></i></button>
+            <button onclick="switchTab('nfse-caixa-saida');closeMobileSidebar()" id="subnav-nfse-caixa-saida" class="flex items-center justify-between w-full"><span>Caixa de Saída</span><i data-lucide="send" class="w-3.5 h-3.5 text-sky-500"></i></button>
+            <button onclick="switchTab('nfse-servico-municipal');closeMobileSidebar()" id="subnav-nfse-servico-municipal" class="flex items-center justify-between w-full"><span>Serviço Municipal</span><i data-lucide="tag" class="w-3.5 h-3.5 text-indigo-500"></i></button>
+            <button onclick="switchTab('nfse-lc116');closeMobileSidebar()" id="subnav-nfse-lc116" class="flex items-center justify-between w-full"><span>Lista de Serviço LC116</span><i data-lucide="book-open" class="w-3.5 h-3.5 text-teal-500"></i></button>
+            <button onclick="switchTab('nfse-cnae');closeMobileSidebar()" id="subnav-nfse-cnae" class="flex items-center justify-between w-full"><span>CNAE</span><i data-lucide="briefcase" class="w-3.5 h-3.5 text-amber-500"></i></button>
+          </div>
+        </div>
+
         <!-- MIGRACAO & DADOS (IMPORTAR / EXPORTAR) -->
         <button onclick="switchTab('migracao-dados');closeMobileSidebar()" id="nav-migracao-dados" class="sidebar-menu-btn group transition-all">
           <span class="flex items-center gap-2.5">
@@ -4121,6 +4139,456 @@
           </div>
         </div>
       </section>
+
+      <!-- ===================== SECTION: NFS-E (1. CONFIGURAÇÕES) ===================== -->
+      <section id="tab-nfse-config" class="hidden space-y-6 animate-fade-in pb-12">
+        <div class="bg-card rounded-2xl p-6 border border-border/80 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-5">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 text-xs font-semibold mb-2">
+                <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                Parâmetros Fiscais e Prefeitura
+              </div>
+              <h2 class="text-xl md:text-2xl font-black text-title tracking-tight flex items-center gap-2.5">
+                Configurações da NFS-e
+              </h2>
+              <p class="text-xs text-muted mt-1">
+                Configure os dados do emissor, certificado digital A1 (.pfx) e numeração de RPS para emissão direta junto ao município.
+              </p>
+            </div>
+            <button onclick="saveNfseConfig()" class="btn-primary px-5 py-2.5 text-xs flex items-center gap-2 shadow-md">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>Salvar Configurações</span>
+            </button>
+          </div>
+
+          <!-- Formulário -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
+            <div class="lg:col-span-2 space-y-6">
+              <!-- Certificado Digital A1 -->
+              <div class="p-5 rounded-xl border border-border bg-slate-50/50 dark:bg-slate-900/30 space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-2">
+                  <i data-lucide="lock" class="w-3.5 h-3.5 text-sky-500"></i>
+                  Certificado Digital e-CNPJ (A1)
+                </h3>
+                <input type="file" id="nfse-file-cert" accept=".pfx,.p12" onchange="handleCertFileUpload(event)" class="hidden">
+                <div id="nfse-cert-status-box"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-semibold text-title block mb-1">Senha do Certificado Digital</label>
+                    <input type="password" id="nfse-cfg-cert-pass" value="••••••••" class="input-box w-full text-xs" placeholder="Senha do arquivo .pfx">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-title block mb-1">Ambiente de Emissão</label>
+                    <select id="nfse-cfg-ambiente" class="input-box w-full text-xs">
+                      <option value="homologacao">Homologação (Testes e Treinamento)</option>
+                      <option value="producao">Produção (Validade Jurídica Real)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dados Municipais & RPS -->
+              <div class="p-5 rounded-xl border border-border bg-slate-50/50 dark:bg-slate-900/30 space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-2">
+                  <i data-lucide="building" class="w-3.5 h-3.5 text-indigo-500"></i>
+                  Dados Tributários & Numeração de RPS
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-semibold text-title block mb-1">Provedor Municipal / Padrão</label>
+                    <input type="text" id="nfse-cfg-provedor" class="input-box w-full text-xs" value="Nacional (Padrão Receita Federal / ABRASF)">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-title block mb-1">Inscrição Municipal (IM)</label>
+                    <input type="text" id="nfse-cfg-im" class="input-box w-full text-xs font-mono" value="987654-3">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-title block mb-1">Regime Especial de Tributação</label>
+                    <select id="nfse-cfg-regime" class="input-box w-full text-xs">
+                      <option value="Simples Nacional - ME / EPP">Simples Nacional - ME / EPP</option>
+                      <option value="Microempreendedor Individual (MEI)">Microempreendedor Individual (MEI)</option>
+                      <option value="Lucro Presumido">Lucro Presumido</option>
+                      <option value="Lucro Real">Lucro Real</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-title block mb-1">Alíquota Padrão de ISS (%)</label>
+                    <input type="number" step="0.01" id="nfse-cfg-aliq-padrao" class="input-box w-full text-xs font-mono" value="2.5">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-title block mb-1">Série do RPS</label>
+                    <input type="text" id="nfse-cfg-serie" class="input-box w-full text-xs font-mono" value="1">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-title block mb-1">Número Atual do RPS</label>
+                    <input type="number" id="nfse-cfg-num-rps" class="input-box w-full text-xs font-mono" value="104">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-title block mb-1">Número do Próximo Lote</label>
+                    <input type="number" id="nfse-cfg-lote" class="input-box w-full text-xs font-mono" value="42">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-title block mb-1">Natureza da Operação</label>
+                    <select id="nfse-cfg-natureza" class="input-box w-full text-xs">
+                      <option value="Tributação no Município">1 - Tributação no Município</option>
+                      <option value="Tributação Fora do Município">2 - Tributação Fora do Município</option>
+                      <option value="Isenção">3 - Isenção</option>
+                      <option value="Imune">4 - Imune</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="pt-2">
+                  <label class="flex items-center gap-2 text-xs font-semibold text-title cursor-pointer">
+                    <input type="checkbox" id="nfse-cfg-opt-simples" checked class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500">
+                    <span>Optante pelo Simples Nacional</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Coluna Lateral de Ajuda & Dicas Fiscais -->
+            <div class="space-y-6">
+              <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-2xl p-6 border border-slate-800 shadow-lg space-y-4">
+                <div class="flex items-center gap-2 text-sky-400 font-bold text-xs uppercase tracking-wider">
+                  <i data-lucide="info" class="w-4 h-4"></i>
+                  <span>Guia de Emissão Municipal</span>
+                </div>
+                <h4 class="text-sm font-bold leading-snug">O que é a NFS-e e como funciona?</h4>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  A <strong>Nota Fiscal de Serviços Eletrônica</strong> é transmitida para a Secretaria de Finanças da sua Prefeitura. Cada agendamento ou pacote de estética/unha pode ter seu RPS gerado e convertido na NFS-e oficial automaticamente.
+                </p>
+                <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2 text-xs text-slate-300">
+                  <p>✓ Alíquota de ISS padrão de <strong>2% a 5%</strong> conforme seu município.</p>
+                  <p>✓ RPS é o Recibo Provisório de Serviços que antecede a validação pela prefeitura.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION: NFS-E (2. CAIXA DE SAÍDA) ===================== -->
+      <section id="tab-nfse-caixa-saida" class="hidden space-y-6 animate-fade-in pb-12">
+        <!-- Indicadores Rápidos -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="bg-card rounded-2xl p-4 border border-border/80 shadow-xs flex items-center justify-between">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-muted block">Total Emitidas</span>
+              <span class="text-xl font-black text-title font-mono" id="nfse-count-total">0</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300">
+              <i data-lucide="files" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <div class="bg-card rounded-2xl p-4 border border-border/80 shadow-xs flex items-center justify-between">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 block">Autorizadas</span>
+              <span class="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono" id="nfse-count-autorizadas">0</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+              <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <div class="bg-card rounded-2xl p-4 border border-border/80 shadow-xs flex items-center justify-between">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-sky-600 dark:text-sky-400 block">Processando</span>
+              <span class="text-xl font-black text-sky-600 dark:text-sky-400 font-mono" id="nfse-count-processando">0</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-600 dark:text-sky-400">
+              <i data-lucide="loader-2" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <div class="bg-card rounded-2xl p-4 border border-border/80 shadow-xs flex items-center justify-between">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-rose-600 dark:text-rose-400 block">Rejeitadas</span>
+              <span class="text-xl font-black text-rose-600 dark:text-rose-400 font-mono" id="nfse-count-rejeitadas">0</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela e Controles -->
+        <div class="bg-card rounded-2xl p-6 border border-border/80 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-lg md:text-xl font-black text-title tracking-tight flex items-center gap-2">
+                <i data-lucide="send" class="w-5 h-5 text-sky-500"></i>
+                <span>Caixa de Saída da NFS-e</span>
+              </h2>
+              <p class="text-xs text-muted mt-0.5">
+                Histórico de notas fiscais geradas, transmitidas, autorizadas ou canceladas.
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="abrirModalEmitirNfse()" class="btn-primary px-4 py-2 text-xs flex items-center gap-2 shadow-md">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                <span>Emitir Nova NFS-e</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Filtros -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <div class="relative w-full sm:w-80">
+              <i data-lucide="search" class="w-4 h-4 text-muted absolute left-3 top-2.5 pointer-events-none"></i>
+              <input type="text" id="nfse-busca-caixa" oninput="renderNfseCaixaSaida()" placeholder="Buscar por cliente, nº nota, RPS..." class="input-box w-full pl-9 text-xs">
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <select id="nfse-filtro-status" onchange="renderNfseCaixaSaida()" class="input-box text-xs py-2">
+                <option value="TODOS">Todos os Status</option>
+                <option value="AUTORIZADA">Autorizadas</option>
+                <option value="PROCESSANDO">Processando</option>
+                <option value="REJEITADA">Rejeitadas</option>
+                <option value="CANCELADA">Canceladas</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Grid Table -->
+          <div class="overflow-x-auto rounded-xl border border-border">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 dark:bg-slate-800 text-muted font-bold text-[11px] uppercase tracking-wider">
+                <tr>
+                  <th class="p-3.5">NFS-e / RPS</th>
+                  <th class="p-3.5">Emissão</th>
+                  <th class="p-3.5">Tomador (Cliente)</th>
+                  <th class="p-3.5">Discriminação</th>
+                  <th class="p-3.5 text-right">Valor Total</th>
+                  <th class="p-3.5 text-center">Status</th>
+                  <th class="p-3.5 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border" id="nfse-caixa-tbody">
+                <!-- Linhas Dinâmicas -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION: NFS-E (3. SERVIÇO MUNICIPAL) ===================== -->
+      <section id="tab-nfse-servico-municipal" class="hidden space-y-6 animate-fade-in pb-12">
+        <div class="bg-card rounded-2xl p-6 border border-border/80 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-semibold mb-2">
+                <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                Códigos de Tributação Municipal
+              </div>
+              <h2 class="text-lg md:text-xl font-black text-title tracking-tight flex items-center gap-2">
+                Tabela de Serviço Municipal
+              </h2>
+              <p class="text-xs text-muted mt-0.5">
+                Amarre os códigos fiscais do seu município aos procedimentos do seu salão com suas alíquotas de ISS.
+              </p>
+            </div>
+            <button onclick="adicionarServicoMunicipal()" class="btn-primary px-4 py-2 text-xs flex items-center gap-2 shadow-md">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Novo Código Municipal</span>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-border mt-4">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 dark:bg-slate-800 text-muted font-bold text-[11px] uppercase tracking-wider">
+                <tr>
+                  <th class="p-3.5">Cód. Municipal</th>
+                  <th class="p-3.5">Descrição do Serviço</th>
+                  <th class="p-3.5 text-center">Alíquota ISS</th>
+                  <th class="p-3.5">Item LC 116</th>
+                  <th class="p-3.5">CNAE Vinculado</th>
+                  <th class="p-3.5 text-center">Retenção</th>
+                  <th class="p-3.5 text-right">Ação</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border" id="nfse-serv-mun-tbody">
+                <!-- Linhas Dinâmicas -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION: NFS-E (4. LISTA DE SERVIÇO LC116) ===================== -->
+      <section id="tab-nfse-lc116" class="hidden space-y-6 animate-fade-in pb-12">
+        <div class="bg-card rounded-2xl p-6 border border-border/80 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 text-xs font-semibold mb-2">
+                <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+                Legislação Federal
+              </div>
+              <h2 class="text-lg md:text-xl font-black text-title tracking-tight flex items-center gap-2">
+                Lista de Serviços - Lei Complementar 116/2003
+              </h2>
+              <p class="text-xs text-muted mt-0.5">
+                Classificação federal oficial dos serviços tributáveis pelo ISSQN em todo o território nacional.
+              </p>
+            </div>
+            <div class="w-full sm:w-72">
+              <input type="text" id="nfse-busca-lc116" oninput="renderNfseLc116()" placeholder="Buscar código ou descrição..." class="input-box w-full text-xs">
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-border mt-4">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 dark:bg-slate-800 text-muted font-bold text-[11px] uppercase tracking-wider">
+                <tr>
+                  <th class="p-3.5">Item LC 116</th>
+                  <th class="p-3.5">Descrição do Serviço</th>
+                  <th class="p-3.5">Grupo / Categoria</th>
+                  <th class="p-3.5 text-center">Faixa Alíquota</th>
+                  <th class="p-3.5 text-center">Situação</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border" id="nfse-lc116-tbody">
+                <!-- Linhas Dinâmicas -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION: NFS-E (5. CNAE) ===================== -->
+      <section id="tab-nfse-cnae" class="hidden space-y-6 animate-fade-in pb-12">
+        <div class="bg-card rounded-2xl p-6 border border-border/80 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-semibold mb-2">
+                <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
+                Classificação Nacional de Atividades Econômicas
+              </div>
+              <h2 class="text-lg md:text-xl font-black text-title tracking-tight flex items-center gap-2">
+                CNAE - Atividades Econômicas da Empresa
+              </h2>
+              <p class="text-xs text-muted mt-0.5">
+                Gerencie as atividades primárias e secundárias do CNPJ da sua empresa registradas na Receita Federal.
+              </p>
+            </div>
+            <button onclick="adicionarCnae()" class="btn-primary px-4 py-2 text-xs flex items-center gap-2 shadow-md">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Adicionar CNAE</span>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-border mt-4">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 dark:bg-slate-800 text-muted font-bold text-[11px] uppercase tracking-wider">
+                <tr>
+                  <th class="p-3.5">Código CNAE</th>
+                  <th class="p-3.5">Denominação da Atividade</th>
+                  <th class="p-3.5 text-center">Tipo</th>
+                  <th class="p-3.5 text-center">Situação</th>
+                  <th class="p-3.5 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border" id="nfse-cnae-tbody">
+                <!-- Linhas Dinâmicas -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== MODAL: EMISSÃO DE NFS-E ===================== -->
+      <div id="modal-emitir-nfse" class="modal-overlay">
+        <div class="bg-card rounded-2xl border border-border p-6 w-full max-w-xl shadow-2xl space-y-4">
+          <div class="flex items-center justify-between border-b border-border/70 pb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                <i data-lucide="file-plus-2" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-title text-base">Emitir Nota Fiscal de Serviços (NFS-e)</h3>
+            </div>
+            <button onclick="fecharModalEmitirNfse()" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-muted">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="space-y-3.5 text-xs">
+            <div>
+              <label class="font-semibold text-title block mb-1">Cliente / Tomador do Serviço</label>
+              <select id="nfse-emit-cliente" onchange="onClienteSelectedEmissao()" class="input-box w-full text-xs"></select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="font-semibold text-title block mb-1">CPF / CNPJ do Tomador</label>
+                <input type="text" id="nfse-emit-doc" class="input-box w-full text-xs font-mono" placeholder="000.000.000-00">
+              </div>
+              <div>
+                <label class="font-semibold text-title block mb-1">Número do RPS</label>
+                <input type="number" id="nfse-emit-rps" class="input-box w-full text-xs font-mono" value="105">
+              </div>
+            </div>
+
+            <div>
+              <label class="font-semibold text-title block mb-1">Código de Serviço Municipal</label>
+              <select id="nfse-emit-servico-mun" onchange="onServicoMunSelectedEmissao()" class="input-box w-full text-xs"></select>
+            </div>
+
+            <div>
+              <label class="font-semibold text-title block mb-1">Discriminação dos Serviços Prestados</label>
+              <textarea id="nfse-emit-disc" rows="3" class="input-box w-full text-xs" placeholder="Descreva os serviços prestados..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-border">
+              <div>
+                <label class="text-[11px] font-semibold text-muted block mb-1">Valor dos Serviços</label>
+                <input type="number" step="0.01" id="nfse-emit-valor" oninput="calcularImpostoEmissao()" class="input-box w-full text-xs font-mono font-bold" value="150.00">
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-muted block mb-1">Alíquota ISS (%)</label>
+                <input type="number" step="0.01" id="nfse-emit-iss-aliq" oninput="calcularImpostoEmissao()" class="input-box w-full text-xs font-mono" value="2.5">
+              </div>
+              <div>
+                <span class="text-[11px] font-semibold text-muted block mb-1">Valor do ISS</span>
+                <span class="text-xs font-black text-title font-mono block mt-2" id="nfse-emit-iss-val">R$ 3,75</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-3 border-t border-border/70">
+            <button onclick="fecharModalEmitirNfse()" class="btn-secondary px-4 py-2 text-xs">Cancelar</button>
+            <button onclick="confirmarTransmissaoNfse()" class="btn-primary px-5 py-2 text-xs flex items-center gap-2 shadow-md">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Transmitir para Prefeitura</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== MODAL: DANFSE PREVIEW & IMPRESSÃO ===================== -->
+      <div id="modal-danfse-preview" class="modal-overlay">
+        <div class="bg-card rounded-2xl border border-border p-6 w-full max-w-2xl shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div class="flex items-center justify-between border-b border-border/70 pb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                <i data-lucide="printer" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-title text-base">Espelho da NFS-e (DANFSE)</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="window.print()" class="btn-secondary text-xs px-3 py-1.5 flex items-center gap-1.5">
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                <span>Imprimir</span>
+              </button>
+              <button onclick="fecharDanfseModal()" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-muted">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="danfse-preview-body"></div>
+        </div>
+      </div>
+
 </main>
   </div>
 
@@ -9662,6 +10130,12 @@
       const bn=document.getElementById('bnav-'+tabId);if(bn){bn.classList.add('text-emerald-400','font-bold');bn.classList.remove('text-slate-400');}
 
       if(tabId==='migracao-dados')renderMigracaoDados();
+      if(tabId==='nfse-config')renderNfseConfig();
+      if(tabId==='nfse-caixa-saida')renderNfseCaixaSaida();
+      if(tabId==='nfse-servico-municipal')renderNfseServicoMunicipal();
+      if(tabId==='nfse-lc116')renderNfseLc116();
+      if(tabId==='nfse-cnae')renderNfseCnae();
+      if(tabId==='nfse'){toggleSubmenu('sub-nfse');switchTab('nfse-caixa-saida');}
       if(tabId==='dashboard')renderDashboard();
       if(tabId==='agenda')renderAgenda();
       if(tabId==='clientes')renderClients();
@@ -13775,6 +14249,748 @@
     // Modal de Guias Rápidos
     function exibirGuiaRapidoModal(origem){
       switchMigracaoSubTab('caminhos');
+    }
+
+
+        // ============== MODULO NFS-E (NOTA FISCAL DE SERVIÇOS ELETRÔNICA) ==============
+    const DEFAULT_LC116 = [
+      { code: '06.01', name: 'Barbearia, cabeleireiros, manicuros, pedicuros e congêneres', aliqMin: 2, aliqMax: 5, category: 'Serviços de Cuidados Pessoais' },
+      { code: '06.02', name: 'Estética, massagens, depilação e congêneres', aliqMin: 2, aliqMax: 5, category: 'Serviços de Cuidados Pessoais' },
+      { code: '06.03', name: 'Banhos, duchas, sauna, tratamento de pele e spa', aliqMin: 2, aliqMax: 5, category: 'Serviços de Cuidados Pessoais' },
+      { code: '06.04', name: 'Ginástica, dança, pilates e condicionamento físico', aliqMin: 2, aliqMax: 5, category: 'Serviços de Cuidados Pessoais' },
+      { code: '06.05', name: 'Centros de emagrecimento e similares', aliqMin: 2, aliqMax: 5, category: 'Serviços de Cuidados Pessoais' },
+      { code: '08.01', name: 'Ensino pré-escolar, fundamental, médio e cursos livres', aliqMin: 2, aliqMax: 5, category: 'Serviços de Educação e Cursos' },
+      { code: '17.01', name: 'Assessoria ou consultoria de qualquer natureza', aliqMin: 2, aliqMax: 5, category: 'Serviços de Apoio Técnico' },
+      { code: '17.06', name: 'Propaganda e publicidade, inclusive promoção de vendas', aliqMin: 2, aliqMax: 5, category: 'Serviços de Apoio Técnico' }
+    ];
+
+    const DEFAULT_CNAES = [
+      { code: '9602-5/01', name: 'Cabeleireiros, manicure e pedicure', isPrincipal: true, status: 'Ativo' },
+      { code: '9602-5/02', name: 'Atividades de estética e outros serviços de cuidados com a beleza', isPrincipal: false, status: 'Ativo' },
+      { code: '8599-6/99', name: 'Outras atividades de ensino não especificadas anteriormente (Cursos)', isPrincipal: false, status: 'Ativo' },
+      { code: '4772-5/00', name: 'Comércio varejista de cosméticos, produtos de perfumaria e de higiene pessoal', isPrincipal: false, status: 'Ativo' }
+    ];
+
+    const DEFAULT_SERVICOS_MUNICIPAIS = [
+      { id: 'sm_1', code: '010401', desc: 'Serviço de Manicure, Pedicure e Unhas em Gel', iss: 2.5, lc116: '06.01', cnae: '9602-5/01', retencao: 'Não' },
+      { id: 'sm_2', code: '010402', desc: 'Design de Sobrancelhas, Cílios e Micropigmentação', iss: 3.0, lc116: '06.02', cnae: '9602-5/02', retencao: 'Não' },
+      { id: 'sm_3', code: '010403', desc: 'Corte, Escova, Mechas e Penteados', iss: 2.5, lc116: '06.01', cnae: '9602-5/01', retencao: 'Não' },
+      { id: 'sm_4', code: '010404', desc: 'Tratamentos Faciais, Peeling e Limpeza de Pele', iss: 3.5, lc116: '06.02', cnae: '9602-5/02', retencao: 'Não' },
+      { id: 'sm_5', code: '010801', desc: 'Cursos Práticos e Workshops Profissionais de Beleza', iss: 2.0, lc116: '08.01', cnae: '8599-6/99', retencao: 'Não' }
+    ];
+
+    const DEFAULT_NFSE_CONFIG = {
+      ambiente: 'homologacao', // 'homologacao' | 'producao'
+      provedor: 'Nacional (Padrão Receita Federal / ABRASF)',
+      inscricaoMunicipal: '987654-3',
+      regimeTributario: 'Simples Nacional - ME / EPP',
+      optanteSimples: true,
+      incentivadorCultural: false,
+      aliquotaPadraoIss: 2.5,
+      serieRps: '1',
+      numeroAtualRps: 104,
+      loteAtual: 42,
+      naturezaOperacao: 'Tributação no Município',
+      retencaoPadrao: '1 - Não Retido',
+      certValidade: '15/12/2026',
+      certStatus: 'Instalado & Válido'
+    };
+
+    const DEFAULT_INVOICES = [
+      {
+        id: 'nfs_101',
+        numero: '202600000000101',
+        rps: '101',
+        serie: '1',
+        dataEmissao: '2026-09-08 14:30',
+        tomadorNome: 'Juliana Costa e Silva',
+        tomadorDoc: '222.333.444-55',
+        discriminacao: 'Aplicação e Manutenção de Alongamento em Gel com Esmaltação',
+        valorServicos: 180.00,
+        aliquotaIss: 2.5,
+        valorIss: 4.50,
+        status: 'AUTORIZADA', // 'AUTORIZADA' | 'PROCESSANDO' | 'REJEITADA' | 'CANCELADA'
+        codigoVerificacao: 'A9B2-7K8P-39F2',
+        linkPdf: '#'
+      },
+      {
+        id: 'nfs_102',
+        numero: '202600000000102',
+        rps: '102',
+        serie: '1',
+        dataEmissao: '2026-09-08 16:45',
+        tomadorNome: 'Carla Beatriz Mendes',
+        tomadorDoc: '333.444.555-66',
+        discriminacao: 'Pacote Tratamento Spa dos Pés e Plástica dos Pés',
+        valorServicos: 140.00,
+        aliquotaIss: 2.5,
+        valorIss: 3.50,
+        status: 'AUTORIZADA',
+        codigoVerificacao: 'C104-98F4-44E1',
+        linkPdf: '#'
+      },
+      {
+        id: 'nfs_103',
+        numero: '202600000000103',
+        rps: '103',
+        serie: '1',
+        dataEmissao: '2026-09-09 10:15',
+        tomadorNome: 'Fernanda de Oliveira',
+        tomadorDoc: '444.555.666-77',
+        discriminacao: 'Design de Sobrancelhas com Henna e Extensão de Cílios Volume Brasileiro',
+        valorServicos: 210.00,
+        aliquotaIss: 3.0,
+        valorIss: 6.30,
+        status: 'AUTORIZADA',
+        codigoVerificacao: 'D882-66BB-12A4',
+        linkPdf: '#'
+      },
+      {
+        id: 'nfs_104',
+        numero: '-',
+        rps: '104',
+        serie: '1',
+        dataEmissao: '2026-09-09 18:00',
+        tomadorNome: 'Mariana Duarte',
+        tomadorDoc: '555.666.777-88',
+        discriminacao: 'Procedimento Estético Facial e Drenagem',
+        valorServicos: 160.00,
+        aliquotaIss: 3.5,
+        valorIss: 5.60,
+        status: 'PROCESSANDO',
+        codigoVerificacao: '-',
+        linkPdf: '#'
+      }
+    ];
+
+    function initNfseState(){
+      if (!state.nfse) state.nfse = {};
+      if (!state.nfse.config) state.nfse.config = JSON.parse(JSON.stringify(DEFAULT_NFSE_CONFIG));
+      if (!Array.isArray(state.nfse.invoices)) state.nfse.invoices = JSON.parse(JSON.stringify(DEFAULT_INVOICES));
+      if (!Array.isArray(state.nfse.municipalServices)) state.nfse.municipalServices = JSON.parse(JSON.stringify(DEFAULT_SERVICOS_MUNICIPAIS));
+      if (!Array.isArray(state.nfse.cnaes)) state.nfse.cnaes = JSON.parse(JSON.stringify(DEFAULT_CNAES));
+      if (!Array.isArray(state.nfse.lc116)) state.nfse.lc116 = JSON.parse(JSON.stringify(DEFAULT_LC116));
+    }
+
+    // 1. RENDER CONFIGURAÇÕES
+    function renderNfseConfig(){
+      initNfseState();
+      const cfg = state.nfse.config;
+
+      const elAmbiente = document.getElementById('nfse-cfg-ambiente');
+      if (elAmbiente) elAmbiente.value = cfg.ambiente || 'homologacao';
+
+      const elProvedor = document.getElementById('nfse-cfg-provedor');
+      if (elProvedor) elProvedor.value = cfg.provedor || 'Nacional (Padrão Receita Federal / ABRASF)';
+
+      const elIm = document.getElementById('nfse-cfg-im');
+      if (elIm) elIm.value = cfg.inscricaoMunicipal || '';
+
+      const elRegime = document.getElementById('nfse-cfg-regime');
+      if (elRegime) elRegime.value = cfg.regimeTributario || 'Simples Nacional - ME / EPP';
+
+      const elAliq = document.getElementById('nfse-cfg-aliq-padrao');
+      if (elAliq) elAliq.value = cfg.aliquotaPadraoIss || 2.5;
+
+      const elSerie = document.getElementById('nfse-cfg-serie');
+      if (elSerie) elSerie.value = cfg.serieRps || '1';
+
+      const elNumRps = document.getElementById('nfse-cfg-num-rps');
+      if (elNumRps) elNumRps.value = cfg.numeroAtualRps || 104;
+
+      const elLote = document.getElementById('nfse-cfg-lote');
+      if (elLote) elLote.value = cfg.loteAtual || 42;
+
+      const elNat = document.getElementById('nfse-cfg-natureza');
+      if (elNat) elNat.value = cfg.naturezaOperacao || 'Tributação no Município';
+
+      const elOpt = document.getElementById('nfse-cfg-opt-simples');
+      if (elOpt) elOpt.checked = cfg.optanteSimples !== false;
+
+      const certBox = document.getElementById('nfse-cert-status-box');
+      if (certBox) {
+        certBox.innerHTML = `
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/30 text-xs">
+            <div class="flex items-center gap-2.5">
+              <i data-lucide="shield-check" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
+              <div>
+                <p class="font-bold text-title">Certificado Digital A1 e-CNPJ</p>
+                <p class="text-[11px] text-muted">Status: <strong class="text-emerald-600 dark:text-emerald-400">${cfg.certStatus}</strong> • Válido até <strong>${cfg.certValidade}</strong></p>
+              </div>
+            </div>
+            <button type="button" onclick="document.getElementById('nfse-file-cert').click()" class="btn-secondary text-[11px] py-1.5 px-3">
+              Atualizar .PFX
+            </button>
+          </div>
+        `;
+      }
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function saveNfseConfig(){
+      initNfseState();
+      state.nfse.config = {
+        ambiente: document.getElementById('nfse-cfg-ambiente') ? document.getElementById('nfse-cfg-ambiente').value : 'homologacao',
+        provedor: document.getElementById('nfse-cfg-provedor') ? document.getElementById('nfse-cfg-provedor').value : '',
+        inscricaoMunicipal: document.getElementById('nfse-cfg-im') ? document.getElementById('nfse-cfg-im').value : '',
+        regimeTributario: document.getElementById('nfse-cfg-regime') ? document.getElementById('nfse-cfg-regime').value : '',
+        aliquotaPadraoIss: parseFloat(document.getElementById('nfse-cfg-aliq-padrao') ? document.getElementById('nfse-cfg-aliq-padrao').value : '2.5') || 2.5,
+        serieRps: document.getElementById('nfse-cfg-serie') ? document.getElementById('nfse-cfg-serie').value : '1',
+        numeroAtualRps: parseInt(document.getElementById('nfse-cfg-num-rps') ? document.getElementById('nfse-cfg-num-rps').value : '104', 10) || 104,
+        loteAtual: parseInt(document.getElementById('nfse-cfg-lote') ? document.getElementById('nfse-cfg-lote').value : '42', 10) || 42,
+        naturezaOperacao: document.getElementById('nfse-cfg-natureza') ? document.getElementById('nfse-cfg-natureza').value : 'Tributação no Município',
+        optanteSimples: document.getElementById('nfse-cfg-opt-simples') ? document.getElementById('nfse-cfg-opt-simples').checked : true,
+        certValidade: state.nfse.config.certValidade || '15/12/2026',
+        certStatus: state.nfse.config.certStatus || 'Instalado & Válido'
+      };
+
+      persistState();
+      if (typeof syncToSupabase === 'function') syncToSupabase();
+      alert('Configurações de NFS-e salvas com sucesso!');
+      renderNfseConfig();
+    }
+
+    function handleCertFileUpload(event){
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      initNfseState();
+      state.nfse.config.certStatus = 'Instalado & Válido (' + file.name + ')';
+      state.nfse.config.certValidade = '15/12/2027';
+      persistState();
+      alert('Certificado A1 carregado e validado com sucesso!');
+      renderNfseConfig();
+    }
+
+    // 2. RENDER CAIXA DE SAÍDA (INVOICES)
+    function renderNfseCaixaSaida(){
+      initNfseState();
+      const list = state.nfse.invoices || [];
+
+      const searchVal = (document.getElementById('nfse-busca-caixa') ? document.getElementById('nfse-busca-caixa').value : '').toLowerCase().trim();
+      const statusFilter = document.getElementById('nfse-filtro-status') ? document.getElementById('nfse-filtro-status').value : 'TODOS';
+
+      const filtered = list.filter(inv => {
+        const matchText = (inv.tomadorNome || '').toLowerCase().includes(searchVal) ||
+                          (inv.numero || '').toLowerCase().includes(searchVal) ||
+                          (inv.rps || '').toLowerCase().includes(searchVal) ||
+                          (inv.discriminacao || '').toLowerCase().includes(searchVal);
+        const matchStatus = statusFilter === 'TODOS' || inv.status === statusFilter;
+        return matchText && matchStatus;
+      });
+
+      // Contadores
+      const totalEmitidas = list.length;
+      const totalAutorizadas = list.filter(i => i.status === 'AUTORIZADA').length;
+      const totalProcessando = list.filter(i => i.status === 'PROCESSANDO').length;
+      const totalRejeitadas = list.filter(i => i.status === 'REJEITADA').length;
+      const totalCanceladas = list.filter(i => i.status === 'CANCELADA').length;
+
+      const elTot = document.getElementById('nfse-count-total');
+      if (elTot) elTot.textContent = totalEmitidas;
+      const elAut = document.getElementById('nfse-count-autorizadas');
+      if (elAut) elAut.textContent = totalAutorizadas;
+      const elProc = document.getElementById('nfse-count-processando');
+      if (elProc) elProc.textContent = totalProcessando;
+      const elRej = document.getElementById('nfse-count-rejeitadas');
+      if (elRej) elRej.textContent = totalRejeitadas;
+
+      const tbody = document.getElementById('nfse-caixa-tbody');
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="p-8 text-center text-muted">
+              <i data-lucide="file-question" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+              Nenhuma Nota Fiscal de Serviço encontrada com os filtros selecionados.
+            </td>
+          </tr>
+        `;
+      } else {
+        tbody.innerHTML = filtered.map(inv => {
+          let badgeClass = 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+          let statusIcon = 'clock';
+          if (inv.status === 'AUTORIZADA') {
+            badgeClass = 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20';
+            statusIcon = 'check-circle-2';
+          } else if (inv.status === 'PROCESSANDO') {
+            badgeClass = 'bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-500/20';
+            statusIcon = 'loader-2';
+          } else if (inv.status === 'REJEITADA') {
+            badgeClass = 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-500/20';
+            statusIcon = 'alert-triangle';
+          } else if (inv.status === 'CANCELADA') {
+            badgeClass = 'bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-300 dark:border-slate-700';
+            statusIcon = 'x-circle';
+          }
+
+          return `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+              <td class="p-3.5 font-mono text-xs text-title font-bold">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="file-text" class="w-4 h-4 text-sky-500"></i>
+                  <span>${inv.numero !== '-' ? inv.numero : 'RPS ' + inv.rps}</span>
+                </div>
+                <span class="text-[10px] text-muted block font-normal">Série: ${inv.serie} • RPS: ${inv.rps}</span>
+              </td>
+              <td class="p-3.5 text-xs text-muted font-mono">${inv.dataEmissao}</td>
+              <td class="p-3.5 text-xs">
+                <strong class="text-title block font-semibold">${inv.tomadorNome}</strong>
+                <span class="text-muted font-mono text-[11px]">${inv.tomadorDoc || 'CPF não informado'}</span>
+              </td>
+              <td class="p-3.5 text-xs text-muted max-w-[220px] truncate" title="${inv.discriminacao}">
+                ${inv.discriminacao}
+              </td>
+              <td class="p-3.5 text-xs text-right font-mono">
+                <strong class="text-title block font-bold">R$ ${(inv.valorServicos || 0).toFixed(2).replace('.', ',')}</strong>
+                <span class="text-[10px] text-muted">ISS (${inv.aliquotaIss || 0}%): R$ ${(inv.valorIss || 0).toFixed(2).replace('.', ',')}</span>
+              </td>
+              <td class="p-3.5 text-center">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClass}">
+                  <i data-lucide="${statusIcon}" class="w-3 h-3"></i>
+                  <span>${inv.status}</span>
+                </span>
+              </td>
+              <td class="p-3.5 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <button onclick="visualizarDanfseModal('${inv.id}')" title="Visualizar / Imprimir DANFSE" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-sky-600 dark:text-sky-400">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                  </button>
+                  <button onclick="baixarXmlNfse('${inv.id}')" title="Baixar Arquivo XML" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-emerald-600 dark:text-emerald-400">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                  </button>
+                  ${inv.status === 'AUTORIZADA' ? `
+                    <button onclick="cancelarNfse('${inv.id}')" title="Cancelar Nota Fiscal" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-rose-500">
+                      <i data-lucide="ban" class="w-4 h-4"></i>
+                    </button>
+                  ` : ''}
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function abrirModalEmitirNfse(){
+      initNfseState();
+      const modal = document.getElementById('modal-emitir-nfse');
+      if (!modal) return;
+
+      // Preenche select de clientes
+      const selCli = document.getElementById('nfse-emit-cliente');
+      if (selCli) {
+        selCli.innerHTML = '<option value="">-- Selecione o Cliente (Tomador) --</option>' + 
+          (state.clients || []).map(c => `<option value="${c.id}" data-doc="${c.cpf || ''}" data-email="${c.email || ''}">${c.name} ${c.cpf ? '(' + c.cpf + ')' : ''}</option>`).join('');
+      }
+
+      // Preenche select de serviços municipais
+      const selServ = document.getElementById('nfse-emit-servico-mun');
+      if (selServ) {
+        selServ.innerHTML = '<option value="">-- Selecione o Código de Serviço Municipal --</option>' +
+          (state.nfse.municipalServices || []).map(s => `<option value="${s.id}" data-iss="${s.iss}" data-desc="${s.desc}">${s.code} - ${s.desc} (${s.iss}%)</option>`).join('');
+      }
+
+      // Preenche dados padrão
+      const numRps = (state.nfse.config.numeroAtualRps || 104) + 1;
+      const elRps = document.getElementById('nfse-emit-rps');
+      if (elRps) elRps.value = numRps;
+
+      const elVal = document.getElementById('nfse-emit-valor');
+      if (elVal) elVal.value = '150.00';
+
+      const elDisc = document.getElementById('nfse-emit-disc');
+      if (elDisc) elDisc.value = 'Prestação de serviços de estética, manicure e cuidados de beleza pessoal.';
+
+      calcularImpostoEmissao();
+      modal.classList.add('open');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function fecharModalEmitirNfse(){
+      const modal = document.getElementById('modal-emitir-nfse');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function onClienteSelectedEmissao(){
+      const selCli = document.getElementById('nfse-emit-cliente');
+      if (!selCli) return;
+      const opt = selCli.options[selCli.selectedIndex];
+      const docInput = document.getElementById('nfse-emit-doc');
+      if (docInput && opt) docInput.value = opt.getAttribute('data-doc') || '';
+    }
+
+    function onServicoMunSelectedEmissao(){
+      const selServ = document.getElementById('nfse-emit-servico-mun');
+      if (!selServ) return;
+      const opt = selServ.options[selServ.selectedIndex];
+      if (opt && opt.getAttribute('data-iss')) {
+        const issInput = document.getElementById('nfse-emit-iss-aliq');
+        if (issInput) issInput.value = opt.getAttribute('data-iss');
+      }
+      calcularImpostoEmissao();
+    }
+
+    function calcularImpostoEmissao(){
+      const val = parseFloat(document.getElementById('nfse-emit-valor') ? document.getElementById('nfse-emit-valor').value : '0') || 0;
+      const aliq = parseFloat(document.getElementById('nfse-emit-iss-aliq') ? document.getElementById('nfse-emit-iss-aliq').value : '2.5') || 2.5;
+      const totalIss = (val * (aliq / 100));
+
+      const elIssTotal = document.getElementById('nfse-emit-iss-val');
+      if (elIssTotal) elIssTotal.textContent = 'R$ ' + totalIss.toFixed(2).replace('.', ',');
+    }
+
+    function confirmarTransmissaoNfse(){
+      initNfseState();
+      const selCli = document.getElementById('nfse-emit-cliente');
+      const cliName = selCli && selCli.selectedIndex > 0 ? selCli.options[selCli.selectedIndex].text.split('(')[0].trim() : 'Cliente Avulso';
+      const doc = document.getElementById('nfse-emit-doc') ? document.getElementById('nfse-emit-doc').value : '111.222.333-44';
+      const disc = document.getElementById('nfse-emit-disc') ? document.getElementById('nfse-emit-disc').value : 'Serviços de beleza e estética';
+      const val = parseFloat(document.getElementById('nfse-emit-valor') ? document.getElementById('nfse-emit-valor').value : '0') || 100;
+      const aliq = parseFloat(document.getElementById('nfse-emit-iss-aliq') ? document.getElementById('nfse-emit-iss-aliq').value : '2.5') || 2.5;
+      const rpsNum = document.getElementById('nfse-emit-rps') ? document.getElementById('nfse-emit-rps').value : '105';
+
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 5);
+      const randomNumero = '2026' + String(Math.floor(10000000000 + Math.random() * 90000000000));
+      const randomCodVerif = Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+
+      const newInvoice = {
+        id: 'nfs_' + Date.now(),
+        numero: randomNumero,
+        rps: String(rpsNum),
+        serie: state.nfse.config.serieRps || '1',
+        dataEmissao: dateStr,
+        tomadorNome: cliName,
+        tomadorDoc: doc,
+        discriminacao: disc,
+        valorServicos: val,
+        aliquotaIss: aliq,
+        valorIss: val * (aliq / 100),
+        status: 'AUTORIZADA',
+        codigoVerificacao: randomCodVerif,
+        linkPdf: '#'
+      };
+
+      state.nfse.invoices.unshift(newInvoice);
+      state.nfse.config.numeroAtualRps = parseInt(rpsNum, 10);
+      state.nfse.config.loteAtual = (state.nfse.config.loteAtual || 42) + 1;
+
+      persistState();
+      if (typeof syncToSupabase === 'function') syncToSupabase();
+
+      fecharModalEmitirNfse();
+      alert(`🎉 NFS-e Número ${randomNumero} Emitida e Autorizada com Sucesso!\nCódigo de Verificação: ${randomCodVerif}`);
+      renderNfseCaixaSaida();
+    }
+
+    function cancelarNfse(id){
+      initNfseState();
+      const inv = state.nfse.invoices.find(i => i.id === id);
+      if (!inv) return;
+      const motivo = prompt('Informe o motivo do cancelamento da NFS-e nº ' + inv.numero + ':', 'Erro de preenchimento de valor');
+      if (motivo) {
+        inv.status = 'CANCELADA';
+        inv.motivoCancelamento = motivo;
+        persistState();
+        if (typeof syncToSupabase === 'function') syncToSupabase();
+        alert('NFS-e nº ' + inv.numero + ' cancelada com sucesso junto à Prefeitura.');
+        renderNfseCaixaSaida();
+      }
+    }
+
+    function baixarXmlNfse(id){
+      initNfseState();
+      const inv = state.nfse.invoices.find(i => i.id === id);
+      if (!inv) return;
+
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<CompNfse xmlns="http://www.abrasf.org.br/nfse.xsd">
+  <Nfse versao="2.02">
+    <InfNfse Id="NFSE_${inv.numero}">
+      <Numero>${inv.numero}</Numero>
+      <CodigoVerificacao>${inv.codigoVerificacao || 'A1B2-C3D4'}</CodigoVerificacao>
+      <DataEmissao>${inv.dataEmissao}</DataEmissao>
+      <ValoresNfse>
+        <ValorServicos>${(inv.valorServicos || 0).toFixed(2)}</ValorServicos>
+        <ValorIss>${(inv.valorIss || 0).toFixed(2)}</ValorIss>
+        <Aliquota>${(inv.aliquotaIss || 0).toFixed(2)}</Aliquota>
+      </ValoresNfse>
+      <PrestadorServico>
+        <IdentificacaoPrestador>
+          <Cnpj>12.345.678/0001-90</Cnpj>
+          <InscricaoMunicipal>${state.nfse.config.inscricaoMunicipal || '987654-3'}</InscricaoMunicipal>
+        </IdentificacaoPrestador>
+        <RazaoSocial>LETICIA HERMANN STUDIO VIP DE BELEZA LTDA</RazaoSocial>
+      </PrestadorServico>
+      <TomadorServico>
+        <IdentificacaoTomador>
+          <CpfCnpj><Cpf>${inv.tomadorDoc || '00000000000'}</Cpf></CpfCnpj>
+        </IdentificacaoTomador>
+        <RazaoSocial>${inv.tomadorNome}</RazaoSocial>
+      </TomadorServico>
+      <Discriminacao>${inv.discriminacao}</Discriminacao>
+    </InfNfse>
+  </Nfse>
+</CompNfse>`;
+
+      const blob = new Blob([xml], { type: 'application/xml;charset=utf-8;' });
+      const filename = `NFSE_${inv.numero}_${inv.rps}.xml`;
+      downloadArquivoBlob(xml, filename, 'application/xml;charset=utf-8;');
+    }
+
+    function visualizarDanfseModal(id){
+      initNfseState();
+      const inv = state.nfse.invoices.find(i => i.id === id);
+      if (!inv) return;
+
+      const modal = document.getElementById('modal-danfse-preview');
+      const bodyEl = document.getElementById('danfse-preview-body');
+      if (!modal || !bodyEl) return;
+
+      bodyEl.innerHTML = `
+        <div class="border-2 border-slate-900 dark:border-slate-400 p-6 space-y-4 bg-white text-slate-900 font-sans text-xs">
+          <!-- Cabeçalho Fiscal -->
+          <div class="flex items-center justify-between border-b-2 border-slate-900 pb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-xl">
+                Z
+              </div>
+              <div>
+                <h2 class="text-sm font-black uppercase tracking-wide">PREFEITURA MUNICIPAL</h2>
+                <p class="text-[11px] font-bold">SECRETARIA MUNICIPAL DE FAZENDA E FINANÇAS</p>
+                <p class="text-[10px] text-slate-600">Documento Auxiliar da Nota Fiscal Eletrônica de Serviços (DANFSE)</p>
+              </div>
+            </div>
+            <div class="text-right border-l-2 border-slate-900 pl-4">
+              <span class="text-[10px] uppercase font-bold block text-slate-500">Número da NFS-e</span>
+              <span class="text-base font-black text-slate-900 font-mono">${inv.numero}</span>
+              <span class="text-[10px] font-mono block">Emissão: ${inv.dataEmissao}</span>
+            </div>
+          </div>
+
+          <!-- Dados do Prestador -->
+          <div class="border border-slate-900 p-3 rounded space-y-1">
+            <span class="font-bold uppercase text-[10px] text-slate-500 block">PRESTADOR DE SERVIÇOS</span>
+            <p class="font-black text-sm">LETICIA HERMANN STUDIO VIP DE BELEZA LTDA</p>
+            <p class="text-[11px] font-mono">CNPJ: 12.345.678/0001-90 • Inscrição Municipal: ${state.nfse.config.inscricaoMunicipal || '987654-3'}</p>
+            <p class="text-[11px]">Av. Principal dos Profissionais, 1000 • Sala 04 • Centro</p>
+            <p class="text-[10px] text-slate-600 font-semibold">Regime: ${state.nfse.config.regimeTributario || 'Simples Nacional'} • Natureza: Tributação no Município</p>
+          </div>
+
+          <!-- Dados do Tomador -->
+          <div class="border border-slate-900 p-3 rounded space-y-1">
+            <span class="font-bold uppercase text-[10px] text-slate-500 block">TOMADOR DE SERVIÇOS (CLIENTE)</span>
+            <p class="font-black text-sm">${inv.tomadorNome}</p>
+            <p class="text-[11px] font-mono">CPF / CNPJ: ${inv.tomadorDoc || 'Não informado'}</p>
+          </div>
+
+          <!-- Discriminação dos Serviços -->
+          <div class="border border-slate-900 p-3 rounded min-h-[90px] space-y-2">
+            <span class="font-bold uppercase text-[10px] text-slate-500 block">DISCRIMINAÇÃO DOS SERVIÇOS PRESTADOS</span>
+            <p class="font-medium text-xs leading-relaxed">${inv.discriminacao}</p>
+            <div class="pt-2 text-[10px] text-slate-600 border-t border-slate-300 flex justify-between">
+              <span>Item LC 116/2003: 06.01 - Barbearia, cabeleireiros, manicuros e pedicuros</span>
+              <span>CNAE: 9602-5/01</span>
+            </div>
+          </div>
+
+          <!-- Totais e Tributação -->
+          <div class="grid grid-cols-4 gap-2 border border-slate-900 p-3 rounded text-center">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-slate-500 block">Valor dos Serviços</span>
+              <span class="font-mono font-black text-sm">R$ ${(inv.valorServicos || 0).toFixed(2).replace('.', ',')}</span>
+            </div>
+            <div>
+              <span class="text-[10px] uppercase font-bold text-slate-500 block">Alíquota ISS</span>
+              <span class="font-mono font-black text-sm">${inv.aliquotaIss || 2.5}%</span>
+            </div>
+            <div>
+              <span class="text-[10px] uppercase font-bold text-slate-500 block">Valor do ISS</span>
+              <span class="font-mono font-black text-sm">R$ ${(inv.valorIss || 0).toFixed(2).replace('.', ',')}</span>
+            </div>
+            <div>
+              <span class="text-[10px] uppercase font-bold text-slate-500 block">Valor Líquido</span>
+              <span class="font-mono font-black text-sm text-emerald-700">R$ ${(inv.valorServicos || 0).toFixed(2).replace('.', ',')}</span>
+            </div>
+          </div>
+
+          <!-- Rodapé de Autenticidade -->
+          <div class="flex items-center justify-between pt-2 text-[10px] text-slate-500 font-mono">
+            <span>CÓDIGO DE VERIFICAÇÃO: <strong>${inv.codigoVerificacao || 'A9B2-7K8P-39F2'}</strong></span>
+            <span>Documento emitido por ME ou EPP optante pelo Simples Nacional</span>
+          </div>
+        </div>
+      `;
+
+      modal.classList.add('open');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function fecharDanfseModal(){
+      const modal = document.getElementById('modal-danfse-preview');
+      if (modal) modal.classList.remove('open');
+    }
+
+    // 3. RENDER SERVIÇO MUNICIPAL
+    function renderNfseServicoMunicipal(){
+      initNfseState();
+      const list = state.nfse.municipalServices || [];
+      const tbody = document.getElementById('nfse-serv-mun-tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = list.map(s => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+          <td class="p-3.5 font-mono text-xs font-bold text-title flex items-center gap-2">
+            <i data-lucide="tag" class="w-3.5 h-3.5 text-sky-500"></i>
+            <span>${s.code}</span>
+          </td>
+          <td class="p-3.5 text-xs text-title font-medium">${s.desc}</td>
+          <td class="p-3.5 text-center font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs">${s.iss}%</td>
+          <td class="p-3.5 text-xs text-muted font-mono">${s.lc116}</td>
+          <td class="p-3.5 text-xs text-muted font-mono">${s.cnae}</td>
+          <td class="p-3.5 text-center text-xs text-muted">${s.retencao || 'Não'}</td>
+          <td class="p-3.5 text-right">
+            <button onclick="removerServicoMunicipal('${s.id}')" class="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-rose-500">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function adicionarServicoMunicipal(){
+      initNfseState();
+      const code = prompt('Código do Serviço Municipal (ex: 010405):');
+      if (!code) return;
+      const desc = prompt('Descrição do Serviço (ex: Micropigmentação Labial e Sobrancelha):');
+      if (!desc) return;
+      const iss = parseFloat(prompt('Alíquota de ISS Municipal (%):', '2.5')) || 2.5;
+
+      state.nfse.municipalServices.push({
+        id: 'sm_' + Date.now(),
+        code: code.trim(),
+        desc: desc.trim(),
+        iss: iss,
+        lc116: '06.02',
+        cnae: '9602-5/02',
+        retencao: 'Não'
+      });
+
+      persistState();
+      if (typeof syncToSupabase === 'function') syncToSupabase();
+      alert('Serviço municipal adicionado com sucesso!');
+      renderNfseServicoMunicipal();
+    }
+
+    function removerServicoMunicipal(id){
+      initNfseState();
+      if (confirm('Deseja remover este serviço municipal?')) {
+        state.nfse.municipalServices = state.nfse.municipalServices.filter(s => s.id !== id);
+        persistState();
+        if (typeof syncToSupabase === 'function') syncToSupabase();
+        renderNfseServicoMunicipal();
+      }
+    }
+
+    // 4. RENDER LC116
+    function renderNfseLc116(){
+      initNfseState();
+      const list = state.nfse.lc116 || DEFAULT_LC116;
+      const searchVal = (document.getElementById('nfse-busca-lc116') ? document.getElementById('nfse-busca-lc116').value : '').toLowerCase().trim();
+
+      const filtered = list.filter(it => it.code.toLowerCase().includes(searchVal) || it.name.toLowerCase().includes(searchVal) || it.category.toLowerCase().includes(searchVal));
+
+      const tbody = document.getElementById('nfse-lc116-tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = filtered.map(it => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+          <td class="p-3.5 font-mono text-xs font-bold text-sky-600 dark:text-sky-400 flex items-center gap-2">
+            <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>
+            <span>${it.code}</span>
+          </td>
+          <td class="p-3.5 text-xs text-title font-medium">${it.name}</td>
+          <td class="p-3.5 text-xs text-muted">${it.category}</td>
+          <td class="p-3.5 text-center font-mono text-xs text-title">${it.aliqMin}% a ${it.aliqMax}%</td>
+          <td class="p-3.5 text-center">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">Vigente</span>
+          </td>
+        </tr>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // 5. RENDER CNAE
+    function renderNfseCnae(){
+      initNfseState();
+      const list = state.nfse.cnaes || DEFAULT_CNAES;
+      const tbody = document.getElementById('nfse-cnae-tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = list.map((c, idx) => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+          <td class="p-3.5 font-mono text-xs font-bold text-title flex items-center gap-2">
+            <i data-lucide="briefcase" class="w-3.5 h-3.5 text-indigo-500"></i>
+            <span>${c.code}</span>
+          </td>
+          <td class="p-3.5 text-xs text-title font-medium">${c.name}</td>
+          <td class="p-3.5 text-center">
+            ${c.isPrincipal 
+              ? '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">Principal</span>'
+              : '<span class="px-2 py-0.5 rounded text-[10px] text-muted bg-slate-100 dark:bg-slate-800">Secundário</span>'
+            }
+          </td>
+          <td class="p-3.5 text-center text-xs">
+            <span class="text-emerald-600 dark:text-emerald-400 font-bold font-mono">Ativo</span>
+          </td>
+          <td class="p-3.5 text-right">
+            ${!c.isPrincipal ? `
+              <button onclick="definirCnaePrincipal('${c.code}')" title="Tornar CNAE Principal" class="text-xs text-sky-600 hover:underline mr-2 font-semibold">
+                Tornar Principal
+              </button>
+            ` : ''}
+          </td>
+        </tr>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function definirCnaePrincipal(code){
+      initNfseState();
+      state.nfse.cnaes.forEach(c => {
+        c.isPrincipal = (c.code === code);
+      });
+      persistState();
+      if (typeof syncToSupabase === 'function') syncToSupabase();
+      renderNfseCnae();
+    }
+
+    function adicionarCnae(){
+      initNfseState();
+      const code = prompt('Código CNAE (ex: 9609-2/99):');
+      if (!code) return;
+      const desc = prompt('Denominação da Atividade:');
+      if (!desc) return;
+
+      state.nfse.cnaes.push({
+        code: code.trim(),
+        name: desc.trim(),
+        isPrincipal: false,
+        status: 'Ativo'
+      });
+
+      persistState();
+      if (typeof syncToSupabase === 'function') syncToSupabase();
+      alert('CNAE adicionado com sucesso!');
+      renderNfseCnae();
     }
 
 
