@@ -104,9 +104,37 @@
     @keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
     .appt-popup-overlay{position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.3)}
     @media print{body *{visibility:hidden}#print-thermal-receipt,#print-thermal-receipt *{visibility:visible}#print-thermal-receipt{position:absolute;left:0;top:0;width:100%}}
+    /* Sleek custom scrollbars */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.6);
+    }
+    html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.4);
+    }
+    html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.7);
+    }
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+    }
+    html.dark .custom-scrollbar {
+      scrollbar-color: rgba(100, 116, 139, 0.4) transparent;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased">
+<body class="h-screen max-h-screen flex flex-col antialiased overflow-hidden selection:bg-emerald-500 selection:text-white bg-slate-50 dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100">
 
   <!-- TOP HEADER -->
   <header class="bg-white dark:bg-[#1e293b] text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 px-3 md:px-6 py-2.5 flex items-center justify-between sticky top-0 z-40 shadow-xs shrink-0 transition-colors">
@@ -160,14 +188,14 @@
   <div id="mobile-sidebar-overlay" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden transition-opacity md:hidden"></div>
 
   <!-- MAIN WRAPPER -->
-  <div class="flex-1 flex overflow-hidden relative">
+  <div class="flex-1 flex overflow-hidden relative min-h-0">
     <!-- SIDEBAR -->
-    <aside id="app-sidebar" class="app-sidebar-bg fixed md:static inset-y-0 left-0 z-50 w-72 md:w-64 border-r flex flex-col justify-between shrink-0 h-[calc(100vh-53px)] overflow-y-auto transition-transform duration-200 ease-in-out -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
-      <div class="p-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 md:hidden">
+    <aside id="app-sidebar" class="app-sidebar-bg fixed md:static inset-y-0 left-0 z-50 w-72 md:w-64 border-r flex flex-col shrink-0 h-full max-h-full overflow-hidden transition-transform duration-200 ease-in-out -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
+      <div class="p-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 md:hidden shrink-0">
         <div class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2"><i data-lucide="menu" class="w-4 h-4 text-emerald-600"></i> Menu Principal</div>
         <button onclick="toggleMobileSidebar()" class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <div class="p-3 space-y-1">
+      <div class="flex-1 overflow-y-auto min-h-0 p-3 space-y-1 pb-20 custom-scrollbar">
         <button onclick="switchTab('dashboard');closeMobileSidebar()" id="nav-dashboard" class="sidebar-menu-btn active">
           <span class="flex items-center gap-2.5"><i data-lucide="layout-dashboard" class="w-4 h-4 text-purple-500"></i><span>Dashboard</span></span>
           <span class="text-[10px] bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 px-1.5 py-0.5 rounded font-mono">BI</span>
@@ -347,7 +375,7 @@
           </div>
         </div>
       </div>
-      <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-2 shrink-0">
+      <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-2 shrink-0 mt-auto">
         <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-mono">
           <span>Techo PRO v5.0</span>
           <span class="text-emerald-600 dark:text-emerald-400 font-bold">100% Offline/Local</span>
