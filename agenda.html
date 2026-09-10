@@ -182,6 +182,17 @@
             <button onclick="switchTab('analise-mensal');closeMobileSidebar()" id="subnav-analise-mensal" class="flex items-center justify-between w-full"><span>Fluxo de Caixa Mensal</span><i data-lucide="calendar-days" class="w-3.5 h-3.5 text-emerald-500"></i></button>
           </div>
         </div>
+        <!-- COMPRAS SUBMENU -->
+        <div>
+          <button onclick="toggleSubmenu('sub-compras')" id="nav-compras" class="sidebar-menu-btn">
+            <span class="flex items-center gap-2.5"><i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-500"></i><span>Compras</span></span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+          <div id="sub-compras" class="sidebar-submenu hidden">
+            <button onclick="switchTab('compras-lista');closeMobileSidebar()" id="subnav-compras-lista" class="flex items-center justify-between w-full"><span>Compra</span><i data-lucide="receipt" class="w-3.5 h-3.5 text-emerald-500"></i></button>
+            <button onclick="switchTab('compras-fornecedores');closeMobileSidebar()" id="subnav-compras-fornecedores" class="flex items-center justify-between w-full"><span>Fornecedor</span><i data-lucide="truck" class="w-3.5 h-3.5 text-blue-500"></i></button>
+          </div>
+        </div>
         <button onclick="switchTab('consultas');closeMobileSidebar()" id="nav-consultas" class="sidebar-menu-btn">
           <span class="flex items-center gap-2.5"><i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-500"></i><span>Consultas & Relatórios</span></span>
         </button>
@@ -993,6 +1004,168 @@
         </div>
       </section>
 
+      <!-- ===================== COMPRAS: LISTA DE COMPRAS ===================== -->
+      <section id="tab-compras-lista" class="hidden space-y-4">
+        <!-- BARRA SUPERIOR DE FILTROS (EXATO SIMPLES AGENDA) -->
+        <div class="glass-card rounded-2xl p-3 md:p-4 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <!-- Esquerda: Fornecedor, Mês Navegador, Período, Produto -->
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- Select Fornecedores -->
+              <select id="filtro-compra-fornecedor" onchange="onFiltroComprasChange()" class="input-box border rounded-xl px-3 py-2 text-xs font-semibold outline-none min-w-[170px]">
+                <option value="ALL">Todos Fornecedores</option>
+              </select>
+
+              <!-- Navegador Mês / Ano -->
+              <div class="flex items-center bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-xs">
+                <button onclick="navegarMesCompra(-1)" class="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300" title="Mês Anterior">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <span id="label-compra-mes-ano" class="px-3 py-1.5 text-xs font-mono font-extrabold text-title uppercase tracking-wider min-w-[140px] text-center">
+                  SETEMBRO 2026
+                </span>
+                <button onclick="navegarMesCompra(1)" class="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300" title="Próximo Mês">
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <!-- Filtro Período Personalizado -->
+              <div class="hidden lg:flex items-center gap-1 text-xs font-mono text-muted bg-slate-50 dark:bg-slate-800/60 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                <span>Período</span>
+                <input type="date" id="filtro-compra-data-ini" onchange="onFiltroComprasChange()" class="bg-transparent text-title text-xs outline-none cursor-pointer">
+                <span>até</span>
+                <input type="date" id="filtro-compra-data-fim" onchange="onFiltroComprasChange()" class="bg-transparent text-title text-xs outline-none cursor-pointer">
+              </div>
+
+              <!-- Busca Produto -->
+              <div class="flex items-center bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1.5">
+                <input type="text" id="filtro-compra-produto" oninput="onFiltroComprasChange()" placeholder="Produto..." class="bg-transparent text-xs text-title outline-none w-28 sm:w-36">
+                <button onclick="onFiltroComprasChange()" class="text-slate-400 hover:text-title ml-1"><i data-lucide="search" class="w-3.5 h-3.5"></i></button>
+              </div>
+
+              <!-- Reset -->
+              <button onclick="resetFiltrosCompras()" class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500" title="Redefinir Filtros">
+                <i data-lucide="rotate-cw" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- Direita: Botões de Ação (+ NOVA COMPRA & IMPORTAR XML) -->
+            <div class="flex items-center gap-2">
+              <button onclick="openNovaCompraModal()" class="touch-btn px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md uppercase tracking-wider">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> + Nova Compra
+              </button>
+              <button onclick="openImportarXmlModal()" class="touch-btn px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md uppercase tracking-wider">
+                <i data-lucide="file-code-2" class="w-4 h-4"></i> Importar XML
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARDS GRANDES AZUIS (ESTILO SIMPLES AGENDA) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Card 1: Total no Ano -->
+          <div class="rounded-2xl p-5 bg-gradient-to-r from-sky-600 to-cyan-700 text-white shadow-lg relative overflow-hidden flex items-center justify-between">
+            <div class="absolute -left-3 -bottom-5 text-white/10 text-8xl font-black select-none pointer-events-none font-mono">$</div>
+            <div class="space-y-1 relative z-10">
+              <div class="text-2xl md:text-3xl font-black font-mono tracking-tight" id="compras-kpi-ano">R$ 0,00</div>
+              <span class="text-xs uppercase font-bold tracking-wider text-sky-100 block">Total no Ano</span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-white relative z-10">
+              <i data-lucide="calendar" class="w-6 h-6"></i>
+            </div>
+          </div>
+
+          <!-- Card 2: Total de Compras (Período) -->
+          <div class="rounded-2xl p-5 bg-gradient-to-r from-sky-700 to-blue-800 text-white shadow-lg relative overflow-hidden flex items-center justify-between">
+            <div class="absolute -left-3 -bottom-5 text-white/10 text-8xl font-black select-none pointer-events-none font-mono">$</div>
+            <div class="space-y-1 relative z-10">
+              <div class="text-2xl md:text-3xl font-black font-mono tracking-tight" id="compras-kpi-mes">R$ 0,00</div>
+              <span class="text-xs uppercase font-bold tracking-wider text-sky-100 block" id="compras-kpi-mes-label">Total de Compras (Mês Atual)</span>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center text-white relative z-10">
+              <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABELA DE COMPRAS -->
+        <div class="glass-card rounded-2xl p-4 overflow-x-auto shadow-sm">
+          <table class="w-full text-left text-xs font-mono min-w-[850px]">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 uppercase text-[10px] tracking-wider bg-slate-50/50 dark:bg-slate-800/50">
+                <th class="p-3">Código</th>
+                <th class="p-3">Entrada</th>
+                <th class="p-3">Fornecedor</th>
+                <th class="p-3">NF</th>
+                <th class="p-3">Emissão NF</th>
+                <th class="p-3 text-right font-bold">Total Líquido</th>
+                <th class="p-3 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="compras-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+              <tr>
+                <td colspan="7" class="py-12 text-center text-muted text-xs">
+                  Não há compras para o filtro atual.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================== COMPRAS: FORNECEDORES ===================== -->
+      <section id="tab-compras-fornecedores" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30">CADEIA DE SUPRIMENTOS</span>
+              <span class="text-xs font-mono text-muted">Parceiros & Distribuidores</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="truck" class="w-5 h-5 text-blue-500"></i>
+              <span>Gestão de Fornecedores</span>
+            </h2>
+            <p class="text-xs text-muted">Cadastro de distribuidores, marcas de cosméticos, dados fiscais e contato direto</p>
+          </div>
+          <button onclick="openFornecedorModal()" class="touch-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Novo Fornecedor
+          </button>
+        </div>
+
+        <!-- KPIs de Fornecedores -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="glass-card rounded-2xl p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Fornecedores Ativos</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="forn-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Compras no Mês</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="forn-kpi-compras-mes">0 pedidos</div>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border-l-4 border-indigo-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Total Pago a Fornecedores</span>
+            <div class="text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400 mt-1" id="forn-kpi-total-pago">R$ 0,00</div>
+          </div>
+        </div>
+
+        <!-- Tabela de Fornecedores -->
+        <div class="glass-card rounded-2xl p-4 overflow-x-auto shadow-sm">
+          <table class="w-full text-left text-xs font-mono min-w-[800px]">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 uppercase text-[10px] bg-slate-50/50 dark:bg-slate-800/50">
+                <th class="p-3">Fornecedor / Razão Social</th>
+                <th class="p-3">CNPJ / CPF</th>
+                <th class="p-3">Contato / WhatsApp</th>
+                <th class="p-3">Cidade / UF</th>
+                <th class="p-3">Representante</th>
+                <th class="p-3 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="fornecedores-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+          </table>
+        </div>
+      </section>
+
       <!-- ===================== ESTOQUE ===================== -->
       <section id="tab-estoque" class="hidden space-y-4">
         <div class="flex items-center justify-between">
@@ -1781,6 +1954,216 @@
     </div>
   </div>
 
+  <!-- MODAL: NOVA / EDITAR COMPRA -->
+  <div id="modal-compra" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="compra-modal-title">
+          <i data-lucide="shopping-bag" class="w-4 h-4 text-sky-500"></i> Lançar Nova Compra
+        </h3>
+        <button onclick="closeModal('modal-compra')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="compra-edit-id" value="">
+      
+      <div class="space-y-4 text-xs">
+        <!-- Dados Gerais -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="font-bold text-title block mb-1">Fornecedor *</label>
+            <select id="compra-fornecedor" class="input-box w-full border rounded-xl px-3 py-2 outline-none font-semibold"></select>
+          </div>
+          <div>
+            <label class="font-bold text-title block mb-1">Data de Entrada *</label>
+            <input type="date" id="compra-data-entrada" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="font-bold text-title block mb-1">Número da Nota Fiscal (NF)</label>
+            <input type="text" id="compra-nf-numero" placeholder="Ex: 004829" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+          </div>
+          <div>
+            <label class="font-bold text-title block mb-1">Data Emissão NF</label>
+            <input type="date" id="compra-nf-emissao" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+          </div>
+          <div>
+            <label class="font-bold text-title block mb-1">Forma de Pagamento</label>
+            <select id="compra-forma-pagamento" class="input-box w-full border rounded-xl px-3 py-2 outline-none font-mono"></select>
+          </div>
+        </div>
+
+        <!-- Grade de Inclusão de Itens / Insumos -->
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-title uppercase font-mono text-[11px] flex items-center gap-1.5">
+              <i data-lucide="package" class="w-3.5 h-3.5 text-emerald-500"></i> Itens da Compra
+            </span>
+            <span class="text-[10px] text-muted">Dá entrada no estoque</span>
+          </div>
+
+          <div class="grid grid-cols-12 gap-2 items-end">
+            <div class="col-span-12 sm:col-span-6">
+              <label class="font-semibold text-muted block mb-1 text-[11px]">Produto / Insumo</label>
+              <input list="lista-produtos-estoque" id="item-prod-input" placeholder="Selecione ou digite um produto..." class="input-box w-full border rounded-xl px-3 py-2 text-xs outline-none">
+              <datalist id="lista-produtos-estoque"></datalist>
+            </div>
+            <div class="col-span-4 sm:col-span-2">
+              <label class="font-semibold text-muted block mb-1 text-[11px]">Qtd</label>
+              <input type="number" id="item-qtd-input" min="1" value="1" class="input-box w-full border rounded-xl px-2.5 py-2 font-mono font-bold outline-none text-xs text-center">
+            </div>
+            <div class="col-span-4 sm:col-span-2">
+              <label class="font-semibold text-muted block mb-1 text-[11px]">Custo R$</label>
+              <input type="number" id="item-custo-input" step="0.01" placeholder="0.00" class="input-box w-full border rounded-xl px-2.5 py-2 font-mono font-bold outline-none text-xs">
+            </div>
+            <div class="col-span-4 sm:col-span-2">
+              <button type="button" onclick="adicionarItemCompra()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1 shadow-xs">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> + Item
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabela de itens adicionados -->
+          <div class="overflow-x-auto max-h-48 overflow-y-auto">
+            <table class="w-full text-left text-xs font-mono">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 text-[10px]">
+                  <th class="pb-1.5">Produto</th>
+                  <th class="pb-1.5 text-center">Qtd</th>
+                  <th class="pb-1.5 text-right">Unitário</th>
+                  <th class="pb-1.5 text-right">Subtotal</th>
+                  <th class="pb-1.5 text-right"></th>
+                </tr>
+              </thead>
+              <tbody id="compra-itens-tbody" class="divide-y divide-slate-100 dark:divide-slate-700/50"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Total Líquido & Integrações -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-200 dark:border-slate-800">
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-title font-medium">
+              <input type="checkbox" id="compra-auto-estoque" checked class="rounded accent-emerald-600 w-4 h-4">
+              <span>Atualizar estoque automaticamente com os produtos comprados</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-title font-medium">
+              <input type="checkbox" id="compra-auto-financeiro" checked class="rounded accent-sky-600 w-4 h-4">
+              <span>Lançar despesa no Financeiro (Insumos & Estoque)</span>
+            </label>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-muted font-mono uppercase block">Total Líquido da Compra</span>
+            <span class="text-2xl font-black font-mono text-sky-600 dark:text-sky-400" id="compra-total-display">R$ 0,00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-3 flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-compra')" class="px-4 py-2 text-xs font-semibold text-muted">Cancelar</button>
+        <button onclick="saveCompra()" class="touch-btn px-6 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl shadow-md">Salvar Compra</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: NOVO / EDITAR FORNECEDOR -->
+  <div id="modal-fornecedor" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="forn-modal-title">
+          <i data-lucide="truck" class="w-4 h-4 text-blue-500"></i> Fornecedor
+        </h3>
+        <button onclick="closeModal('modal-fornecedor')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="forn-edit-id" value="">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="font-bold text-title block mb-1">Razão Social / Nome da Empresa *</label>
+          <input type="text" id="forn-nome" placeholder="Ex: Vòlia Cosméticos Brasil" class="input-box w-full border rounded-xl px-3 py-2 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-title block mb-1">CNPJ / CPF</label>
+            <input type="text" id="forn-cnpj" placeholder="00.000.000/0001-00" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+          </div>
+          <div>
+            <label class="font-bold text-title block mb-1">WhatsApp / Telefone *</label>
+            <input type="text" id="forn-phone" placeholder="(00) 00000-0000" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-title block mb-1">E-mail</label>
+            <input type="email" id="forn-email" placeholder="contato@fornecedor.com" class="input-box w-full border rounded-xl px-3 py-2 outline-none">
+          </div>
+          <div>
+            <label class="font-bold text-title block mb-1">Cidade / UF</label>
+            <input type="text" id="forn-cidade" placeholder="Ex: São Paulo/SP" class="input-box w-full border rounded-xl px-3 py-2 outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="font-bold text-title block mb-1">Nome do Vendedor / Representante</label>
+          <input type="text" id="forn-rep" placeholder="Ex: Mariana Silva" class="input-box w-full border rounded-xl px-3 py-2 outline-none">
+        </div>
+        <div>
+          <label class="font-bold text-title block mb-1">Observações</label>
+          <textarea id="forn-obs" rows="2" placeholder="Produtos principais, prazos de entrega, etc..." class="input-box w-full border rounded-xl px-3 py-2 outline-none"></textarea>
+        </div>
+      </div>
+      <div class="pt-3 flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-fornecedor')" class="px-4 py-2 text-xs font-semibold text-muted">Cancelar</button>
+        <button onclick="saveFornecedor()" class="touch-btn px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs">Salvar Fornecedor</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: IMPORTAR XML DE NOTA FISCAL (NF-E) -->
+  <div id="modal-importar-xml" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2">
+          <i data-lucide="file-code-2" class="w-4 h-4 text-emerald-500"></i> Importar XML de NF-e (Danfe)
+        </h3>
+        <button onclick="closeModal('modal-importar-xml')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <p class="text-muted">Selecione o arquivo <b>.xml</b> da Nota Fiscal Eletrônica recebida do fornecedor para importar automaticamente itens, quantidades e valores para o estoque e financeiro.</p>
+        
+        <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-2xl p-6 text-center space-y-2 cursor-pointer bg-slate-50/50 dark:bg-slate-800/50 transition-colors" onclick="document.getElementById('xml-file-input').click()">
+          <i data-lucide="upload-cloud" class="w-8 h-8 text-emerald-500 mx-auto"></i>
+          <div class="font-bold text-title text-sm">Clique para carregar o arquivo XML</div>
+          <div class="text-[10px] text-muted font-mono">Formatos aceitos: .xml (Padrão SEFAZ NF-e)</div>
+          <input type="file" id="xml-file-input" accept=".xml" onchange="processarArquivoXml(event)" class="hidden">
+        </div>
+
+        <div id="xml-preview-box" class="p-3.5 bg-slate-100 dark:bg-slate-800 rounded-xl space-y-2 font-mono text-xs hidden"></div>
+      </div>
+
+      <div class="pt-3 flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-importar-xml')" class="px-4 py-2 text-xs font-semibold text-muted">Cancelar</button>
+        <button id="btn-confirmar-xml" onclick="confirmarImportacaoXml()" class="touch-btn px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs hidden">Confirmar e Dar Entrada</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VISUALIZAR DETALHES DA COMPRA -->
+  <div id="modal-view-compra" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="view-compra-title">
+          <i data-lucide="receipt" class="w-4 h-4 text-sky-500"></i> Espelho da Compra
+        </h3>
+        <button onclick="closeModal('modal-view-compra')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="view-compra-body" class="space-y-3 text-xs font-mono"></div>
+      <div class="pt-3 flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-view-compra')" class="px-4 py-2 text-xs font-semibold text-muted">Fechar</button>
+        <button onclick="window.print()" class="touch-btn px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5"><i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimir</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: NOVA / EDITAR CATEGORIA -->
   <div id="modal-category" class="modal-overlay">
     <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
@@ -2421,6 +2804,30 @@
 
   <!-- ==================== APPLICATION ENGINE ==================== -->
   <script>
+    const DEFAULT_FORNECEDORES=[
+      {id:'forn_1',nome:'Vòlia Cosméticos Brasil',cnpj:'28.123.456/0001-90',phone:'(11) 98765-4321',email:'contato@voliacosmeticos.com.br',cidade:'São Paulo/SP',rep:'Mariana Silva',obs:'Fornecedor principal de géis construtores e preparadores'},
+      {id:'forn_2',nome:'Distribuidora Belle Nail Pro',cnpj:'34.987.654/0001-12',phone:'(54) 99888-7766',email:'pedidos@bellenail.com.br',cidade:'Caxias do Sul/RS',rep:'Carlos Eduardo',obs:'Lixas, fibras de vidro e brocas diamantadas'},
+      {id:'forn_3',nome:'Insumos Médicos & Descartáveis Sul',cnpj:'19.456.789/0001-33',phone:'(51) 99111-2233',email:'vendas@suldescartaveis.com.br',cidade:'Porto Alegre/RS',rep:'Fernanda Lima',obs:'Luvas nitrílicas, máscaras e descartáveis'}
+    ];
+    const DEFAULT_COMPRAS=[
+      {
+        id:'cmp_101',
+        codigo:'CMP-101',
+        dataEntrada:todayStr,
+        fornecedorId:'forn_1',
+        fornecedorNome:'Vòlia Cosméticos Brasil',
+        nfNumero:'004829',
+        nfEmissao:todayStr,
+        formaPagamento:'PIX Instantâneo',
+        status:'RECEBIDO',
+        itens:[
+          {produtoId:'st1',nome:'Gel Construtor Vòlia Classic Nude 24g',qtd:5,valorUnit:68.00,subtotal:340.00},
+          {produtoId:'st2',nome:'Top Coat Selante Sem Goma',qtd:4,valorUnit:35.00,subtotal:140.00}
+        ],
+        totalLiquido:480.00,
+        obs:'Reposição de estoque de géis'
+      }
+    ];
     const DEFAULT_CATEGORIES=[
       {id:'cat_rec_procedimentos',name:'Atendimentos & Procedimentos',type:'RECEITA',color:'#10b981',icon:'sparkles'},
       {id:'cat_rec_cursos',name:'Cursos & Treinamentos',type:'RECEITA',color:'#6366f1',icon:'award'},
@@ -2505,6 +2912,12 @@
       accounts:JSON.parse(localStorage.getItem('zp_accounts'))||DEFAULT_ACCOUNTS,
       paymentMethods:JSON.parse(localStorage.getItem('zp_payment_methods'))||DEFAULT_PAYMENT_METHODS,
       caixaMovs:JSON.parse(localStorage.getItem('zp_caixa_movs'))||[],
+      fornecedores:JSON.parse(localStorage.getItem('zp_fornecedores'))||DEFAULT_FORNECEDORES,
+      compras:JSON.parse(localStorage.getItem('zp_compras'))||DEFAULT_COMPRAS,
+      comprasFilterFornecedor:'ALL',
+      comprasFilterMes:new Date().getMonth(),
+      comprasFilterAno:new Date().getFullYear(),
+      modalCompraItens:[],
       categoryTab:'ALL',
       finCatFilter:'ALL',
       finAccFilter:'ALL',
@@ -2547,6 +2960,8 @@
             accounts: state.accounts,
             paymentMethods: state.paymentMethods,
             caixaMovs: state.caixaMovs,
+            fornecedores: state.fornecedores,
+            compras: state.compras,
             stock: state.stock,
             services: state.services,
             professionals: state.professionals,
@@ -2574,6 +2989,8 @@
           if(cloudData.accounts) state.accounts = cloudData.accounts;
           if(cloudData.paymentMethods) state.paymentMethods = cloudData.paymentMethods;
           if(cloudData.caixaMovs) state.caixaMovs = cloudData.caixaMovs;
+          if(cloudData.fornecedores) state.fornecedores = cloudData.fornecedores;
+          if(cloudData.compras) state.compras = cloudData.compras;
           if(cloudData.stock) state.stock = cloudData.stock;
           if(cloudData.services) state.services = cloudData.services;
           if(cloudData.professionals) state.professionals = cloudData.professionals;
@@ -2599,6 +3016,8 @@
       localStorage.setItem('zp_accounts',JSON.stringify(state.accounts));
       localStorage.setItem('zp_payment_methods',JSON.stringify(state.paymentMethods));
       localStorage.setItem('zp_caixa_movs',JSON.stringify(state.caixaMovs));
+      localStorage.setItem('zp_fornecedores',JSON.stringify(state.fornecedores));
+      localStorage.setItem('zp_compras',JSON.stringify(state.compras));
       localStorage.setItem('zp_caixa',JSON.stringify(state.caixa));
       localStorage.setItem('zp_caixas_fechados',JSON.stringify(state.caixasFechados));
       localStorage.setItem('zanettia_theme',state.theme);
@@ -3106,6 +3525,686 @@
       lucide.createIcons();
     }
 
+    // ============== COMPRAS & FORNECEDORES (ESTILO SIMPLES AGENDA) ==============
+    function renderCompras(){
+      // Popula select de fornecedores
+      const selForn = document.getElementById('filtro-compra-fornecedor');
+      if(selForn){
+        const cur = state.comprasFilterFornecedor || 'ALL';
+        selForn.innerHTML = '<option value="ALL">Todos Fornecedores</option>' + 
+          (state.fornecedores||[]).map(f => `<option value="${f.id}" ${cur===f.id?'selected':''}>${f.nome}</option>`).join('');
+      }
+
+      const mes = state.comprasFilterMes !== undefined ? state.comprasFilterMes : new Date().getMonth();
+      const ano = state.comprasFilterAno !== undefined ? state.comprasFilterAno : new Date().getFullYear();
+
+      // Atualiza label de Mês/Ano (Ex: "SETEMBRO 2026")
+      const labelMesAno = document.getElementById('label-compra-mes-ano');
+      if(labelMesAno){
+        labelMesAno.innerText = `${MESES_NOMES[mes].toUpperCase()} ${ano}`;
+      }
+
+      // Filtros
+      const fornId = selForn ? selForn.value : 'ALL';
+      const dataIni = document.getElementById('filtro-compra-data-ini')?.value || '';
+      const dataFim = document.getElementById('filtro-compra-data-fim')?.value || '';
+      const prodBusca = (document.getElementById('filtro-compra-produto')?.value || '').toLowerCase().trim();
+
+      const mesStr = (mes + 1).toString().padStart(2, '0');
+      const prefixMes = `${ano}-${mesStr}`;
+
+      // Total no Ano (todas as compras do ano selecionado)
+      const prefixAno = `${ano}-`;
+      const totalAno = (state.compras||[]).filter(c => (c.dataEntrada || '').startsWith(prefixAno)).reduce((s,c) => s + Number(c.totalLiquido||0), 0);
+      if(document.getElementById('compras-kpi-ano')) document.getElementById('compras-kpi-ano').innerText = fmt(totalAno);
+
+      // Filtragem das compras
+      let list = state.compras || [];
+
+      // Filtro Fornecedor
+      if(fornId !== 'ALL'){
+        list = list.filter(c => c.fornecedorId === fornId);
+      }
+
+      // Filtro Período ou Mês
+      if(dataIni && dataFim){
+        list = list.filter(c => (c.dataEntrada >= dataIni && c.dataEntrada <= dataFim));
+        if(document.getElementById('compras-kpi-mes-label')){
+          document.getElementById('compras-kpi-mes-label').innerText = `Total (${fmtDate(dataIni)} a ${fmtDate(dataFim)})`;
+        }
+      } else {
+        list = list.filter(c => (c.dataEntrada || '').startsWith(prefixMes));
+        if(document.getElementById('compras-kpi-mes-label')){
+          document.getElementById('compras-kpi-mes-label').innerText = `Total de Compras (${MESES_NOMES[mes]})`;
+        }
+      }
+
+      // Filtro por Produto
+      if(prodBusca){
+        list = list.filter(c => (c.itens||[]).some(it => (it.nome||'').toLowerCase().includes(prodBusca)));
+      }
+
+      // Total filtrado
+      const totalFiltrado = list.reduce((s,c) => s + Number(c.totalLiquido||0), 0);
+      if(document.getElementById('compras-kpi-mes')) document.getElementById('compras-kpi-mes').innerText = fmt(totalFiltrado);
+
+      // Renderiza Tabela
+      const tbody = document.getElementById('compras-tbody');
+      if(!tbody) return;
+
+      if(list.length === 0){
+        tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center text-muted text-xs">Não há compras para o filtro atual.</td></tr>';
+        return;
+      }
+
+      // Ordenar mais recentes primeiro
+      const sorted = [...list].sort((a,b) => (b.dataEntrada||'').localeCompare(a.dataEntrada||''));
+
+      tbody.innerHTML = sorted.map(c => {
+        const forn = (state.fornecedores||[]).find(f => f.id === c.fornecedorId);
+        const fornNome = forn ? forn.nome : (c.fornecedorNome || 'Fornecedor Avulso');
+
+        return `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
+            <td class="p-3 font-bold font-mono text-sky-600 dark:text-sky-400">${c.codigo || '#CMP-' + c.id.slice(-4)}</td>
+            <td class="p-3 text-muted font-mono whitespace-nowrap">${fmtDate(c.dataEntrada)}</td>
+            <td class="p-3 font-bold text-title">
+              <span class="inline-flex items-center gap-1.5">
+                <i data-lucide="truck" class="w-3.5 h-3.5 text-slate-400"></i>
+                ${fornNome}
+              </span>
+            </td>
+            <td class="p-3 text-muted font-mono">${c.nfNumero || '—'}</td>
+            <td class="p-3 text-muted font-mono whitespace-nowrap">${c.nfEmissao ? fmtDate(c.nfEmissao) : '—'}</td>
+            <td class="p-3 text-right font-black font-mono text-sm text-title whitespace-nowrap">${fmt(c.totalLiquido)}</td>
+            <td class="p-3 text-right flex items-center justify-end gap-1.5 whitespace-nowrap">
+              <button onclick="viewCompra('${c.id}')" title="Visualizar Detalhes" class="p-1.5 text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/40 rounded-lg">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+              <button onclick="deleteCompra('${c.id}')" title="Excluir Compra" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function navegarMesCompra(delta){
+      let mes = state.comprasFilterMes !== undefined ? state.comprasFilterMes : new Date().getMonth();
+      let ano = state.comprasFilterAno !== undefined ? state.comprasFilterAno : new Date().getFullYear();
+
+      mes += delta;
+      if(mes > 11){ mes = 0; ano++; }
+      if(mes < 0){ mes = 11; ano--; }
+
+      state.comprasFilterMes = mes;
+      state.comprasFilterAno = ano;
+
+      // Limpa período personalizado para priorizar o mês
+      const dtIni = document.getElementById('filtro-compra-data-ini');
+      const dtFim = document.getElementById('filtro-compra-data-fim');
+      if(dtIni) dtIni.value = '';
+      if(dtFim) dtFim.value = '';
+
+      renderCompras();
+    }
+
+    function resetFiltrosCompras(){
+      state.comprasFilterMes = new Date().getMonth();
+      state.comprasFilterAno = new Date().getFullYear();
+      state.comprasFilterFornecedor = 'ALL';
+
+      const sel = document.getElementById('filtro-compra-fornecedor');
+      if(sel) sel.value = 'ALL';
+      const dtIni = document.getElementById('filtro-compra-data-ini');
+      if(dtIni) dtIni.value = '';
+      const dtFim = document.getElementById('filtro-compra-data-fim');
+      if(dtFim) dtFim.value = '';
+      const prod = document.getElementById('filtro-compra-produto');
+      if(prod) prod.value = '';
+
+      renderCompras();
+    }
+
+    function onFiltroComprasChange(){
+      state.comprasFilterFornecedor = document.getElementById('filtro-compra-fornecedor')?.value || 'ALL';
+      renderCompras();
+    }
+
+    function openNovaCompraModal(){
+      document.getElementById('compra-edit-id').value = '';
+      document.getElementById('compra-data-entrada').value = todayStr;
+      document.getElementById('compra-nf-numero').value = '';
+      document.getElementById('compra-nf-emissao').value = todayStr;
+      document.getElementById('item-prod-input').value = '';
+      document.getElementById('item-qtd-input').value = '1';
+      document.getElementById('item-custo-input').value = '';
+
+      // Popula fornecedor
+      const selForn = document.getElementById('compra-fornecedor');
+      if(selForn){
+        selForn.innerHTML = (state.fornecedores||[]).map(f => `<option value="${f.id}">${f.nome} (${f.cidade||'Geral'})` + '</option>').join('');
+      }
+
+      // Popula formas de pagamento
+      const selForma = document.getElementById('compra-forma-pagamento');
+      if(selForma){
+        selForma.innerHTML = (state.paymentMethods||[]).map(pm => `<option value="${pm.name}">${pm.name}</option>`).join('');
+      }
+
+      // Popula datalist de produtos
+      const datalist = document.getElementById('lista-produtos-estoque');
+      if(datalist){
+        datalist.innerHTML = (state.stock||[]).map(st => `<option value="${st.name}">`).join('');
+      }
+
+      state.modalCompraItens = [];
+      renderModalCompraItens();
+
+      document.getElementById('compra-modal-title').innerHTML = '<i data-lucide="shopping-bag" class="w-4 h-4 text-sky-500"></i> Lançar Nova Compra';
+      openModal('modal-compra');
+      lucide.createIcons();
+    }
+
+    function adicionarItemCompra(){
+      const prodNome = document.getElementById('item-prod-input').value.trim();
+      const qtd = parseInt(document.getElementById('item-qtd-input').value) || 0;
+      const custo = parseFloat(document.getElementById('item-custo-input').value) || 0;
+
+      if(!prodNome || qtd <= 0 || custo <= 0){
+        return alert('Preencha o nome do produto, quantidade maior que zero e custo unitário.');
+      }
+
+      // Procura se o produto já existe no estoque para vincular o ID
+      const st = (state.stock||[]).find(s => s.name.toLowerCase() === prodNome.toLowerCase());
+      const produtoId = st ? st.id : ('st_' + Date.now());
+
+      state.modalCompraItens.push({
+        produtoId,
+        nome: prodNome,
+        qtd,
+        valorUnit: custo,
+        subtotal: qtd * custo
+      });
+
+      // Limpa campos
+      document.getElementById('item-prod-input').value = '';
+      document.getElementById('item-qtd-input').value = '1';
+      document.getElementById('item-custo-input').value = '';
+      document.getElementById('item-prod-input').focus();
+
+      renderModalCompraItens();
+    }
+
+    function removerItemCompra(idx){
+      state.modalCompraItens.splice(idx, 1);
+      renderModalCompraItens();
+    }
+
+    function renderModalCompraItens(){
+      const tbody = document.getElementById('compra-itens-tbody');
+      const totalDisplay = document.getElementById('compra-total-display');
+      if(!tbody) return;
+
+      if(state.modalCompraItens.length === 0){
+        tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-muted text-[11px]">Nenhum item adicionado ainda. Preencha acima e clique em "+ Item".</td></tr>';
+        if(totalDisplay) totalDisplay.innerText = fmt(0);
+        return;
+      }
+
+      let total = 0;
+      tbody.innerHTML = state.modalCompraItens.map((it, idx) => {
+        total += it.subtotal;
+        return `
+          <tr class="hover:bg-slate-100 dark:hover:bg-slate-700/40">
+            <td class="py-2 font-bold text-title">${it.nome}</td>
+            <td class="py-2 text-center font-mono">${it.qtd}</td>
+            <td class="py-2 text-right font-mono">${fmt(it.valorUnit)}</td>
+            <td class="py-2 text-right font-bold font-mono text-title">${fmt(it.subtotal)}</td>
+            <td class="py-2 text-right">
+              <button type="button" onclick="removerItemCompra(${idx})" class="p-1 text-rose-500 hover:text-rose-700"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      if(totalDisplay) totalDisplay.innerText = fmt(total);
+      lucide.createIcons();
+    }
+
+    function saveCompra(){
+      const fornId = document.getElementById('compra-fornecedor').value;
+      const dataEntrada = document.getElementById('compra-data-entrada').value || todayStr;
+      const nfNumero = document.getElementById('compra-nf-numero').value.trim();
+      const nfEmissao = document.getElementById('compra-nf-emissao').value;
+      const formaPagamento = document.getElementById('compra-forma-pagamento').value;
+      const autoEstoque = document.getElementById('compra-auto-estoque').checked;
+      const autoFinanceiro = document.getElementById('compra-auto-financeiro').checked;
+
+      if(!fornId) return alert('Selecione um fornecedor.');
+      if(state.modalCompraItens.length === 0) return alert('Adicione pelo menos um item na compra.');
+
+      const forn = (state.fornecedores||[]).find(f => f.id === fornId);
+      const fornNome = forn ? forn.nome : 'Fornecedor';
+
+      const totalLiquido = state.modalCompraItens.reduce((s,it) => s + it.subtotal, 0);
+      const compraId = 'cmp_' + Date.now();
+      const codigo = '#CMP-' + Math.floor(100 + Math.random() * 900);
+
+      const novaCompra = {
+        id: compraId,
+        codigo,
+        dataEntrada,
+        fornecedorId: fornId,
+        fornecedorNome: fornNome,
+        nfNumero,
+        nfEmissao,
+        formaPagamento,
+        status: 'RECEBIDO',
+        itens: [...state.modalCompraItens],
+        totalLiquido,
+        autoEstoque,
+        autoFinanceiro
+      };
+
+      state.compras.unshift(novaCompra);
+
+      // 1. Atualizar Estoque Automaticamente
+      if(autoEstoque){
+        novaCompra.itens.forEach(it => {
+          let st = (state.stock||[]).find(s => s.name.toLowerCase() === it.nome.toLowerCase() || s.id === it.produtoId);
+          if(st){
+            st.qty = Number(st.qty || 0) + Number(it.qtd || 0);
+            st.cost = Number(it.valorUnit || st.cost);
+          } else {
+            state.stock.push({
+              id: it.produtoId || ('st_' + Date.now()),
+              name: it.nome,
+              cat: 'Geral',
+              qty: it.qtd,
+              min: 2,
+              cost: it.valorUnit
+            });
+          }
+        });
+      }
+
+      // 2. Lançar despesa no Financeiro
+      if(autoFinanceiro){
+        state.financial.push({
+          id: 'f_' + Date.now(),
+          date: dataEntrada,
+          type: 'DESPESA',
+          category: 'Insumos & Estoque',
+          desc: `Compra ${codigo} (${fornNome}) - NF ${nfNumero || 'S/N'}`,
+          method: formaPagamento.toUpperCase().includes('DINHEIRO') ? 'DINHEIRO' : (formaPagamento.toUpperCase().includes('PIX') ? 'PIX' : 'CARTAO_DEBITO'),
+          accountId: 'acc_nubank',
+          value: totalLiquido
+        });
+      }
+
+      persistState();
+      closeModal('modal-compra');
+      renderCompras();
+      if(state.currentTab === 'estoque') renderStock();
+      if(state.currentTab === 'financeiro-lancamentos') renderFinancialScreen();
+      confetti({ particleCount: 50, spread: 70 });
+      alert(`Compra ${codigo} registrada com sucesso! ✅ Estoque e financeiro sincronizados.`);
+    }
+
+    function viewCompra(id){
+      const c = (state.compras||[]).find(x => x.id === id);
+      if(!c) return;
+
+      const body = document.getElementById('view-compra-body');
+      if(!body) return;
+
+      body.innerHTML = `
+        <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl space-y-1.5 border border-slate-200 dark:border-slate-700">
+          <div class="flex justify-between"><span class="text-muted">Código da Compra:</span><b class="text-title text-sm">${c.codigo}</b></div>
+          <div class="flex justify-between"><span class="text-muted">Fornecedor:</span><b class="text-title">${c.fornecedorNome}</b></div>
+          <div class="flex justify-between"><span class="text-muted">Data Entrada:</span><span>${fmtDate(c.dataEntrada)}</span></div>
+          <div class="flex justify-between"><span class="text-muted">Nota Fiscal (NF):</span><span>${c.nfNumero || 'Sem NF'} (Emissão: ${c.nfEmissao ? fmtDate(c.nfEmissao) : '—'})</span></div>
+          <div class="flex justify-between"><span class="text-muted">Forma de Pagamento:</span><span>${c.formaPagamento || 'PIX'}</span></div>
+        </div>
+
+        <div class="space-y-1 pt-2">
+          <div class="font-bold text-title uppercase text-[11px] flex justify-between border-b pb-1">
+            <span>Itens da Nota</span>
+            <span>Total</span>
+          </div>
+          ${(c.itens||[]).map(it => `
+            <div class="flex justify-between py-1 text-xs border-b border-slate-100 dark:border-slate-800">
+              <div><b>${it.nome}</b> <span class="text-muted text-[10px]">(${it.qtd} x ${fmt(it.valorUnit)})</span></div>
+              <div class="font-bold text-title">${fmt(it.subtotal)}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="flex justify-between text-base font-black text-title pt-3 border-t-2 border-slate-800 dark:border-slate-600">
+          <span>TOTAL LÍQUIDO:</span>
+          <span class="text-sky-600 dark:text-sky-400">${fmt(c.totalLiquido)}</span>
+        </div>
+      `;
+
+      openModal('modal-view-compra');
+      lucide.createIcons();
+    }
+
+    function deleteCompra(id){
+      const c = (state.compras||[]).find(x => x.id === id);
+      if(!c) return;
+
+      if(confirm(`Deseja realmente excluir a compra ${c.codigo} de ${c.fornecedorNome} (${fmt(c.totalLiquido)})?`)){
+        state.compras = state.compras.filter(x => x.id !== id);
+        persistState();
+        renderCompras();
+        alert('Compra excluída com sucesso.');
+      }
+    }
+
+    // ============== IMPORTADOR DE XML NF-E ==============
+    function openImportarXmlModal(){
+      const fileInput = document.getElementById('xml-file-input');
+      if(fileInput) fileInput.value = '';
+      const preview = document.getElementById('xml-preview-box');
+      if(preview){ preview.classList.add('hidden'); preview.innerHTML = ''; }
+      const btn = document.getElementById('btn-confirmar-xml');
+      if(btn) btn.classList.add('hidden');
+      state.parsedXmlCompra = null;
+      openModal('modal-importar-xml');
+      lucide.createIcons();
+    }
+
+    function processarArquivoXml(event){
+      const file = event.target.files[0];
+      if(!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e){
+        try {
+          const xmlText = e.target.result;
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+
+          // Extração SEFAZ NF-e
+          const nNF = xmlDoc.querySelector('ide > nNF')?.textContent || '00' + Math.floor(1000 + Math.random() * 9000);
+          const dhEmi = (xmlDoc.querySelector('ide > dhEmi')?.textContent || xmlDoc.querySelector('ide > dEmi')?.textContent || todayStr).slice(0, 10);
+          
+          const emitNome = xmlDoc.querySelector('emit > xNome')?.textContent || xmlDoc.querySelector('emit > xFant')?.textContent || 'Distribuidora Fornecedora';
+          const emitCNPJ = xmlDoc.querySelector('emit > CNPJ')?.textContent || '';
+          const emitUF = xmlDoc.querySelector('emit > enderEmit > UF')?.textContent || 'SP';
+          const emitMun = xmlDoc.querySelector('emit > enderEmit > xMun')?.textContent || 'São Paulo';
+
+          // Itens
+          const dets = xmlDoc.querySelectorAll('det');
+          const itens = [];
+          let totalCalc = 0;
+
+          dets.forEach(det => {
+            const xProd = det.querySelector('prod > xProd')?.textContent || 'Produto';
+            const qCom = parseFloat(det.querySelector('prod > qCom')?.textContent || '1');
+            const vUnCom = parseFloat(det.querySelector('prod > vUnCom')?.textContent || '0');
+            const vProd = parseFloat(det.querySelector('prod > vProd')?.textContent || (qCom * vUnCom).toString());
+            totalCalc += vProd;
+
+            itens.push({
+              nome: xProd,
+              qtd: Math.round(qCom),
+              valorUnit: vUnCom,
+              subtotal: vProd
+            });
+          });
+
+          const vNF = parseFloat(xmlDoc.querySelector('total > ICMSTot > vNF')?.textContent || totalCalc.toString());
+
+          state.parsedXmlCompra = {
+            nNF,
+            dhEmi,
+            emitNome,
+            emitCNPJ,
+            cidade: `${emitMun}/${emitUF}`,
+            itens,
+            totalLiquido: vNF
+          };
+
+          const preview = document.getElementById('xml-preview-box');
+          if(preview){
+            preview.classList.remove('hidden');
+            preview.innerHTML = `
+              <div class="text-emerald-600 dark:text-emerald-400 font-bold text-xs flex items-center gap-1.5"><i data-lucide="check-circle" class="w-4 h-4"></i> XML Validado com Sucesso!</div>
+              <div><b>Fornecedor:</b> ${emitNome} (${emitCNPJ || 'CNPJ verificado'})</div>
+              <div><b>Nota Fiscal:</b> NF ${nNF} • Emissão: ${fmtDate(dhEmi)}</div>
+              <div><b>Itens Identificados:</b> ${itens.length} produtos</div>
+              <div class="text-title font-black text-sm pt-1 border-t border-slate-300 dark:border-slate-700 flex justify-between">
+                <span>VALOR TOTAL NF:</span>
+                <span class="text-emerald-600 dark:text-emerald-400">${fmt(vNF)}</span>
+              </div>
+            `;
+            lucide.createIcons();
+          }
+
+          const btn = document.getElementById('btn-confirmar-xml');
+          if(btn) btn.classList.remove('hidden');
+
+        } catch(err){
+          alert('Erro ao processar o arquivo XML: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function confirmarImportacaoXml(){
+      if(!state.parsedXmlCompra) return;
+      const data = state.parsedXmlCompra;
+
+      // 1. Cadastra Fornecedor se não existir
+      let forn = (state.fornecedores||[]).find(f => (data.emitCNPJ && f.cnpj === data.emitCNPJ) || f.nome.toLowerCase() === data.emitNome.toLowerCase());
+      if(!forn){
+        forn = {
+          id: 'forn_' + Date.now(),
+          nome: data.emitNome,
+          cnpj: data.emitCNPJ || '',
+          phone: '(00) 00000-0000',
+          email: '',
+          cidade: data.cidade,
+          rep: '',
+          obs: 'Cadastrado automaticamente via importação de XML NF-e'
+        };
+        state.fornecedores.push(forn);
+      }
+
+      // 2. Cria Compra
+      const codigo = '#CMP-' + Math.floor(100 + Math.random() * 900);
+      const novaCompra = {
+        id: 'cmp_' + Date.now(),
+        codigo,
+        dataEntrada: todayStr,
+        fornecedorId: forn.id,
+        fornecedorNome: forn.nome,
+        nfNumero: data.nNF,
+        nfEmissao: data.dhEmi,
+        formaPagamento: 'Boleto / Transferência',
+        status: 'RECEBIDO',
+        itens: data.itens,
+        totalLiquido: data.totalLiquido,
+        obs: 'Importado de arquivo XML NF-e'
+      };
+      state.compras.unshift(novaCompra);
+
+      // 3. Atualiza Estoque
+      data.itens.forEach(it => {
+        let st = (state.stock||[]).find(s => s.name.toLowerCase() === it.nome.toLowerCase());
+        if(st){
+          st.qty = Number(st.qty || 0) + Number(it.qtd || 0);
+          st.cost = Number(it.valorUnit || st.cost);
+        } else {
+          state.stock.push({
+            id: 'st_' + Date.now() + '_' + Math.floor(Math.random()*100),
+            name: it.nome,
+            cat: 'Geral',
+            qty: it.qtd,
+            min: 2,
+            cost: it.valorUnit
+          });
+        }
+      });
+
+      // 4. Lança despesa no Financeiro
+      state.financial.push({
+        id: 'f_' + Date.now(),
+        date: todayStr,
+        type: 'DESPESA',
+        category: 'Insumos & Estoque',
+        desc: `Entrada XML NF ${data.nNF} (${forn.nome})`,
+        method: 'BOLETO',
+        accountId: 'acc_nubank',
+        value: data.totalLiquido
+      });
+
+      persistState();
+      closeModal('modal-importar-xml');
+      renderCompras();
+      if(state.currentTab === 'estoque') renderStock();
+      if(state.currentTab === 'financeiro-lancamentos') renderFinancialScreen();
+      confetti({ particleCount: 70, spread: 80 });
+      alert(`Nota Fiscal NF ${data.nNF} importada com sucesso! 📦 ${data.itens.length} itens deram entrada no estoque e financeiro.`);
+    }
+
+    // ============== FORNECEDORES ==============
+    function renderFornecedores(){
+      const forns = state.fornecedores || [];
+
+      // KPIs
+      const totalForns = forns.length;
+      const mesStr = (new Date().getMonth() + 1).toString().padStart(2, '0');
+      const prefixMes = `${new Date().getFullYear()}-${mesStr}`;
+
+      const comprasMes = (state.compras||[]).filter(c => (c.dataEntrada||'').startsWith(prefixMes)).length;
+      const totalPago = (state.compras||[]).reduce((s,c) => s + Number(c.totalLiquido||0), 0);
+
+      if(document.getElementById('forn-kpi-total')) document.getElementById('forn-kpi-total').innerText = totalForns;
+      if(document.getElementById('forn-kpi-compras-mes')) document.getElementById('forn-kpi-compras-mes').innerText = comprasMes + ' pedidos';
+      if(document.getElementById('forn-kpi-total-pago')) document.getElementById('forn-kpi-total-pago').innerText = fmt(totalPago);
+
+      const tbody = document.getElementById('fornecedores-tbody');
+      if(!tbody) return;
+
+      if(forns.length === 0){
+        tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-muted text-xs">Nenhum fornecedor cadastrado. Clique em "+ Novo Fornecedor".</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = forns.map(f => {
+        const rawPhone = (f.phone || '').replace(/\D/g, '');
+        const zapUrl = rawPhone ? `https://wa.me/55${rawPhone}?text=${encodeURIComponent('Olá! Gostaria de fazer uma cotação/pedido de reposição de insumos para o estúdio.')}` : '#';
+
+        return `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
+            <td class="p-3 font-bold text-title">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs">
+                  <i data-lucide="truck" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <span class="block">${f.nome}</span>
+                  ${f.obs ? `<span class="text-[10px] text-muted font-normal block truncate max-w-xs">${f.obs}</span>` : ''}
+                </div>
+              </div>
+            </td>
+            <td class="p-3 text-muted font-mono whitespace-nowrap">${f.cnpj || '—'}</td>
+            <td class="p-3 whitespace-nowrap">
+              ${rawPhone ? `
+                <a href="${zapUrl}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 font-mono text-xs font-semibold">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+                  ${f.phone}
+                </a>
+              ` : '<span class="text-muted">—</span>'}
+            </td>
+            <td class="p-3 text-muted whitespace-nowrap">${f.cidade || '—'}</td>
+            <td class="p-3 text-title font-medium whitespace-nowrap">${f.rep || '—'}</td>
+            <td class="p-3 text-right flex items-center justify-end gap-1.5 whitespace-nowrap">
+              <button onclick="openFornecedorModal('${f.id}')" title="Editar" class="p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-lg"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+              <button onclick="deleteFornecedor('${f.id}')" title="Excluir" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function openFornecedorModal(id){
+      const f = (state.fornecedores||[]).find(x => x.id === id);
+      document.getElementById('forn-edit-id').value = f ? f.id : '';
+      document.getElementById('forn-nome').value = f ? f.nome : '';
+      document.getElementById('forn-cnpj').value = f ? (f.cnpj || '') : '';
+      document.getElementById('forn-phone').value = f ? (f.phone || '') : '';
+      document.getElementById('forn-email').value = f ? (f.email || '') : '';
+      document.getElementById('forn-cidade').value = f ? (f.cidade || '') : '';
+      document.getElementById('forn-rep').value = f ? (f.rep || '') : '';
+      document.getElementById('forn-obs').value = f ? (f.obs || '') : '';
+
+      document.getElementById('forn-modal-title').innerHTML = '<i data-lucide="truck" class="w-4 h-4 text-blue-500"></i> ' + (f ? 'Editar Fornecedor' : 'Novo Fornecedor');
+      openModal('modal-fornecedor');
+      lucide.createIcons();
+    }
+
+    function saveFornecedor(){
+      const id = document.getElementById('forn-edit-id').value;
+      const nome = document.getElementById('forn-nome').value.trim();
+      const cnpj = document.getElementById('forn-cnpj').value.trim();
+      const phone = document.getElementById('forn-phone').value.trim();
+      const email = document.getElementById('forn-email').value.trim();
+      const cidade = document.getElementById('forn-cidade').value.trim();
+      const rep = document.getElementById('forn-rep').value.trim();
+      const obs = document.getElementById('forn-obs').value.trim();
+
+      if(!nome) return alert('Informe o nome ou razão social do fornecedor.');
+
+      if(id){
+        const f = state.fornecedores.find(x => x.id === id);
+        if(f) Object.assign(f, { nome, cnpj, phone, email, cidade, rep, obs });
+      } else {
+        state.fornecedores.push({
+          id: 'forn_' + Date.now(),
+          nome,
+          cnpj,
+          phone,
+          email,
+          cidade,
+          rep,
+          obs
+        });
+      }
+
+      persistState();
+      closeModal('modal-fornecedor');
+      renderFornecedores();
+      if(state.currentTab === 'compras-lista') renderCompras();
+      confetti({ particleCount: 30, spread: 50 });
+    }
+
+    function deleteFornecedor(id){
+      const f = (state.fornecedores||[]).find(x => x.id === id);
+      if(!f) return;
+
+      const emUso = (state.compras||[]).some(c => c.fornecedorId === f.id);
+      if(emUso){
+        return alert(`O fornecedor "${f.nome}" possui compras vinculadas. Remova ou altere as compras antes de excluí-lo.`);
+      }
+
+      if(confirm(`Deseja realmente excluir o fornecedor "${f.nome}"?`)){
+        state.fornecedores = state.fornecedores.filter(x => x.id !== id);
+        persistState();
+        renderFornecedores();
+        if(state.currentTab === 'compras-lista') renderCompras();
+      }
+    }
+
     // ============== THEME ==============
     function applyTheme(){
       const h=document.documentElement;
@@ -3148,6 +4247,8 @@
       if(tabId==='financeiro-formas-pagamento')renderFormasPagamento();
       if(tabId==='analise-anual')renderAnaliseAnual();
       if(tabId==='analise-mensal')renderAnaliseMensal();
+      if(tabId==='compras-lista')renderCompras();
+      if(tabId==='compras-fornecedores')renderFornecedores();
       if(tabId==='consultas')renderConsulta();
       if(tabId==='produtos-servicos')renderServices();
       if(tabId==='estoque')renderStock();
