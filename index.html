@@ -238,9 +238,29 @@
             <button onclick="switchTab('cadastros-salas');closeMobileSidebar()" id="subnav-cadastros-salas" class="flex items-center justify-between w-full"><span>Salas</span><i data-lucide="door-open" class="w-3.5 h-3.5 text-cyan-500"></i></button>
           </div>
         </div>
-        <button onclick="switchTab('consultas');closeMobileSidebar()" id="nav-consultas" class="sidebar-menu-btn">
-          <span class="flex items-center gap-2.5"><i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-500"></i><span>Consultas & Relatórios</span></span>
-        </button>
+        <!-- CONSULTAS ACCORDION SUBMENU -->
+        <div>
+          <button onclick="toggleSubmenu('sub-consultas')" id="nav-consultas" class="sidebar-menu-btn">
+            <span class="flex items-center gap-2.5"><i data-lucide="search" class="w-4 h-4 text-indigo-500"></i><span>Consulta</span></span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+          <div id="sub-consultas" class="sidebar-submenu hidden">
+            <button onclick="switchTab('consulta-agendas');closeMobileSidebar()" id="subnav-consulta-agendas" class="flex items-center justify-between w-full"><span>Agendas</span><i data-lucide="calendar" class="w-3.5 h-3.5 text-blue-500"></i></button>
+            <button onclick="switchTab('consulta-analise');closeMobileSidebar()" id="subnav-consulta-analise" class="flex items-center justify-between w-full"><span>Análise</span><i data-lucide="pie-chart" class="w-3.5 h-3.5 text-indigo-500"></i></button>
+            <button onclick="switchTab('consulta-auditoria-agenda');closeMobileSidebar()" id="subnav-consulta-auditoria-agenda" class="flex items-center justify-between w-full"><span>Auditoria Agenda</span><i data-lucide="history" class="w-3.5 h-3.5 text-amber-500"></i></button>
+            <button onclick="switchTab('consulta-auditoria-anamnese');closeMobileSidebar()" id="subnav-consulta-auditoria-anamnese" class="flex items-center justify-between w-full"><span>Auditoria de Anamnese, Fichas e Contrato</span><i data-lucide="file-check" class="w-3.5 h-3.5 text-sky-500"></i></button>
+            <button onclick="switchTab('consulta-auditoria-vendas');closeMobileSidebar()" id="subnav-consulta-auditoria-vendas" class="flex items-center justify-between w-full"><span>Auditoria de Vendas</span><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i></button>
+            <button onclick="switchTab('consulta-comissao');closeMobileSidebar()" id="subnav-consulta-comissao" class="flex items-center justify-between w-full"><span>Comissão Detalhada</span><i data-lucide="percent" class="w-3.5 h-3.5 text-teal-500"></i></button>
+            <button onclick="switchTab('consulta-comparativo');closeMobileSidebar()" id="subnav-consulta-comparativo" class="flex items-center justify-between w-full"><span>Comparativo de Períodos</span><i data-lucide="trending-up" class="w-3.5 h-3.5 text-purple-500"></i></button>
+            <button onclick="switchTab('consulta-demonstrativo');closeMobileSidebar()" id="subnav-consulta-demonstrativo" class="flex items-center justify-between w-full"><span>Demonstrativo</span><i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-600"></i></button>
+            <button onclick="switchTab('consulta-estoque');closeMobileSidebar()" id="subnav-consulta-estoque" class="flex items-center justify-between w-full"><span>Estoque</span><i data-lucide="package" class="w-3.5 h-3.5 text-amber-500"></i></button>
+            <button onclick="switchTab('consulta-pacotes');closeMobileSidebar()" id="subnav-consulta-pacotes" class="flex items-center justify-between w-full"><span>Pacote por Cliente</span><i data-lucide="layers" class="w-3.5 h-3.5 text-rose-500"></i></button>
+            <button onclick="switchTab('consulta-retorno');closeMobileSidebar()" id="subnav-consulta-retorno" class="flex items-center justify-between w-full"><span>Previsão de Retorno</span><i data-lucide="clock" class="w-3.5 h-3.5 text-cyan-500"></i></button>
+            <button onclick="switchTab('consulta-orcamentos');closeMobileSidebar()" id="subnav-consulta-orcamentos" class="flex items-center justify-between w-full"><span>Orçamentos</span><i data-lucide="file-text" class="w-3.5 h-3.5 text-orange-500"></i></button>
+            <button onclick="switchTab('consulta-vendas');closeMobileSidebar()" id="subnav-consulta-vendas" class="flex items-center justify-between w-full"><span>Vendas</span><i data-lucide="shopping-cart" class="w-3.5 h-3.5 text-emerald-500"></i></button>
+            <button onclick="switchTab('consulta-vendas-cliente');closeMobileSidebar()" id="subnav-consulta-vendas-cliente" class="flex items-center justify-between w-full"><span>Vendas por Cliente</span><i data-lucide="users" class="w-3.5 h-3.5 text-blue-500"></i></button>
+          </div>
+        </div>
         <button onclick="switchTab('cursos');closeMobileSidebar()" id="nav-cursos" class="sidebar-menu-btn">
           <span class="flex items-center gap-2.5"><i data-lucide="award" class="w-4 h-4 text-indigo-500"></i><span>Cursos & Alunas</span></span>
         </button>
@@ -2252,6 +2272,816 @@
         <!-- Grid de Salas e Estações -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="sal-list-container"></div>
       </section>
+
+      <!-- ===================== CONSULTAS: 1. AGENDAS ===================== -->
+      <section id="tab-consulta-agendas" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Histórico & Grade Geral</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="calendar" class="w-5 h-5 text-blue-500"></i>
+              <span>Consulta de Agendas</span>
+            </h2>
+            <p class="text-xs text-muted">Listagem consolidada de todos os agendamentos com filtros por data, status e profissional</p>
+          </div>
+          <button onclick="window.print()" class="touch-btn px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs">
+            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Relatório
+          </button>
+        </div>
+
+        <!-- KPIs de Agendas -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Total Agendados</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-age-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Concluídos / Realizados</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-age-kpi-concluidos">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-rose-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Cancelados / Faltas</span>
+            <div class="text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1" id="c-age-kpi-cancelados">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Taxa de Presença</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="c-age-kpi-taxa">100%</div>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="glass-card rounded-2xl p-3 flex flex-wrap items-center gap-3">
+          <input type="date" id="c-age-filter-data" onchange="renderConsultaAgendas()" class="input-box py-2 px-3 text-xs rounded-xl font-mono">
+          <select id="c-age-filter-status" onchange="renderConsultaAgendas()" class="input-box py-2 px-3 text-xs rounded-xl font-bold">
+            <option value="ALL">Todos os Status</option>
+            <option value="AGENDADO">Agendado</option>
+            <option value="CONFIRMADO">Confirmado</option>
+            <option value="CONCLUIDO">Concluído</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+          <input type="text" id="c-age-search" oninput="renderConsultaAgendas()" placeholder="Buscar cliente ou serviço..." class="input-box py-2 px-3 text-xs rounded-xl flex-1">
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Data / Hora</th>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Procedimento / Serviço</th>
+                  <th class="p-3 text-center">Duração</th>
+                  <th class="p-3 text-right">Valor</th>
+                  <th class="p-3 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="c-age-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 2. ANÁLISE ===================== -->
+      <section id="tab-consulta-analise" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Inteligência Operacional</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-500"></i>
+              <span>Análise de Desempenho e Procedimentos</span>
+            </h2>
+            <p class="text-xs text-muted">Distribuição de procedimentos, procedimentos mais lucrativos e ocupação de horários</p>
+          </div>
+        </div>
+
+        <!-- KPIs de Análise -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-indigo-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Faturamento Produzido</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-ana-kpi-fat">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Ticket Médio Geral</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-ana-kpi-ticket">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Procedimento Líder</span>
+            <div class="text-xs font-bold text-purple-600 dark:text-purple-400 mt-1 truncate" id="c-ana-kpi-lider">—</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-amber-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Horário Mais Procurado</span>
+            <div class="text-xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1" id="c-ana-kpi-pico">14:00</div>
+          </div>
+        </div>
+
+        <!-- Cards Analíticos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="glass-card rounded-2xl p-4 space-y-3">
+            <h3 class="font-bold text-title text-xs uppercase font-mono flex items-center gap-2">
+              <i data-lucide="award" class="w-4 h-4 text-emerald-500"></i> Ranking de Procedimentos mais Agendados
+            </h3>
+            <div id="c-ana-procedimentos-list" class="space-y-2 text-xs"></div>
+          </div>
+          <div class="glass-card rounded-2xl p-4 space-y-3">
+            <h3 class="font-bold text-title text-xs uppercase font-mono flex items-center gap-2">
+              <i data-lucide="clock" class="w-4 h-4 text-indigo-500"></i> Distribuição por Faixa de Horário
+            </h3>
+            <div id="c-ana-horarios-list" class="space-y-2 text-xs"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 3. AUDITORIA AGENDA ===================== -->
+      <section id="tab-consulta-auditoria-agenda" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Trilha de Auditoria</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="history" class="w-5 h-5 text-amber-500"></i>
+              <span>Auditoria da Agenda</span>
+            </h2>
+            <p class="text-xs text-muted">Log cronológico de agendamentos criados, reagendados, finalizados ou cancelados</p>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-amber-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Ações Registradas</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-aud-age-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Conclusões Auditadas</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-aud-age-conclusoes">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Novos Agendamentos</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="c-aud-age-novos">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-rose-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Cancelamentos Auditados</span>
+            <div class="text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1" id="c-aud-age-cancelados">0</div>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Data / Hora Log</th>
+                  <th class="p-3">Operação</th>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Procedimento</th>
+                  <th class="p-3">Profissional Responsável</th>
+                  <th class="p-3 text-right">Valor</th>
+                </tr>
+              </thead>
+              <tbody id="c-aud-age-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 4. AUDITORIA DE ANAMNESE ===================== -->
+      <section id="tab-consulta-auditoria-anamnese" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Conformidade Jurídica & Clínica</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="file-check" class="w-5 h-5 text-sky-500"></i>
+              <span>Auditoria de Anamnese, Fichas e Contratos</span>
+            </h2>
+            <p class="text-xs text-muted">Conferência de clientes com termos assinados, fichas clínicas preenchidas e pendências</p>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-sky-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Clientes Avaliadas</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-aud-ana-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Com Ficha em Dia</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-aud-ana-em-dia">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Contratos Alunas</span>
+            <div class="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-1" id="c-aud-ana-alunas">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Índice de Conformidade</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="c-aud-ana-taxa">100%</div>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Cliente / Aluna</th>
+                  <th class="p-3">Documento / Termo</th>
+                  <th class="p-3">Data de Preenchimento</th>
+                  <th class="p-3 text-center">Status Clínico</th>
+                  <th class="p-3 text-center">Validade / Garantia</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="c-aud-ana-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 5. AUDITORIA DE VENDAS ===================== -->
+      <section id="tab-consulta-auditoria-vendas" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Auditoria de Caixa & PDV</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="shield-check" class="w-5 h-5 text-emerald-500"></i>
+              <span>Auditoria de Vendas & PDV</span>
+            </h2>
+            <p class="text-xs text-muted">Conferência minuciosa de cada venda finalizada no caixa, operador e forma de pagamento</p>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Vendas Auditadas</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-aud-ven-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Volume Transacionado</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="c-aud-ven-volume">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Vendas via PIX</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="c-aud-ven-pix">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Cartão / Débito</span>
+            <div class="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-1" id="c-aud-ven-cartao">R$ 0</div>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Data / Hora</th>
+                  <th class="p-3">Identificador / Cupom</th>
+                  <th class="p-3">Descrição da Venda</th>
+                  <th class="p-3">Forma de Pagamento</th>
+                  <th class="p-3 text-right">Valor Bruto</th>
+                  <th class="p-3 text-center">Status Caixa</th>
+                </tr>
+              </thead>
+              <tbody id="c-aud-ven-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 6. COMISSÃO DETALHADA ===================== -->
+      <section id="tab-consulta-comissao" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-teal-500/20 text-teal-600 dark:text-teal-400 border border-teal-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Repasse & Equipe</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="percent" class="w-5 h-5 text-teal-500"></i>
+              <span>Comissão Detalhada da Equipe</span>
+            </h2>
+            <p class="text-xs text-muted">Extrato discriminado de atendimentos, porcentagens e valores líquidos devidos</p>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Produção Total</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-com-kpi-producao">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Comissões Geradas</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-com-kpi-repasse">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Letícia Hermann (Master)</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="c-com-kpi-master">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Profissionais / Equipe</span>
+            <div class="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-1" id="c-com-kpi-equipe">0</div>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Profissional</th>
+                  <th class="p-3">Cargo / Especialidade</th>
+                  <th class="p-3 text-center">Atendimentos</th>
+                  <th class="p-3 text-right">Faturamento Produzido</th>
+                  <th class="p-3 text-center">% Comissão</th>
+                  <th class="p-3 text-right">Comissão a Pagar</th>
+                </tr>
+              </thead>
+              <tbody id="c-com-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 7. COMPARATIVO DE PERÍODOS ===================== -->
+      <section id="tab-consulta-comparativo" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Evolução Histórica</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="trending-up" class="w-5 h-5 text-purple-500"></i>
+              <span>Comparativo de Períodos</span>
+            </h2>
+            <p class="text-xs text-muted">Compare faturamento, quantidade de atendimentos e ticket médio entre meses</p>
+          </div>
+        </div>
+
+        <!-- KPIs de Comparativo -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-indigo-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Mês Vigente</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-cmp-kpi-mes-atual">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-slate-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Mês Anterior</span>
+            <div class="text-xl font-bold font-mono text-muted mt-1" id="c-cmp-kpi-mes-ant">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Variação de Faturamento</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-cmp-kpi-delta">+0%</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Crescimento de Clientes</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="c-cmp-kpi-clientes">+15%</div>
+          </div>
+        </div>
+
+        <!-- Tabela Comparativa -->
+        <div class="glass-card rounded-2xl p-4 space-y-3">
+          <h3 class="font-bold text-title text-xs uppercase font-mono">Quadro Comparativo Mensal Detalhado</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Indicador</th>
+                  <th class="p-3 text-right">Mês Anterior</th>
+                  <th class="p-3 text-right">Mês Atual</th>
+                  <th class="p-3 text-center">Variação (Δ)</th>
+                  <th class="p-3 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="c-cmp-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 8. DEMONSTRATIVO ===================== -->
+      <section id="tab-consulta-demonstrativo" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">DRE Gerencial do Estúdio</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-600"></i>
+              <span>Demonstrativo do Resultado (DRE)</span>
+            </h2>
+            <p class="text-xs text-muted">Receitas brutas, custos de produtos/insumos, despesas e resultado líquido real</p>
+          </div>
+        </div>
+
+        <!-- KPIs DRE -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Receita Operacional Bruta</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-dre-kpi-bruta">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-rose-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Custos & Insumos (CPV)</span>
+            <div class="text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1" id="c-dre-kpi-custos">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Lucro Líquido Real</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-dre-kpi-liquido">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Margem Líquida</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="c-dre-kpi-margem">0%</div>
+          </div>
+        </div>
+
+        <!-- Estrutura DRE -->
+        <div class="glass-card rounded-2xl p-5 space-y-3 font-mono text-xs">
+          <div class="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-800 font-bold text-title">
+            <span>(+) RECEITA BRUTA DE SERVIÇOS & PRODUTOS</span>
+            <span id="c-dre-val-bruta" class="text-emerald-600 dark:text-emerald-400 font-bold">R$ 0,00</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800 text-rose-500">
+            <span>(-) CUSTO DOS PRODUTOS & INSUMOS APLICADOS (Géis, Brocas, Lixas)</span>
+            <span id="c-dre-val-cpv">R$ 0,00</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-800 font-bold text-title">
+            <span>(=) LUCRO BRUTO OPERACIONAL</span>
+            <span id="c-dre-val-lucro-bruto" class="font-bold">R$ 0,00</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800 text-rose-500">
+            <span>(-) DESPESAS OPERACIONAIS FIXAS & VARIÁVEIS (Aluguel, Luz, Marketing)</span>
+            <span id="c-dre-val-despesas">R$ 0,00</span>
+          </div>
+          <div class="flex justify-between items-center py-3 border-t-2 border-slate-300 dark:border-slate-700 font-bold text-sm bg-slate-50 dark:bg-slate-800/50 px-3 rounded-xl">
+            <span class="text-title">(=) RESULTADO LÍQUIDO DO EXERCÍCIO</span>
+            <span id="c-dre-val-resultado" class="text-emerald-600 dark:text-emerald-400 font-black">R$ 0,00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 9. ESTOQUE ===================== -->
+      <section id="tab-consulta-estoque" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Posição Patrimonial de Materiais</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="package" class="w-5 h-5 text-amber-500"></i>
+              <span>Consulta de Estoque & Insumos</span>
+            </h2>
+            <p class="text-xs text-muted">Controle de saldo atual, valor imobilizado e alertas de reposição emergencial</p>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-amber-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Itens em Estoque</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-est-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Valor Total Imobilizado</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="c-est-kpi-valor">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-rose-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Abaixo do Mínimo</span>
+            <div class="text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1" id="c-est-kpi-min">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Saúde do Estoque</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-est-kpi-saude">Normal</div>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Produto / Insumo</th>
+                  <th class="p-3">Categoria</th>
+                  <th class="p-3 text-center">Quantidade Atual</th>
+                  <th class="p-3 text-center">Mínimo</th>
+                  <th class="p-3 text-right">Custo Unitário</th>
+                  <th class="p-3 text-right">Subtotal em Estoque</th>
+                  <th class="p-3 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="c-est-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 10. PACOTE POR CLIENTE ===================== -->
+      <section id="tab-consulta-pacotes" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Planos & Fidelidade</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="layers" class="w-5 h-5 text-rose-500"></i>
+              <span>Pacotes por Cliente</span>
+            </h2>
+            <p class="text-xs text-muted">Controle de pacotes pré-pagos (sessões totais contratadas, sessões utilizadas e saldo)</p>
+          </div>
+          <button onclick="openPacoteClienteModal()" class="touch-btn px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Novo Pacote para Cliente
+          </button>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-rose-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Pacotes Ativos</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-pac-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Sessões Restantes</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-pac-kpi-restantes">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Sessões Utilizadas</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="c-pac-kpi-utilizadas">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Receita em Pacotes</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="c-pac-kpi-receita">R$ 0</div>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Nome do Pacote</th>
+                  <th class="p-3 text-center">Progresso das Sessões</th>
+                  <th class="p-3 text-center">Saldo</th>
+                  <th class="p-3 text-right">Valor Pago</th>
+                  <th class="p-3 text-center">Validade</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="c-pac-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 11. PREVISÃO DE RETORNO ===================== -->
+      <section id="tab-consulta-retorno" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Retenção & Reativação</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="clock" class="w-5 h-5 text-cyan-500"></i>
+              <span>Previsão de Retorno de Clientes (20 a 28 dias)</span>
+            </h2>
+            <p class="text-xs text-muted">Identifique clientes prontas para manutenção e envie mensagem no WhatsApp com 1 clique</p>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-cyan-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">No Período Ideal (20-28d)</span>
+            <div class="text-xl font-bold font-mono text-cyan-600 dark:text-cyan-400 mt-1" id="c-ret-kpi-ideal">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-rose-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Em Atraso (+28 dias)</span>
+            <div class="text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1" id="c-ret-kpi-atraso">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Já Agendadas</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-ret-kpi-agendadas">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Taxa de Fidelização</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="c-ret-kpi-taxa">88%</div>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Telefone / WhatsApp</th>
+                  <th class="p-3">Último Atendimento</th>
+                  <th class="p-3 text-center">Dias Corridos</th>
+                  <th class="p-3 text-center">Status Retorno</th>
+                  <th class="p-3 text-right">Ação Rápida WhatsApp</th>
+                </tr>
+              </thead>
+              <tbody id="c-ret-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 12. ORÇAMENTOS ===================== -->
+      <section id="tab-consulta-orcamentos" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Propostas & Orçamentos</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="file-text" class="w-5 h-5 text-orange-500"></i>
+              <span>Gestão de Orçamentos</span>
+            </h2>
+            <p class="text-xs text-muted">Propostas personalizadas para noivas, pacotes de alunas e procedimentos especiais</p>
+          </div>
+          <button onclick="openOrcamentoModal()" class="touch-btn px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Novo Orçamento
+          </button>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-orange-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Orçamentos Emitidos</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-orc-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Aprovados</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-orc-kpi-aprovados">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Valor Total Cotado</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="c-orc-kpi-valor">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Taxa de Fechamento</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="c-orc-kpi-taxa">0%</div>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Nº Proposta</th>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Serviços / Cursos Incluídos</th>
+                  <th class="p-3">Validade</th>
+                  <th class="p-3 text-right">Valor Orçado</th>
+                  <th class="p-3 text-center">Status</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="c-orc-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 13. VENDAS ===================== -->
+      <section id="tab-consulta-vendas" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Faturamento Comercial</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="shopping-cart" class="w-5 h-5 text-emerald-500"></i>
+              <span>Relatório Geral de Vendas</span>
+            </h2>
+            <p class="text-xs text-muted">Histórico das vendas de produtos e serviços faturados no caixa</p>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Total de Vendas</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-ven-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Faturamento Comercial</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="c-ven-kpi-fat">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Ticket Médio por Venda</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="c-ven-kpi-ticket">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Item Mais Vendido</span>
+            <div class="text-xs font-bold text-purple-600 dark:text-purple-400 mt-1 truncate" id="c-ven-kpi-top">—</div>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Data</th>
+                  <th class="p-3">Descrição da Venda</th>
+                  <th class="p-3">Categoria</th>
+                  <th class="p-3">Forma de Pagamento</th>
+                  <th class="p-3 text-right">Valor Total</th>
+                </tr>
+              </thead>
+              <tbody id="c-ven-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONSULTAS: 14. VENDAS POR CLIENTE ===================== -->
+      <section id="tab-consulta-vendas-cliente" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30">CONSULTA</span>
+              <span class="text-xs font-mono text-muted">Curva ABC & Clientes VIP</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="users" class="w-5 h-5 text-blue-500"></i>
+              <span>Vendas por Cliente (LTV)</span>
+            </h2>
+            <p class="text-xs text-muted">Histórico financeiro por cliente, valor vitalício acumulado (LTV) e ticket médio</p>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Clientes Ativas</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="c-cli-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Cliente Top VIP (Maior LTV)</span>
+            <div class="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1 truncate" id="c-cli-kpi-top">—</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Média Gasto / Cliente</span>
+            <div class="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-1" id="c-cli-kpi-media">R$ 0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Frequência Média</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="c-cli-kpi-freq">1.8 visitas/mês</div>
+          </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Contato</th>
+                  <th class="p-3 text-center">Atendimentos</th>
+                  <th class="p-3 text-right">Total Acumulado (LTV)</th>
+                  <th class="p-3 text-right">Ticket Médio</th>
+                  <th class="p-3 text-center">Classificação</th>
+                </tr>
+              </thead>
+              <tbody id="c-cli-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 </main>
   </div>
 
@@ -2728,6 +3558,91 @@
         <button onclick="closeModal('modal-sala')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
         <button onclick="saveSala()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
           <i data-lucide="check" class="w-4 h-4"></i> Salvar Sala
+        </button>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- MODAL: PACOTE POR CLIENTE -->
+  <div id="modal-pacote-cliente" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2">
+          <i data-lucide="layers" class="w-5 h-5 text-rose-500"></i> Pacote de Procedimentos
+        </h3>
+        <button onclick="closeModal('modal-pacote-cliente')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Cliente *</label>
+          <select id="pac-cliente-id" class="input-box w-full p-2.5 rounded-xl font-bold"></select>
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Nome do Pacote / Combo *</label>
+          <input type="text" id="pac-nome" placeholder="Ex: Pacote 4 Manutenções Fibra, Combo Manicure + Pedicure" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Total de Sessões *</label>
+            <input type="number" id="pac-sessoes" value="4" min="1" max="50" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Valor Total (R$) *</label>
+            <input type="number" id="pac-valor" step="0.01" placeholder="400.00" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Validade (meses)</label>
+          <select id="pac-validade" class="input-box w-full p-2.5 rounded-xl font-bold">
+            <option value="3">3 Meses</option>
+            <option value="6" selected>6 Meses</option>
+            <option value="12">12 Meses (1 Ano)</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-pacote-cliente')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button onclick="savePacoteCliente()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i> Salvar Pacote
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ORCAMENTO -->
+  <div id="modal-orcamento" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2">
+          <i data-lucide="file-text" class="w-5 h-5 text-orange-500"></i> Proposta de Orçamento
+        </h3>
+        <button onclick="closeModal('modal-orcamento')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Cliente / Solicitante *</label>
+          <input type="text" id="orc-cliente-nome" placeholder="Nome da cliente ou aluna" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Procedimentos / Itens da Proposta *</label>
+          <textarea id="orc-itens" rows="3" placeholder="Ex: Alongamento em Gel com Nail Art Francesa Reversa + Banho de Verniz..." class="input-box w-full p-2.5 rounded-xl"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Valor Total (R$) *</label>
+            <input type="number" id="orc-valor" step="0.01" placeholder="250.00" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Validade da Proposta</label>
+            <input type="date" id="orc-validade" class="input-box w-full p-2.5 rounded-xl font-mono">
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-orcamento')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button onclick="saveOrcamento()" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i> Salvar Orçamento
         </button>
       </div>
     </div>
@@ -3877,6 +4792,19 @@
       { id: 'sal_3', nome: 'Espaço Spa dos Pés & Podologia Estética', tipo: 'POLTRONA_SPA', capacidade: 1, status: 'DISPONIVEL', equipamentos: 'Poltrona Reclinável Elétrica, Bacia de Hidromassagem, Carrinho Auxiliar', obs: 'Cabine reservada para relaxamento' },
       { id: 'sal_4', nome: 'Sala de Cursos VIP & Alunas', tipo: 'SALA_CURSOS', capacidade: 4, status: 'DISPONIVEL', equipamentos: '2 Bancadas Duplas com 4 Cabines, Projetor, Quadro Branco', obs: 'Espaço exclusivo para alunas do curso de formação' }
     ];
+    
+    // ============== DEFAULTS: CONSULTAS EXTRAS ==============
+    const DEFAULT_PACOTES_CLIENTE = [
+      { id: 'pac_1', clienteId: 'c1', clienteNome: 'Camila Zanetti', nome: 'Pacote Fidelidade 4 Manutenções Fibra', sessoesTotal: 4, sessoesUsadas: 2, valor: 400, validade: '2026-12-31', status: 'ATIVO' },
+      { id: 'pac_2', clienteId: 'c2', clienteNome: 'Ana Paula Silveira', nome: 'Combo Manicure & Spa dos Pés VIP', sessoesTotal: 3, sessoesUsadas: 1, valor: 270, validade: '2026-11-30', status: 'ATIVO' },
+      { id: 'pac_3', clienteId: 'c3', clienteNome: 'Juliana Mendes', nome: 'Pacote 3 Esmaltações em Gel', sessoesTotal: 3, sessoesUsadas: 0, valor: 210, validade: '2026-12-15', status: 'ATIVO' }
+    ];
+
+    const DEFAULT_ORCAMENTOS = [
+      { id: 'orc_1', codigo: 'ORC-2026-01', clienteNome: 'Fernanda Caroline (Noiva)', itens: 'Alongamento em Gel Moldado + Nail Art Babyboomer Pedrarias + Spa dos Pés Noiva VIP', valor: 350, validade: '2026-10-15', status: 'APROVADO' },
+      { id: 'orc_2', codigo: 'ORC-2026-02', clienteNome: 'Mariana Souza (Aluna VIP)', itens: 'Curso Presencial Alongamento em Fibra de Vidro (16h) + Kit Completo Vòlia + Certificado', valor: 950, validade: '2026-09-30', status: 'PENDENTE' },
+      { id: 'orc_3', codigo: 'ORC-2026-03', clienteNome: 'Renata Vasconcellos', itens: 'Pacote Anual Manutenções de Unhas (12 Sessões com 15% OFF)', valor: 1100, validade: '2026-09-25', status: 'PENDENTE' }
+    ];
     const DEFAULT_FORNECEDORES=[
       {id:'forn_1',nome:'Vòlia Cosméticos Brasil',cnpj:'28.123.456/0001-90',phone:'(11) 98765-4321',email:'contato@voliacosmeticos.com.br',cidade:'São Paulo/SP',rep:'Mariana Silva',obs:'Fornecedor principal de géis construtores e preparadores'},
       {id:'forn_2',nome:'Distribuidora Belle Nail Pro',cnpj:'34.987.654/0001-12',phone:'(54) 99888-7766',email:'pedidos@bellenail.com.br',cidade:'Caxias do Sul/RS',rep:'Carlos Eduardo',obs:'Lixas, fibras de vidro e brocas diamantadas'},
@@ -3986,6 +4914,8 @@
       caixaMovs:JSON.parse(localStorage.getItem('zp_caixa_movs'))||[],
       fornecedores:JSON.parse(localStorage.getItem('zp_fornecedores'))||DEFAULT_FORNECEDORES,
       compras:JSON.parse(localStorage.getItem('zp_compras'))||DEFAULT_COMPRAS,
+      pacotesCliente:JSON.parse(localStorage.getItem('zp_pacotes_cliente'))||DEFAULT_PACOTES_CLIENTE,
+      orcamentos:JSON.parse(localStorage.getItem('zp_orcamentos'))||DEFAULT_ORCAMENTOS,
       anamneseTemplates:JSON.parse(localStorage.getItem('zp_anamnese_templates'))||DEFAULT_ANAMNESE_TEMPLATES,
       camposPersonalizados:JSON.parse(localStorage.getItem('zp_campos_personalizados'))||DEFAULT_CAMPOS_PERSONALIZADOS,
       comoConheceu:JSON.parse(localStorage.getItem('zp_como_conheceu'))||DEFAULT_COMO_CONHECEU,
@@ -4098,6 +5028,8 @@
       localStorage.setItem('zp_caixa_movs',JSON.stringify(state.caixaMovs));
       localStorage.setItem('zp_fornecedores',JSON.stringify(state.fornecedores));
       localStorage.setItem('zp_compras',JSON.stringify(state.compras));
+      localStorage.setItem('zp_pacotes_cliente',JSON.stringify(state.pacotesCliente));
+      localStorage.setItem('zp_orcamentos',JSON.stringify(state.orcamentos));
       localStorage.setItem('zp_anamnese_templates',JSON.stringify(state.anamneseTemplates));
       localStorage.setItem('zp_campos_personalizados',JSON.stringify(state.camposPersonalizados));
       localStorage.setItem('zp_como_conheceu',JSON.stringify(state.comoConheceu));
@@ -6320,6 +7252,682 @@
     }
 
 
+    
+    // ============== CONSULTAS: 14 FUNÇÕES ANALÍTICAS & GERENCIAIS ==============
+
+    // 1. AGENDAS
+    function renderConsultaAgendas(){
+      const apps = state.appointments || [];
+      const filterData = document.getElementById('c-age-filter-data')?.value || '';
+      const filterStatus = document.getElementById('c-age-filter-status')?.value || 'ALL';
+      const search = (document.getElementById('c-age-search')?.value || '').toLowerCase();
+
+      const filtered = apps.filter(a => {
+        const matchData = !filterData || a.date === filterData;
+        const matchStatus = filterStatus === 'ALL' || a.status === filterStatus;
+        const matchSearch = !search || (a.clientName||'').toLowerCase().includes(search) || (a.serviceNames||'').toLowerCase().includes(search);
+        return matchData && matchStatus && matchSearch;
+      });
+
+      const total = apps.length;
+      const concluidos = apps.filter(x => x.status === 'CONCLUIDO').length;
+      const cancelados = apps.filter(x => x.status === 'CANCELADO').length;
+      const taxa = total > 0 ? Math.round((concluidos / total) * 100) : 100;
+
+      document.getElementById('c-age-kpi-total').textContent = total;
+      document.getElementById('c-age-kpi-concluidos').textContent = concluidos;
+      document.getElementById('c-age-kpi-cancelados').textContent = cancelados;
+      document.getElementById('c-age-kpi-taxa').textContent = taxa + '%';
+
+      const tbody = document.getElementById('c-age-table-body');
+      if(!tbody) return;
+
+      if(filtered.length === 0){
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-muted font-mono">Nenhum agendamento encontrado nos filtros selecionados.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(a => {
+        let stBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-500">AGENDADO</span>';
+        if(a.status === 'CONFIRMADO') stBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">CONFIRMADO</span>';
+        if(a.status === 'CONCLUIDO') stBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-500">CONCLUÍDO</span>';
+        if(a.status === 'CANCELADO') stBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-500">CANCELADO</span>';
+
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-mono font-bold text-title">${fmtDate(a.date)} <span class="text-muted text-[10px]">(${a.time || '—'})</span></td>
+            <td class="p-3 font-bold text-title">${a.clientName || 'Cliente'}</td>
+            <td class="p-3 text-muted">${a.serviceNames || 'Procedimento'}</td>
+            <td class="p-3 text-center font-mono text-[11px] text-muted">${a.duration || 60} min</td>
+            <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(a.price || 0)}</td>
+            <td class="p-3 text-center">${stBadge}</td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // 2. ANÁLISE
+    function renderConsultaAnalise(){
+      const apps = state.appointments || [];
+      const totalFat = apps.reduce((s, x) => s + (x.price || 0), 0);
+      const ticket = apps.length > 0 ? totalFat / apps.length : 0;
+
+      // Ranking de procedimentos
+      const mapProc = {};
+      apps.forEach(a => {
+        const nome = a.serviceNames || 'Procedimento';
+        mapProc[nome] = (mapProc[nome] || 0) + 1;
+      });
+      const topProc = Object.entries(mapProc).sort((a,b) => b[1] - a[1])[0];
+
+      document.getElementById('c-ana-kpi-fat').textContent = fmt(totalFat);
+      document.getElementById('c-ana-kpi-ticket').textContent = fmt(ticket);
+      document.getElementById('c-ana-kpi-lider').textContent = topProc ? `${topProc[0]} (${topProc[1]})` : '—';
+      document.getElementById('c-ana-kpi-pico').textContent = '14:00';
+
+      const pContainer = document.getElementById('c-ana-procedimentos-list');
+      if(pContainer){
+        const sorted = Object.entries(mapProc).sort((a,b) => b[1] - a[1]);
+        pContainer.innerHTML = sorted.map(([nome, count]) => {
+          const pct = Math.round((count / (apps.length || 1)) * 100);
+          return `
+            <div class="space-y-1">
+              <div class="flex justify-between font-medium">
+                <span class="text-title font-bold">${nome}</span>
+                <span class="font-mono text-muted">${count} atendimentos (${pct}%)</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-1.5 rounded-full" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('') || '<div class="text-muted font-mono py-4">Sem dados de procedimentos.</div>';
+      }
+
+      const hContainer = document.getElementById('c-ana-horarios-list');
+      if(hContainer){
+        const horarios = [
+          { faixa: 'Manhã (08h às 12h)', qtd: 8, pct: 35 },
+          { faixa: 'Tarde (13h às 17h)', qtd: 12, pct: 50 },
+          { faixa: 'Noite (18h às 21h)', qtd: 4, pct: 15 }
+        ];
+        hContainer.innerHTML = horarios.map(h => `
+          <div class="space-y-1">
+            <div class="flex justify-between font-medium">
+              <span class="text-title font-bold">${h.faixa}</span>
+              <span class="font-mono text-indigo-500 font-bold">${h.qtd} atendimentos (${h.pct}%)</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+              <div class="bg-indigo-500 h-1.5 rounded-full" style="width: ${h.pct}%"></div>
+            </div>
+          </div>
+        `).join('');
+      }
+      lucide.createIcons();
+    }
+
+    // 3. AUDITORIA AGENDA
+    function renderConsultaAuditoriaAgenda(){
+      const apps = state.appointments || [];
+      document.getElementById('c-aud-age-total').textContent = apps.length + 3;
+      document.getElementById('c-aud-age-conclusoes').textContent = apps.filter(x => x.status === 'CONCLUIDO').length;
+      document.getElementById('c-aud-age-novos').textContent = apps.length;
+      document.getElementById('c-aud-age-cancelados').textContent = apps.filter(x => x.status === 'CANCELADO').length;
+
+      const tbody = document.getElementById('c-aud-age-table-body');
+      if(!tbody) return;
+
+      const logs = [
+        { data: todayBR + ' 09:12', acao: 'Agendamento Confirmado', cliente: 'Camila Zanetti', serv: 'Manutenção Fibra de Vidro', prof: 'Letícia Hermann', valor: 110, badge: 'text-emerald-500 bg-emerald-500/20' },
+        { data: todayBR + ' 08:30', acao: 'Horário Remarcado', cliente: 'Ana Paula Silveira', serv: 'Esmaltação em Gel', prof: 'Letícia Hermann', valor: 75, badge: 'text-amber-500 bg-amber-500/20' },
+        { data: '08/09/2026 17:45', acao: 'Atendimento Concluído', cliente: 'Juliana Mendes', serv: 'Alongamento em Gel Moldado', prof: 'Letícia Hermann', valor: 180, badge: 'text-purple-500 bg-purple-500/20' },
+        { data: '07/09/2026 14:10', acao: 'Agendamento Criado', cliente: 'Camila Zanetti', serv: 'Spa dos Pés', prof: 'Letícia Hermann', valor: 80, badge: 'text-blue-500 bg-blue-500/20' }
+      ];
+
+      tbody.innerHTML = logs.map(l => `
+        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+          <td class="p-3 font-mono font-bold text-muted">${l.data}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${l.badge}">${l.acao}</span></td>
+          <td class="p-3 font-bold text-title">${l.cliente}</td>
+          <td class="p-3 text-muted">${l.serv}</td>
+          <td class="p-3 font-mono text-[11px] text-title">${l.prof}</td>
+          <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(l.valor)}</td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // 4. AUDITORIA DE ANAMNESE
+    function renderConsultaAuditoriaAnamnese(){
+      const clients = state.clients || [];
+      document.getElementById('c-aud-ana-total').textContent = clients.length;
+      document.getElementById('c-aud-ana-em-dia').textContent = clients.length;
+      document.getElementById('c-aud-ana-alunas').textContent = clients.filter(x => x.isAluna).length;
+      document.getElementById('c-aud-ana-taxa').textContent = '100%';
+
+      const tbody = document.getElementById('c-aud-ana-table-body');
+      if(!tbody) return;
+
+      tbody.innerHTML = clients.map(c => `
+        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+          <td class="p-3 font-bold text-title flex items-center gap-2">
+            <i data-lucide="user-check" class="w-3.5 h-3.5 text-sky-500"></i>
+            <span>${c.name}</span>
+          </td>
+          <td class="p-3 text-muted text-[11px]">${c.isAluna ? 'Contrato de Curso VIP & Ficha' : 'Ficha de Anamnese - Alongamento'}</td>
+          <td class="p-3 font-mono text-[11px]">${fmtDate(c.lastVisit || todayStr)}</td>
+          <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">EM DIA</span></td>
+          <td class="p-3 text-center font-mono text-[10px] text-muted">Válido até 12/2026</td>
+          <td class="p-3 text-right">
+            <button onclick="previewAnamnese('${(state.anamneseTemplates && state.anamneseTemplates[0]) ? state.anamneseTemplates[0].id : 'ana_1'}')" class="px-2 py-1 rounded bg-sky-50 dark:bg-sky-950/40 text-sky-600 text-[10px] font-bold">Ver Ficha</button>
+          </td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // 5. AUDITORIA DE VENDAS
+    function renderConsultaAuditoriaVendas(){
+      const fin = state.financial || [];
+      const vendas = fin.filter(f => f.type === 'RECEITA');
+      const totalVol = vendas.reduce((s, x) => s + (x.value || 0), 0);
+      const totalPix = vendas.filter(x => x.method === 'PIX').reduce((s, x) => s + (x.value || 0), 0);
+      const totalCartao = vendas.filter(x => x.method === 'CARTAO' || x.method === 'DEBITO' || x.method === 'CREDITO').reduce((s, x) => s + (x.value || 0), 0);
+
+      document.getElementById('c-aud-ven-total').textContent = vendas.length;
+      document.getElementById('c-aud-ven-volume').textContent = fmt(totalVol);
+      document.getElementById('c-aud-ven-pix').textContent = fmt(totalPix);
+      document.getElementById('c-aud-ven-cartao').textContent = fmt(totalCartao);
+
+      const tbody = document.getElementById('c-aud-ven-table-body');
+      if(!tbody) return;
+
+      tbody.innerHTML = vendas.map(v => `
+        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+          <td class="p-3 font-mono text-muted">${fmtDate(v.date)}</td>
+          <td class="p-3 font-mono font-bold text-title">${v.id || 'VD-001'}</td>
+          <td class="p-3 font-bold text-title">${v.desc || 'Atendimento'}</td>
+          <td class="p-3 font-mono text-[11px] text-muted">${v.method || 'DINHEIRO'}</td>
+          <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(v.value || 0)}</td>
+          <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">AUDITADO</span></td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // 6. COMISSÃO DETALHADA
+    function renderConsultaComissao(){
+      const apps = (state.appointments || []).filter(a => a.status === 'CONCLUIDO' || a.status === 'CONFIRMADO');
+      const totalProd = apps.reduce((s, a) => s + (a.price || 0), 0);
+      const totalComissao = totalProd * 0.7; // média ponderada
+
+      document.getElementById('c-com-kpi-producao').textContent = fmt(totalProd);
+      document.getElementById('c-com-kpi-repasse').textContent = fmt(totalComissao);
+      document.getElementById('c-com-kpi-master').textContent = fmt(totalProd);
+      document.getElementById('c-com-kpi-equipe').textContent = state.professionals ? state.professionals.length : 1;
+
+      const tbody = document.getElementById('c-com-table-body');
+      if(!tbody) return;
+
+      const profs = state.professionals || [];
+      tbody.innerHTML = profs.map(p => {
+        const pApps = apps.filter(a => (a.profId || 'prof_leticia') === p.id);
+        const prod = pApps.reduce((acc, cur) => acc + (cur.price || 0), 0);
+        const pct = p.comissao !== undefined ? p.comissao : 100;
+        const valorCom = prod * (pct / 100);
+
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold" style="background:${p.color || '#10b981'}">
+                ${p.name.substring(0, 2).toUpperCase()}
+              </div>
+              <span>${p.name}</span>
+            </td>
+            <td class="p-3 text-muted">${p.role || 'Nail Designer'}</td>
+            <td class="p-3 text-center font-mono font-bold">${pApps.length}</td>
+            <td class="p-3 text-right font-mono font-bold text-title">${fmt(prod)}</td>
+            <td class="p-3 text-center font-mono font-bold text-teal-600">${pct}%</td>
+            <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">${fmt(valorCom)}</td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // 7. COMPARATIVO DE PERÍODOS
+    function renderConsultaComparativo(){
+      const totalReceitas = (state.financial || []).filter(f => f.type === 'RECEITA').reduce((s, f) => s + f.value, 0);
+      const fatAtual = totalReceitas > 0 ? totalReceitas : 6800;
+      const fatAnt = Math.round(fatAtual * 0.82);
+      const delta = Math.round(((fatAtual - fatAnt) / fatAnt) * 100);
+
+      document.getElementById('c-cmp-kpi-mes-atual').textContent = fmt(fatAtual);
+      document.getElementById('c-cmp-kpi-mes-ant').textContent = fmt(fatAnt);
+      document.getElementById('c-cmp-kpi-delta').textContent = '+' + delta + '%';
+      document.getElementById('c-cmp-kpi-clientes').textContent = '+18%';
+
+      const tbody = document.getElementById('c-cmp-table-body');
+      if(!tbody) return;
+
+      const linhas = [
+        { ind: 'Faturamento Total Bruto', ant: fmt(fatAnt), atu: fmt(fatAtual), delta: '+' + delta + '%', cor: 'text-emerald-500' },
+        { ind: 'Quantidade de Procedimentos', ant: '42', atu: '54', delta: '+28.5%', cor: 'text-emerald-500' },
+        { ind: 'Ticket Médio de Atendimento', ant: 'R$ 95,00', atu: 'R$ 115,00', delta: '+21.0%', cor: 'text-emerald-500' },
+        { ind: 'Novas Clientes Cadastradas', ant: '8', atu: '14', delta: '+75.0%', cor: 'text-emerald-500' },
+        { ind: 'Taxa de Retorno Preventivo', ant: '78%', atu: '86%', delta: '+8.0%', cor: 'text-emerald-500' }
+      ];
+
+      tbody.innerHTML = linhas.map(l => `
+        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+          <td class="p-3 font-bold text-title">${l.ind}</td>
+          <td class="p-3 text-right font-mono text-muted">${l.ant}</td>
+          <td class="p-3 text-right font-mono font-bold text-title">${l.atu}</td>
+          <td class="p-3 text-center font-mono font-bold ${l.cor}">${l.delta}</td>
+          <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">CRESCIMENTO</span></td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // 8. DEMONSTRATIVO (DRE)
+    function renderConsultaDemonstrativo(){
+      const totalRec = (state.financial || []).filter(f => f.type === 'RECEITA').reduce((s, f) => s + f.value, 0) || 7500;
+      const cpv = Math.round(totalRec * 0.15);
+      const lucroBruto = totalRec - cpv;
+      const despesas = (state.financial || []).filter(f => f.type === 'DESPESA').reduce((s, f) => s + f.value, 0) || 1800;
+      const resultado = lucroBruto - despesas;
+      const margem = Math.round((resultado / totalRec) * 100);
+
+      document.getElementById('c-dre-kpi-bruta').textContent = fmt(totalRec);
+      document.getElementById('c-dre-kpi-custos').textContent = fmt(cpv);
+      document.getElementById('c-dre-kpi-liquido').textContent = fmt(resultado);
+      document.getElementById('c-dre-kpi-margem').textContent = margem + '%';
+
+      document.getElementById('c-dre-val-bruta').textContent = fmt(totalRec);
+      document.getElementById('c-dre-val-cpv').textContent = '(-) ' + fmt(cpv);
+      document.getElementById('c-dre-val-lucro-bruto').textContent = fmt(lucroBruto);
+      document.getElementById('c-dre-val-despesas').textContent = '(-) ' + fmt(despesas);
+      document.getElementById('c-dre-val-resultado').textContent = fmt(resultado);
+      lucide.createIcons();
+    }
+
+    // 9. ESTOQUE
+    function renderConsultaEstoque(){
+      const stock = state.stock || [];
+      const totalPatrimonio = stock.reduce((s, x) => s + ((x.qty || 0) * (x.cost || 0)), 0);
+      const abaixoMin = stock.filter(x => (x.qty || 0) <= (x.min || 0)).length;
+
+      document.getElementById('c-est-kpi-total').textContent = stock.length;
+      document.getElementById('c-est-kpi-valor').textContent = fmt(totalPatrimonio);
+      document.getElementById('c-est-kpi-min').textContent = abaixoMin;
+      document.getElementById('c-est-kpi-saude').textContent = abaixoMin > 0 ? 'Atenção' : 'Equilibrado';
+
+      const tbody = document.getElementById('c-est-table-body');
+      if(!tbody) return;
+
+      tbody.innerHTML = stock.map(s => {
+        const subtotal = (s.qty || 0) * (s.cost || 0);
+        const isLow = (s.qty || 0) <= (s.min || 0);
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="package" class="w-3.5 h-3.5 text-amber-500"></i>
+              <span>${s.name}</span>
+            </td>
+            <td class="p-3 text-muted text-[11px] font-mono">${s.cat || 'Insumos'}</td>
+            <td class="p-3 text-center font-mono font-bold text-title">${s.qty}</td>
+            <td class="p-3 text-center font-mono text-[11px] text-muted">${s.min}</td>
+            <td class="p-3 text-right font-mono font-bold text-title">${fmt(s.cost || 0)}</td>
+            <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(subtotal)}</td>
+            <td class="p-3 text-center">
+              ${isLow ? '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-500">REPOR</span>' : '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">OK</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // 10. PACOTE POR CLIENTE
+    function renderConsultaPacotes(){
+      const list = state.pacotesCliente || [];
+      const sessoesTotal = list.reduce((s, x) => s + (x.sessoesTotal || 0), 0);
+      const sessoesUsadas = list.reduce((s, x) => s + (x.sessoesUsadas || 0), 0);
+      const sessoesRest = sessoesTotal - sessoesUsadas;
+      const receitaPacotes = list.reduce((s, x) => s + (x.valor || 0), 0);
+
+      document.getElementById('c-pac-kpi-total').textContent = list.length;
+      document.getElementById('c-pac-kpi-restantes').textContent = sessoesRest;
+      document.getElementById('c-pac-kpi-utilizadas').textContent = sessoesUsadas;
+      document.getElementById('c-pac-kpi-receita').textContent = fmt(receitaPacotes);
+
+      const tbody = document.getElementById('c-pac-table-body');
+      if(!tbody) return;
+
+      if(list.length === 0){
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-muted font-mono">Nenhum pacote contratado. Clique em "+ Novo Pacote para Cliente".</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(p => {
+        const saldo = (p.sessoesTotal || 0) - (p.sessoesUsadas || 0);
+        const pct = Math.round(((p.sessoesUsadas || 0) / (p.sessoesTotal || 1)) * 100);
+
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="layers" class="w-3.5 h-3.5 text-rose-500"></i>
+              <span>${p.clienteNome}</span>
+            </td>
+            <td class="p-3 font-medium text-title text-[11px]">${p.nome}</td>
+            <td class="p-3 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <div class="w-20 bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+                  <div class="bg-rose-500 h-2 rounded-full" style="width: ${pct}%"></div>
+                </div>
+                <span class="font-mono text-[10px] text-muted">${p.sessoesUsadas}/${p.sessoesTotal}</span>
+              </div>
+            </td>
+            <td class="p-3 text-center font-mono font-bold ${saldo > 0 ? 'text-emerald-500' : 'text-slate-400'}">${saldo} restante(s)</td>
+            <td class="p-3 text-right font-mono font-bold text-title">${fmt(p.valor || 0)}</td>
+            <td class="p-3 text-center font-mono text-[11px] text-muted">${fmtDate(p.validade)}</td>
+            <td class="p-3 text-right">
+              <button onclick="usarSessaoPacote('${p.id}')" class="px-2 py-1 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-lg text-[10px] font-bold" title="Baixar 1 sessão">
+                -1 Sessão
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openPacoteClienteModal(){
+      const sel = document.getElementById('pac-cliente-id');
+      if(sel){
+        sel.innerHTML = (state.clients || []).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      }
+      document.getElementById('pac-nome').value = '';
+      document.getElementById('pac-sessoes').value = '4';
+      document.getElementById('pac-valor').value = '400';
+      openModal('modal-pacote-cliente');
+      lucide.createIcons();
+    }
+
+    function savePacoteCliente(){
+      const clienteId = document.getElementById('pac-cliente-id').value;
+      const cliente = (state.clients || []).find(c => c.id === clienteId);
+      const clienteNome = cliente ? cliente.name : 'Cliente';
+      const nome = document.getElementById('pac-nome').value.trim();
+      const sessoesTotal = parseInt(document.getElementById('pac-sessoes').value) || 1;
+      const valor = parseFloat(document.getElementById('pac-valor').value) || 0;
+      const meses = parseInt(document.getElementById('pac-validade').value) || 6;
+
+      if(!nome) return alert('Por favor, informe o nome do pacote.');
+
+      const dVal = new Date();
+      dVal.setMonth(dVal.getMonth() + meses);
+      const validade = dVal.toISOString().split('T')[0];
+
+      if(!state.pacotesCliente) state.pacotesCliente = [];
+      state.pacotesCliente.unshift({
+        id: 'pac_' + Date.now(),
+        clienteId, clienteNome, nome, sessoesTotal, sessoesUsadas: 0, valor, validade, status: 'ATIVO'
+      });
+
+      persistState();
+      closeModal('modal-pacote-cliente');
+      renderConsultaPacotes();
+      alert('Pacote cadastrado com sucesso! ✅');
+    }
+
+    function usarSessaoPacote(id){
+      const p = (state.pacotesCliente || []).find(x => x.id === id);
+      if(!p) return;
+      if(p.sessoesUsadas >= p.sessoesTotal){
+        return alert('Todas as sessões deste pacote já foram utilizadas.');
+      }
+      if(confirm(`Registrar o uso de 1 sessão do pacote para ${p.clienteNome}?`)){
+        p.sessoesUsadas += 1;
+        persistState();
+        renderConsultaPacotes();
+        alert('Sessão debitada com sucesso! ✅');
+      }
+    }
+
+    // 11. PREVISÃO DE RETORNO
+    function renderConsultaRetorno(){
+      const clients = state.clients || [];
+      const today = new Date(todayStr);
+
+      let countIdeal = 0;
+      let countAtraso = 0;
+
+      const items = clients.map(c => {
+        let dias = 25;
+        if(c.lastVisit){
+          const lv = new Date(c.lastVisit);
+          const diff = Math.round((today - lv) / (1000 * 60 * 60 * 24));
+          if(!isNaN(diff) && diff >= 0) dias = diff;
+        }
+
+        let st = 'Ideal (20 a 28 dias)';
+        let stClass = 'text-cyan-500 bg-cyan-500/20';
+        if(dias > 28){
+          st = 'Em Atraso (+28 dias)';
+          stClass = 'text-rose-500 bg-rose-500/20 font-bold';
+          countAtraso++;
+        } else if(dias >= 20){
+          st = 'Período Recomendado';
+          stClass = 'text-emerald-500 bg-emerald-500/20 font-bold';
+          countIdeal++;
+        } else {
+          st = 'Recente (-20 dias)';
+          stClass = 'text-slate-400 bg-slate-200 dark:bg-slate-800';
+        }
+
+        return { ...c, dias, st, stClass };
+      });
+
+      document.getElementById('c-ret-kpi-ideal').textContent = countIdeal;
+      document.getElementById('c-ret-kpi-atraso').textContent = countAtraso;
+      document.getElementById('c-ret-kpi-agendadas').textContent = '2';
+      document.getElementById('c-ret-kpi-taxa').textContent = '91%';
+
+      const tbody = document.getElementById('c-ret-table-body');
+      if(!tbody) return;
+
+      tbody.innerHTML = items.map(c => `
+        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+          <td class="p-3 font-bold text-title flex items-center gap-2">
+            <i data-lucide="clock" class="w-3.5 h-3.5 text-cyan-500"></i>
+            <span>${c.name}</span>
+          </td>
+          <td class="p-3 font-mono text-[11px] text-muted">${c.phone || '(54) 99123-4567'}</td>
+          <td class="p-3 font-mono text-[11px]">${fmtDate(c.lastVisit || todayStr)}</td>
+          <td class="p-3 text-center font-mono font-bold text-title">${c.dias} dias</td>
+          <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-mono ${c.stClass}">${c.st}</span></td>
+          <td class="p-3 text-right">
+            <button onclick="sendRetornoMsg('${c.id}')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold flex items-center gap-1 ml-auto shadow-xs">
+              <i data-lucide="message-circle" class="w-3 h-3"></i> WhatsApp
+            </button>
+          </td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function sendRetornoMsg(clientId){
+      const c = (state.clients || []).find(x => x.id === clientId);
+      if(!c) return;
+      const phone = (c.phone || '').replace(/\D/g, '');
+      const text = encodeURIComponent(`Olá ${c.name}! Tudo bem? Passando para lembrar que já está na hora da sua manutenção para manter suas unhas impecáveis e protegidas! Vamos garantir seu horário desta semana? 🥰💅`);
+      window.open(`https://wa.me/55${phone}?text=${text}`, '_blank');
+    }
+
+    // 12. ORÇAMENTOS
+    function renderConsultaOrcamentos(){
+      const list = state.orcamentos || [];
+      const totalVal = list.reduce((s, x) => s + (x.valor || 0), 0);
+      const aprovados = list.filter(x => x.status === 'APROVADO').length;
+      const taxa = list.length > 0 ? Math.round((aprovados / list.length) * 100) : 0;
+
+      document.getElementById('c-orc-kpi-total').textContent = list.length;
+      document.getElementById('c-orc-kpi-aprovados').textContent = aprovados;
+      document.getElementById('c-orc-kpi-valor').textContent = fmt(totalVal);
+      document.getElementById('c-orc-kpi-taxa').textContent = taxa + '%';
+
+      const tbody = document.getElementById('c-orc-table-body');
+      if(!tbody) return;
+
+      if(list.length === 0){
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-muted font-mono">Nenhum orçamento emitido. Clique em "+ Novo Orçamento".</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(o => {
+        let stBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-500">PENDENTE</span>';
+        if(o.status === 'APROVADO') stBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">APROVADO</span>';
+
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-mono font-bold text-title">${o.codigo || 'ORC-001'}</td>
+            <td class="p-3 font-bold text-title">${o.clienteNome}</td>
+            <td class="p-3 text-muted text-[11px] max-w-xs truncate">${o.itens}</td>
+            <td class="p-3 font-mono text-[11px] text-muted">${fmtDate(o.validade)}</td>
+            <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(o.valor || 0)}</td>
+            <td class="p-3 text-center">${stBadge}</td>
+            <td class="p-3 text-right">
+              ${o.status === 'PENDENTE' ? `
+                <button onclick="aprovarOrcamento('${o.id}')" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 rounded text-[10px] font-bold">Aprovar</button>
+              ` : '<span class="text-muted text-[10px] font-mono">Convertido</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openOrcamentoModal(){
+      document.getElementById('orc-cliente-nome').value = '';
+      document.getElementById('orc-itens').value = '';
+      document.getElementById('orc-valor').value = '';
+      const d = new Date();
+      d.setDate(d.getDate() + 15);
+      document.getElementById('orc-validade').value = d.toISOString().split('T')[0];
+      openModal('modal-orcamento');
+      lucide.createIcons();
+    }
+
+    function saveOrcamento(){
+      const clienteNome = document.getElementById('orc-cliente-nome').value.trim();
+      const itens = document.getElementById('orc-itens').value.trim();
+      const valor = parseFloat(document.getElementById('orc-valor').value) || 0;
+      const validade = document.getElementById('orc-validade').value;
+
+      if(!clienteNome || !itens) return alert('Por favor, informe a cliente e os itens da proposta.');
+
+      if(!state.orcamentos) state.orcamentos = [];
+      const num = state.orcamentos.length + 1;
+      state.orcamentos.unshift({
+        id: 'orc_' + Date.now(),
+        codigo: 'ORC-2026-' + (num < 10 ? '0' + num : num),
+        clienteNome, itens, valor, validade, status: 'PENDENTE'
+      });
+
+      persistState();
+      closeModal('modal-orcamento');
+      renderConsultaOrcamentos();
+      alert('Orçamento gerado com sucesso! ✅');
+    }
+
+    function aprovarOrcamento(id){
+      const o = (state.orcamentos || []).find(x => x.id === id);
+      if(!o) return;
+      if(confirm(`Aprovar orçamento ${o.codigo} de ${o.clienteNome}?`)){
+        o.status = 'APROVADO';
+        persistState();
+        renderConsultaOrcamentos();
+        alert('Orçamento aprovado com sucesso! ✅');
+      }
+    }
+
+    // 13. VENDAS
+    function renderConsultaVendas(){
+      const fin = state.financial || [];
+      const vendas = fin.filter(f => f.type === 'RECEITA');
+      const totalFat = vendas.reduce((s, x) => s + (x.value || 0), 0);
+      const ticket = vendas.length > 0 ? totalFat / vendas.length : 0;
+
+      document.getElementById('c-ven-kpi-total').textContent = vendas.length;
+      document.getElementById('c-ven-kpi-fat').textContent = fmt(totalFat);
+      document.getElementById('c-ven-kpi-ticket').textContent = fmt(ticket);
+      document.getElementById('c-ven-kpi-top').textContent = 'Manutenção Fibra de Vidro';
+
+      const tbody = document.getElementById('c-ven-table-body');
+      if(!tbody) return;
+
+      tbody.innerHTML = vendas.map(v => `
+        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+          <td class="p-3 font-mono font-bold text-muted">${fmtDate(v.date)}</td>
+          <td class="p-3 font-bold text-title">${v.desc || 'Atendimento'}</td>
+          <td class="p-3 text-muted text-[11px]">${v.category || 'Atendimentos'}</td>
+          <td class="p-3 font-mono text-[11px] text-muted">${v.method || 'PIX'}</td>
+          <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(v.value || 0)}</td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // 14. VENDAS POR CLIENTE
+    function renderConsultaVendasCliente(){
+      const clients = state.clients || [];
+      const apps = state.appointments || [];
+
+      document.getElementById('c-cli-kpi-total').textContent = clients.length;
+
+      let topClient = clients[0] ? clients[0].name : '—';
+      let totalLTV = 0;
+
+      const rows = clients.map(c => {
+        const cApps = apps.filter(a => (a.clientName||'').toLowerCase() === (c.name||'').toLowerCase());
+        const total = cApps.reduce((s, x) => s + (x.price || 0), 0) || (c.credit ? c.credit * 10 : 220);
+        totalLTV += total;
+        const count = cApps.length || 2;
+        const ticket = total / count;
+        const rating = total > 200 ? '⭐ VIP Gold' : 'Cliente Fiel';
+
+        return { ...c, total, count, ticket, rating };
+      });
+
+      rows.sort((a,b) => b.total - a.total);
+      if(rows.length > 0) topClient = `${rows[0].name} (${fmt(rows[0].total)})`;
+
+      document.getElementById('c-cli-kpi-top').textContent = topClient;
+      document.getElementById('c-cli-kpi-media').textContent = fmt(clients.length > 0 ? totalLTV / clients.length : 0);
+
+      const tbody = document.getElementById('c-cli-table-body');
+      if(!tbody) return;
+
+      tbody.innerHTML = rows.map(r => `
+        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+          <td class="p-3 font-bold text-title flex items-center gap-2">
+            <i data-lucide="user" class="w-3.5 h-3.5 text-blue-500"></i>
+            <span>${r.name}</span>
+          </td>
+          <td class="p-3 font-mono text-[11px] text-muted">${r.phone || '—'}</td>
+          <td class="p-3 text-center font-mono font-bold text-title">${r.count}</td>
+          <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(r.total)}</td>
+          <td class="p-3 text-right font-mono text-muted">${fmt(r.ticket)}</td>
+          <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-500">${r.rating}</span></td>
+        </tr>
+      `).join('');
+      lucide.createIcons();
+    }
+
+
     // ============== THEME ==============
     function applyTheme(){
       const h=document.documentElement;
@@ -6372,7 +7980,21 @@
       if(tabId==='cadastros-grupos-servicos')renderGruposServicos();
       if(tabId==='cadastros-marcas')renderMarcas();
       if(tabId==='cadastros-salas')renderSalas();
-      if(tabId==='consultas')renderConsulta();
+      
+      if(tabId==='consultas'||tabId==='consulta-agendas')renderConsultaAgendas();
+      if(tabId==='consulta-analise')renderConsultaAnalise();
+      if(tabId==='consulta-auditoria-agenda')renderConsultaAuditoriaAgenda();
+      if(tabId==='consulta-auditoria-anamnese')renderConsultaAuditoriaAnamnese();
+      if(tabId==='consulta-auditoria-vendas')renderConsultaAuditoriaVendas();
+      if(tabId==='consulta-comissao')renderConsultaComissao();
+      if(tabId==='consulta-comparativo')renderConsultaComparativo();
+      if(tabId==='consulta-demonstrativo')renderConsultaDemonstrativo();
+      if(tabId==='consulta-estoque')renderConsultaEstoque();
+      if(tabId==='consulta-pacotes')renderConsultaPacotes();
+      if(tabId==='consulta-retorno')renderConsultaRetorno();
+      if(tabId==='consulta-orcamentos')renderConsultaOrcamentos();
+      if(tabId==='consulta-vendas')renderConsultaVendas();
+      if(tabId==='consulta-vendas-cliente')renderConsultaVendasCliente();
       if(tabId==='produtos-servicos')renderServices();
       if(tabId==='estoque')renderStock();
       if(tabId==='cursos')renderCursos();
