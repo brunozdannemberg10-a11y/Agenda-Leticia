@@ -2804,6 +2804,8 @@
 
   <!-- ==================== APPLICATION ENGINE ==================== -->
   <script>
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todayBR = todayStr.split('-').reverse().join('/');
     const DEFAULT_FORNECEDORES=[
       {id:'forn_1',nome:'Vòlia Cosméticos Brasil',cnpj:'28.123.456/0001-90',phone:'(11) 98765-4321',email:'contato@voliacosmeticos.com.br',cidade:'São Paulo/SP',rep:'Mariana Silva',obs:'Fornecedor principal de géis construtores e preparadores'},
       {id:'forn_2',nome:'Distribuidora Belle Nail Pro',cnpj:'34.987.654/0001-12',phone:'(54) 99888-7766',email:'pedidos@bellenail.com.br',cidade:'Caxias do Sul/RS',rep:'Carlos Eduardo',obs:'Lixas, fibras de vidro e brocas diamantadas'},
@@ -2874,8 +2876,7 @@
       {id:'cur2',nome:'Curso de Esmaltação em Gel',valor:500,duracao:8,desc:'Aprenda esmaltação em gel do zero ao avançado',status:'Aberto para Inscrição'},
       {id:'cur3',nome:'Workshop Nail Art Avançado',valor:350,duracao:6,desc:'Técnicas avançadas de decoração e nail art',status:'Aberto para Inscrição'}
     ];
-    const todayStr=new Date().toISOString().split('T')[0];
-    const todayBR=todayStr.split('-').reverse().join('/');
+    // todayStr & todayBR already declared at top
 
     let state={
       currentTab:'dashboard',agendaView:'day',selectedDate:todayStr,
