@@ -19,13 +19,40 @@
     *{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
     body{transition:background-color .2s ease,color .2s ease;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
     html.light body{background-color:#f1f5f9;color:#0f172a}
-    html.light .glass-card{background:#ffffff;border:1px solid #e2e8f0;box-shadow:0 4px 20px -4px rgba(0,0,0,.06)}
-    html.light .app-sidebar-bg{background-color:#ffffff;border-color:#e2e8f0}
-    html.light .text-muted{color:#334155!important;font-weight:600}
-    html.light .text-title{color:#0f172a!important;font-weight:700}
+    html.light header{background-color:#ffffff!important;border-color:#cbd5e1!important;color:#0f172a!important;box-shadow:0 1px 4px rgba(0,0,0,0.06)!important}
+    html.light header .text-white{color:#0f172a!important}
+    html.light header .text-slate-400, html.light header .text-slate-300{color:#334155!important;font-weight:700!important}
+    html.light header .bg-slate-800, html.light header .bg-slate-800\/90{background-color:#f1f5f9!important;border-color:#cbd5e1!important;color:#0f172a!important}
+    html.light header #btn-theme-toggle{background-color:#f1f5f9!important;border-color:#cbd5e1!important;color:#d97706!important}
+    html.light header .border-slate-700{border-color:#cbd5e1!important}
+    html.light header .border-l{border-left-color:#cbd5e1!important}
+    
+    html.light .glass-card{background:#ffffff;border:1px solid #cbd5e1;box-shadow:0 4px 20px -4px rgba(0,0,0,.06)}
+    html.light .app-sidebar-bg{background-color:#ffffff;border-color:#cbd5e1}
+    html.light .text-muted{color:#1e293b!important;font-weight:600}
+    html.light .text-title{color:#020617!important;font-weight:800}
     html.light .font-mono{color:#0f172a}
-    html.light .input-box{background-color:#ffffff;border-color:#cbd5e1;color:#0f172a;font-weight:500}
+    html.light .input-box{background-color:#ffffff;border-color:#cbd5e1;color:#0f172a;font-weight:600}
     html.light input, html.light select, html.light textarea{color:#0f172a!important}
+    
+    /* High contrast text for light mode in banner & dashboard */
+    html.light #dash-faturamento{color:#0f172a!important;font-weight:900!important}
+    html.light #dash-meta-val{color:#0f172a!important;font-weight:800!important}
+    html.light #cx-gaveta-balance{color:#0f172a!important;font-weight:900!important}
+    html.light #cx-abertura-info{color:#334155!important;font-weight:600!important}
+    
+    /* Sidebar text high contrast */
+    html.light .sidebar-menu-btn{color:#0f172a!important;font-weight:700}
+    html.light .sidebar-menu-btn:hover{background:#e2e8f0!important;color:#000000!important}
+    html.light .sidebar-submenu button{color:#1e293b!important;font-weight:600}
+    html.light .sidebar-submenu button:hover{background:#e2e8f0!important;color:#000000!important}
+    html.light #badge-agenda-count{background-color:#e2e8f0!important;color:#0f172a!important;font-weight:800}
+
+    /* Buttons preserving crisp white text */
+    html.light button.bg-blue-600, html.light button.bg-emerald-600, html.light button.bg-rose-600,
+    html.light button.bg-indigo-600, html.light button.bg-sky-600, html.light button.bg-teal-600,
+    html.light button.bg-cyan-600, html.light button.bg-amber-600, html.light button.bg-purple-600,
+    html.light .sidebar-menu-btn.active, html.light .sidebar-menu-btn.active *{color:#ffffff!important}
     html.dark body{background-color:#0b0f19;color:#f8fafc}
     html.dark .glass-card{background:#1e293b;border:1px solid #334155;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
     html.dark .app-sidebar-bg{background-color:#111827;border-color:#1f2937}
@@ -82,23 +109,23 @@
 <body class="min-h-screen flex flex-col antialiased">
 
   <!-- TOP HEADER -->
-  <header class="bg-[#1e293b] text-white border-b border-slate-700 px-3 md:px-6 py-2.5 flex items-center justify-between sticky top-0 z-40 shadow-sm shrink-0">
+  <header class="bg-white dark:bg-[#1e293b] text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 px-3 md:px-6 py-2.5 flex items-center justify-between sticky top-0 z-40 shadow-xs shrink-0 transition-colors">
     <div class="flex items-center gap-2.5">
-      <button onclick="toggleMobileSidebar()" class="md:hidden p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200" aria-label="Menu">
+      <button onclick="toggleMobileSidebar()" class="md:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700" aria-label="Menu">
         <i data-lucide="menu" class="w-5 h-5"></i>
       </button>
       <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-white shadow-sm">
+        <div class="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-white shadow-xs">
           <i data-lucide="calendar" class="w-4 h-4"></i>
         </div>
         <div>
-          <span class="font-bold text-xs md:text-sm tracking-tight text-white flex items-center gap-1.5">
+          <span class="font-bold text-xs md:text-sm tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
             ZanettIA Pro
-            <span class="text-[9px] bg-emerald-500/25 text-emerald-300 px-1.5 py-0.5 rounded font-mono hidden sm:inline">GESTÃO TOTAL</span>
+            <span class="text-[9px] bg-emerald-100 text-emerald-800 dark:bg-emerald-500/25 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30 px-1.5 py-0.5 rounded font-mono font-bold hidden sm:inline">GESTÃO TOTAL</span>
           </span>
         </div>
       </div>
-      <div class="hidden lg:flex items-center gap-2 pl-3 border-l border-slate-700">
+      <div class="hidden lg:flex items-center gap-2 pl-3 border-l border-slate-200 dark:border-slate-700">
         <button onclick="openNewAppointmentModal()" class="px-2.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white flex items-center gap-1.5 shadow-xs">
           <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i> + Agendar
         </button>
@@ -111,19 +138,19 @@
       </div>
     </div>
     <div class="flex items-center gap-2 md:gap-3">
-      <button onclick="toggleTheme()" id="btn-theme-toggle" class="p-2 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-xl border border-slate-700 flex items-center gap-1 text-xs" title="Modo Escuro / Claro">
+      <button onclick="toggleTheme()" id="btn-theme-toggle" class="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-500 dark:text-amber-400 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-1 text-xs" title="Modo Escuro / Claro">
         <i data-lucide="sun" id="theme-icon-sun" class="w-4 h-4 hidden"></i>
         <i data-lucide="moon" id="theme-icon-moon" class="w-4 h-4"></i>
       </button>
-      <button onclick="exportDataBackup()" title="Backup em JSON" class="p-2 md:px-2.5 md:py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 flex items-center gap-1 text-xs">
-        <i data-lucide="download-cloud" class="w-4 h-4 text-emerald-400"></i>
+      <button onclick="exportDataBackup()" title="Backup em JSON" class="p-2 md:px-2.5 md:py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 text-xs font-bold shadow-xs">
+        <i data-lucide="download-cloud" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
         <span class="hidden md:inline text-[11px] font-mono">Backup</span>
       </button>
-      <div class="flex items-center gap-2 bg-slate-800/90 px-2.5 py-1.5 rounded-xl border border-slate-700">
+      <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/90 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
         <div class="w-6 h-6 rounded-full bg-rose-500 text-white font-bold text-[10px] flex items-center justify-center shrink-0">LH</div>
         <div class="text-left hidden sm:block">
-          <div class="text-xs font-semibold text-slate-100 flex items-center gap-1 leading-tight">Letícia Hermann <span class="led-dot text-emerald-400"></span></div>
-          <div class="text-[9px] text-slate-400 font-mono">Unhas e Cursos</div>
+          <div class="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1 leading-tight">Letícia Hermann <span class="led-dot text-emerald-500"></span></div>
+          <div class="text-[9px] text-slate-600 dark:text-slate-400 font-mono font-bold">Unhas e Cursos</div>
         </div>
       </div>
     </div>
@@ -226,24 +253,26 @@
       <!-- ===================== DASHBOARD ===================== -->
       <section id="tab-dashboard" class="space-y-4">
         <!-- Banner de Meta Mensal com alto contraste garantido -->
-        <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white shadow-lg">
+        <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-5 bg-white dark:bg-gradient-to-r dark:from-slate-900 dark:via-slate-800 dark:to-indigo-950 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-sm md:shadow-md">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div class="space-y-1 w-full md:w-auto">
-              <span class="text-[10px] uppercase font-mono tracking-wider text-emerald-400 font-bold">Meta de Faturamento Mensal</span>
-              <div class="text-2xl md:text-3xl font-extrabold font-mono flex items-center gap-3 text-white">
-                <span id="dash-faturamento" class="text-white font-bold">R$ 0,00</span>
-                <span class="text-xs font-normal text-slate-300">/ meta <span id="dash-meta-val" class="text-slate-200 font-bold">R$ 8.000,00</span></span>
+            <div class="space-y-1.5 w-full md:w-auto">
+              <span class="text-xs uppercase font-mono tracking-wider text-emerald-700 dark:text-emerald-400 font-black flex items-center gap-1.5">
+                <i data-lucide="target" class="w-4 h-4"></i> Meta de Faturamento Mensal
+              </span>
+              <div class="text-2xl md:text-3xl font-black font-mono flex items-center gap-3 text-slate-900 dark:text-white">
+                <span id="dash-faturamento" class="text-slate-900 dark:text-white font-black text-2xl md:text-3xl">R$ 0,00</span>
+                <span class="text-xs font-bold text-slate-600 dark:text-slate-300">/ meta <span id="dash-meta-val" class="text-slate-900 dark:text-slate-100 font-black">R$ 8.000,00</span></span>
               </div>
-              <div class="w-full md:w-72 bg-slate-700/80 rounded-full h-2.5 overflow-hidden mt-2">
+              <div class="w-full md:w-72 bg-slate-200 dark:bg-slate-700/80 rounded-full h-2.5 overflow-hidden mt-2">
                 <div id="dash-progress-bar" class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-2.5 rounded-full" style="width:0%"></div>
               </div>
             </div>
-            <span id="dash-progress-text" class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3.5 py-1 rounded-full font-mono font-bold">0% Atingido</span>
+            <span id="dash-progress-text" class="text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30 px-3.5 py-1.5 rounded-full font-mono font-black shadow-xs">0% Atingido</span>
           </div>
         </div>
+
         <!-- Dashboard KPI Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="dash-kpis"></div>
-
         <!-- Detalhamento por Forma de Pagamento (Dinheiro, PIX, Débito, Crédito) -->
         <div class="glass-card rounded-2xl p-3 md:p-4 space-y-2">
           <div class="flex items-center justify-between">
@@ -708,7 +737,7 @@
       <!-- ===================== MEUS CAIXAS & FECHAMENTO ===================== -->
       <section id="tab-fechamento-caixa" class="hidden space-y-4">
         <!-- Banner de Status do Caixa Atual -->
-        <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white shadow-lg">
+        <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-5 bg-white dark:bg-gradient-to-r dark:from-slate-900 dark:via-slate-800 dark:to-indigo-950 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-sm md:shadow-md">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div class="space-y-1">
               <div class="flex items-center gap-2">
