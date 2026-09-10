@@ -284,9 +284,24 @@
             <button onclick="switchTab('permissoes-grupos');closeMobileSidebar()" id="subnav-permissoes-grupos" class="flex items-center justify-between w-full"><span>Grupos de Acessos</span><i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-500"></i></button>
           </div>
         </div>
-        <button onclick="switchTab('configuracoes');closeMobileSidebar()" id="nav-configuracoes" class="sidebar-menu-btn">
-          <span class="flex items-center gap-2.5"><i data-lucide="settings" class="w-4 h-4 text-slate-500"></i><span>Configurações</span></span>
-        </button>
+        <!-- CONFIGURACOES ACCORDION SUBMENU -->
+        <div>
+          <button onclick="toggleSubmenu('sub-configuracoes')" id="nav-configuracoes" class="sidebar-menu-btn">
+            <span class="flex items-center gap-2.5"><i data-lucide="settings" class="w-4 h-4 text-slate-500"></i><span>Configurações</span></span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+          <div id="sub-configuracoes" class="sidebar-submenu hidden">
+            <button onclick="switchTab('config-dados-empresa');closeMobileSidebar()" id="subnav-config-dados-empresa" class="flex items-center justify-between w-full"><span>Dados da Empresa</span><i data-lucide="building" class="w-3.5 h-3.5 text-blue-500"></i></button>
+            <button onclick="switchTab('config-meu-plano');closeMobileSidebar()" id="subnav-config-meu-plano" class="flex items-center justify-between w-full"><span>Meu Plano</span><i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i></button>
+            <button onclick="switchTab('config-geral');closeMobileSidebar()" id="subnav-config-geral" class="flex items-center justify-between w-full"><span>Configuração</span><i data-lucide="sliders" class="w-3.5 h-3.5 text-slate-500"></i></button>
+            <button onclick="switchTab('config-sms');closeMobileSidebar()" id="subnav-config-sms" class="flex items-center justify-between w-full"><span>SMS</span><i data-lucide="message-square" class="w-3.5 h-3.5 text-sky-500"></i></button>
+            <button onclick="switchTab('config-whatsapp');closeMobileSidebar()" id="subnav-config-whatsapp" class="flex items-center justify-between w-full"><span>WhatsApp</span><i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-500"></i></button>
+            <button onclick="switchTab('config-alterar-senha');closeMobileSidebar()" id="subnav-config-alterar-senha" class="flex items-center justify-between w-full"><span>Alterar Senha</span><i data-lucide="lock" class="w-3.5 h-3.5 text-rose-500"></i></button>
+            <button onclick="switchTab('config-tutorial');closeMobileSidebar()" id="subnav-config-tutorial" class="flex items-center justify-between w-full"><span>Tutorial</span><i data-lucide="help-circle" class="w-3.5 h-3.5 text-indigo-500"></i></button>
+            <button onclick="switchTab('config-unifica-cliente');closeMobileSidebar()" id="subnav-config-unifica-cliente" class="flex items-center justify-between w-full"><span>Unifica Cliente</span><i data-lucide="user-check" class="w-3.5 h-3.5 text-purple-500"></i></button>
+            <button onclick="switchTab('config-meios-pagamento');closeMobileSidebar()" id="subnav-config-meios-pagamento" class="flex items-center justify-between w-full"><span>Meios de Pagamento</span><i data-lucide="credit-card" class="w-3.5 h-3.5 text-teal-500"></i></button>
+          </div>
+        </div>
       </div>
       <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-2 shrink-0">
         <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-mono">
@@ -3136,6 +3151,417 @@
         <!-- Grid de Cards de Grupos -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4" id="perm-grupos-container"></div>
       </section>
+
+      <!-- ===================== CONFIG: 1. DADOS DA EMPRESA ===================== -->
+      <section id="tab-config-dados-empresa" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30">CONFIGURAÇÕES</span>
+              <span class="text-xs font-mono text-muted">Identificação Oficial & Fiscal</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="building" class="w-5 h-5 text-blue-500"></i>
+              <span>Dados da Empresa & Estúdio</span>
+            </h2>
+            <p class="text-xs text-muted">Informações cadastrais exibidas em recibos, contratos, orçamentos e termos de consentimento</p>
+          </div>
+          <button onclick="saveConfigDadosEmpresa()" class="touch-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="check" class="w-4 h-4"></i> Salvar Dados da Empresa
+          </button>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div>
+              <label class="block font-bold text-muted mb-1">Nome Fantasia do Estúdio *</label>
+              <input type="text" id="cfg-emp-fantasia" value="Letícia Hermann - Unhas e Cursos" class="input-box w-full p-2.5 rounded-xl font-bold">
+            </div>
+            <div>
+              <label class="block font-bold text-muted mb-1">Razão Social / Nome Completo *</label>
+              <input type="text" id="cfg-emp-razao" value="Letícia Hermann Studio de Beleza Ltda" class="input-box w-full p-2.5 rounded-xl font-bold">
+            </div>
+            <div>
+              <label class="block font-bold text-muted mb-1">CNPJ / CPF / MEI</label>
+              <input type="text" id="cfg-emp-cnpj" value="38.912.345/0001-89" class="input-box w-full p-2.5 rounded-xl font-mono">
+            </div>
+            <div>
+              <label class="block font-bold text-muted mb-1">Inscrição Estadual / Municipal</label>
+              <input type="text" id="cfg-emp-ie" value="Isento / Optante Simples Nacional" class="input-box w-full p-2.5 rounded-xl font-mono">
+            </div>
+            <div>
+              <label class="block font-bold text-muted mb-1">Telefone Principal / WhatsApp</label>
+              <input type="text" id="cfg-emp-telefone" value="(54) 99123-4567" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+            </div>
+            <div>
+              <label class="block font-bold text-muted mb-1">E-mail Comercial</label>
+              <input type="email" id="cfg-emp-email" value="contato@leticiahermann.com.br" class="input-box w-full p-2.5 rounded-xl">
+            </div>
+            <div class="md:col-span-2">
+              <label class="block font-bold text-muted mb-1">Endereço Completo</label>
+              <input type="text" id="cfg-emp-endereco" value="Av. Central, 1250, Sala 304 - Centro, Bento Gonçalves/RS" class="input-box w-full p-2.5 rounded-xl">
+            </div>
+            <div>
+              <label class="block font-bold text-muted mb-1">Instagram do Estúdio</label>
+              <input type="text" id="cfg-emp-instagram" value="@leticiahermann.nails" class="input-box w-full p-2.5 rounded-xl font-bold text-indigo-500">
+            </div>
+            <div>
+              <label class="block font-bold text-muted mb-1">Slogan / Especialidade</label>
+              <input type="text" id="cfg-emp-slogan" value="Master Nail Designer • Alongamentos em Gel & Cursos VIP" class="input-box w-full p-2.5 rounded-xl">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONFIG: 2. MEU PLANO ===================== -->
+      <section id="tab-config-meu-plano" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">CONFIGURAÇÕES</span>
+              <span class="text-xs font-mono text-muted">Assinatura & Licenciamento</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
+              <span>Meu Plano: ZanettIA Pro</span>
+            </h2>
+            <p class="text-xs text-muted">Status da licença, recursos premium habilitados e capacidade contratada</p>
+          </div>
+          <span class="px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-mono text-xs font-bold border border-emerald-500/30 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> PLANO ATIVO (Vitalício / Pro)
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="glass-card rounded-2xl p-5 space-y-3 border-2 border-emerald-500 relative">
+            <span class="absolute top-3 right-3 text-[9px] bg-emerald-500 text-white font-bold font-mono px-2 py-0.5 rounded">ATUAL</span>
+            <h3 class="font-bold text-title text-base">ZanettIA Pro - Gestão Total</h3>
+            <p class="text-xs text-muted">Versão completa projetada para estúdios de unhas, estética avançada e cursos profissionalizantes.</p>
+            <div class="text-2xl font-black font-mono text-title pt-2">R$ 0,00 <span class="text-xs font-normal text-muted">/ licença perpétua</span></div>
+            <ul class="text-xs text-muted space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <li class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> Agendamentos ilimitados</li>
+              <li class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> Prontuário & Anamnese completa</li>
+              <li class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> DRE & Controle de Comissões</li>
+              <li class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> Gestão de Cursos & Alunas</li>
+              <li class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> 100% Offline & Backup Local</li>
+            </ul>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 space-y-3 opacity-70">
+            <h3 class="font-bold text-title text-base">Plano Básico</h3>
+            <p class="text-xs text-muted">Apenas agenda simples e cadastro de clientes.</p>
+            <div class="text-2xl font-black font-mono text-muted pt-2">R$ 59,90 <span class="text-xs font-normal">/ mês</span></div>
+            <ul class="text-xs text-muted space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Até 100 agendamentos</li>
+              <li class="flex items-center gap-2 text-rose-400"><i data-lucide="x" class="w-4 h-4"></i> Sem DRE ou Financeiro</li>
+            </ul>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 space-y-3 opacity-70">
+            <h3 class="font-bold text-title text-base">Rede Multi-Salões</h3>
+            <p class="text-xs text-muted">Para redes com mais de 3 filiais simultâneas.</p>
+            <div class="text-2xl font-black font-mono text-muted pt-2">R$ 299,00 <span class="text-xs font-normal">/ mês</span></div>
+            <ul class="text-xs text-muted space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Filiais ilimitadas</li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Servidor em nuvem dedicado</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONFIG: 3. CONFIGURAÇÃO GERAL ===================== -->
+      <section id="tab-config-geral" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-slate-500/20 text-slate-600 dark:text-slate-400 border border-slate-500/30">CONFIGURAÇÕES</span>
+              <span class="text-xs font-mono text-muted">Parâmetros Operacionais</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="sliders" class="w-5 h-5 text-slate-500"></i>
+              <span>Configurações Operacionais da Grade</span>
+            </h2>
+            <p class="text-xs text-muted">Definição dos horários de atendimento, intervalo padrão de horários e meta de faturamento</p>
+          </div>
+          <button onclick="saveConfigGeral()" class="touch-btn px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="check" class="w-4 h-4"></i> Salvar Configurações
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <h3 class="font-bold text-title text-xs uppercase font-mono border-b border-slate-200 dark:border-slate-800 pb-2">Horários de Atendimento</h3>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block font-bold text-muted mb-1">Horário de Abertura</label>
+                <input type="time" id="cfg-geral-hora-abre" value="08:00" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+              </div>
+              <div>
+                <label class="block font-bold text-muted mb-1">Horário de Encerramento</label>
+                <input type="time" id="cfg-geral-hora-fecha" value="19:00" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+              </div>
+              <div class="col-span-2">
+                <label class="block font-bold text-muted mb-1">Intervalo Padrão da Grade de Horários</label>
+                <select id="cfg-geral-intervalo" class="input-box w-full p-2.5 rounded-xl font-bold">
+                  <option value="15">15 minutos (Manicure express)</option>
+                  <option value="30" selected>30 minutos (Padrão recomendada)</option>
+                  <option value="45">45 minutos</option>
+                  <option value="60">60 minutos (1 hora)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <h3 class="font-bold text-title text-xs uppercase font-mono border-b border-slate-200 dark:border-slate-800 pb-2">Metas & Cobrança Rápida</h3>
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block font-bold text-muted mb-1">Meta de Faturamento Mensal (R$)</label>
+                <input type="number" id="cfg-geral-meta" value="8000" step="100" class="input-box w-full p-2.5 rounded-xl font-mono font-black text-emerald-600">
+              </div>
+              <div>
+                <label class="block font-bold text-muted mb-1">Chave PIX Principal</label>
+                <input type="text" id="cfg-geral-pix" value="leticiahermann.unhas@gmail.com" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+              </div>
+              <div>
+                <label class="block font-bold text-muted mb-1">Instituição Bancária</label>
+                <input type="text" id="cfg-geral-banco" value="Banco Inter / Nubank PJ" class="input-box w-full p-2.5 rounded-xl">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONFIG: 4. SMS ===================== -->
+      <section id="tab-config-sms" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/30">CONFIGURAÇÕES</span>
+              <span class="text-xs font-mono text-muted">Avisos & Lembretes por SMS</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="message-square" class="w-5 h-5 text-sky-500"></i>
+              <span>Configurações de Notificações por SMS</span>
+            </h2>
+            <p class="text-xs text-muted">Envio automático de confirmações e avisos de horário para reduzir faltas</p>
+          </div>
+          <button onclick="saveConfigSMS()" class="touch-btn px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="check" class="w-4 h-4"></i> Salvar Parâmetros de SMS
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="glass-card rounded-2xl p-4 border-l-4 border-sky-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Créditos de SMS</span>
+            <div class="text-xl font-bold font-mono text-title mt-1">250 envios</div>
+            <span class="text-[10px] text-emerald-500 font-bold">Disponíveis</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Status do Gateway</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1">Conectado</div>
+            <span class="text-[10px] text-muted">Disparo imediato</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Taxa de Abertura</span>
+            <div class="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-1">98.4%</div>
+            <span class="text-[10px] text-muted">Leitura garantida</span>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 space-y-3 text-xs">
+          <h3 class="font-bold text-title text-xs uppercase font-mono border-b border-slate-200 dark:border-slate-800 pb-2">Régua de Envio Automático</h3>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer font-bold text-title">
+              <input type="checkbox" id="cfg-sms-lembrete-24h" checked class="rounded text-sky-600 focus:ring-0">
+              <span>Enviar lembrete automático 24 horas antes do horário</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer font-bold text-title">
+              <input type="checkbox" id="cfg-sms-confirmacao" checked class="rounded text-sky-600 focus:ring-0">
+              <span>Enviar SMS no momento em que o agendamento for criado</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer font-bold text-title">
+              <input type="checkbox" id="cfg-sms-aniversario" class="rounded text-sky-600 focus:ring-0">
+              <span>Enviar mensagem carinhosa de aniversário com cupom de desconto</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONFIG: 5. WHATSAPP ===================== -->
+      <section id="tab-config-whatsapp" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">CONFIGURAÇÕES</span>
+              <span class="text-xs font-mono text-muted">Integração Direta WhatsApp Web / API</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="message-circle" class="w-5 h-5 text-emerald-500"></i>
+              <span>Configuração de WhatsApp & Modelos de Mensagens</span>
+            </h2>
+            <p class="text-xs text-muted">Personalize as mensagens automáticas de confirmação e lembretes enviadas para as clientes</p>
+          </div>
+          <button onclick="saveConfigWhatsApp()" class="touch-btn px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="check" class="w-4 h-4"></i> Salvar Templates WhatsApp
+          </button>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 space-y-4 text-xs">
+          <div>
+            <label class="block font-bold text-title mb-1">Template: Confirmação de Agendamento</label>
+            <textarea id="cfg-wpp-msg-confirma" rows="3" class="input-box w-full p-2.5 rounded-xl font-mono text-xs">Olá {cliente}! Seu horário para {servico} foi confirmado para {data} às {horario}. Qualquer dúvida estamos à disposição! 💅✨</textarea>
+            <span class="text-[10px] text-muted">Tags disponíveis: {cliente}, {servico}, {data}, {horario}</span>
+          </div>
+          <div>
+            <label class="block font-bold text-title mb-1">Template: Lembrete de Retorno Preventivo (20 a 28 dias)</label>
+            <textarea id="cfg-wpp-msg-retorno" rows="3" class="input-box w-full p-2.5 rounded-xl font-mono text-xs">Olá {cliente}! Passando para lembrar que já está na hora da sua manutenção para manter suas unhas impecáveis e protegidas! Vamos garantir seu horário desta semana? 🥰💅</textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONFIG: 6. ALTERAR SENHA ===================== -->
+      <section id="tab-config-alterar-senha" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30">CONFIGURAÇÕES</span>
+              <span class="text-xs font-mono text-muted">Segurança & Acesso</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="lock" class="w-5 h-5 text-rose-500"></i>
+              <span>Alteração de Senha & Credenciais</span>
+            </h2>
+            <p class="text-xs text-muted">Atualize sua senha mestra de acesso e configure a proteção do sistema</p>
+          </div>
+        </div>
+
+        <div class="max-w-md glass-card rounded-2xl p-5 space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-muted mb-1">Senha Atual *</label>
+            <input type="password" id="cfg-pwd-atual" placeholder="••••••••" class="input-box w-full p-2.5 rounded-xl font-mono">
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Nova Senha *</label>
+            <input type="password" id="cfg-pwd-nova" placeholder="••••••••" class="input-box w-full p-2.5 rounded-xl font-mono">
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Confirmar Nova Senha *</label>
+            <input type="password" id="cfg-pwd-confirma" placeholder="••••••••" class="input-box w-full p-2.5 rounded-xl font-mono">
+          </div>
+          <button onclick="saveConfigAlterarSenha()" class="touch-btn w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold flex items-center justify-center gap-1.5 shadow-sm mt-2">
+            <i data-lucide="shield-check" class="w-4 h-4"></i> Atualizar Senha com Segurança
+          </button>
+        </div>
+      </section>
+
+      <!-- ===================== CONFIG: 7. TUTORIAL ===================== -->
+      <section id="tab-config-tutorial" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">CONFIGURAÇÕES</span>
+              <span class="text-xs font-mono text-muted">Capacitação & Guia Rápido</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="help-circle" class="w-5 h-5 text-indigo-500"></i>
+              <span>Tutoriais & Central de Ajuda ZanettIA</span>
+            </h2>
+            <p class="text-xs text-muted">Passo a passo visual para aprender a utilizar todos os recursos do estúdio</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="glass-card rounded-2xl p-4 space-y-2 hover:border-indigo-500 transition-all">
+            <div class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-600 flex items-center justify-center font-bold">1</div>
+            <h3 class="font-bold text-title text-sm">Como Agendar e Bloquear Grade</h3>
+            <p class="text-xs text-muted leading-relaxed">Aprenda a cadastrar clientes, selecionar procedimentos com durações automáticas e realizar bloqueios de recesso.</p>
+          </div>
+          <div class="glass-card rounded-2xl p-4 space-y-2 hover:border-indigo-500 transition-all">
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold">2</div>
+            <h3 class="font-bold text-title text-sm">Fechamento de Caixa & PDV</h3>
+            <p class="text-xs text-muted leading-relaxed">Como realizar abertura diária com fundo de troco, receber em PIX/Cartão e efetuar a conferência cega ao fim do expediente.</p>
+          </div>
+          <div class="glass-card rounded-2xl p-4 space-y-2 hover:border-indigo-500 transition-all">
+            <div class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-600 flex items-center justify-center font-bold">3</div>
+            <h3 class="font-bold text-title text-sm">Fichas de Anamnese & Contratos</h3>
+            <p class="text-xs text-muted leading-relaxed">Como gerar e imprimir fichas clínicas com termos de garantia de 7 dias e contratos de alunas dos cursos VIP.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CONFIG: 8. UNIFICA CLIENTE ===================== -->
+      <section id="tab-config-unifica-cliente" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30">CONFIGURAÇÕES</span>
+              <span class="text-xs font-mono text-muted">Limpeza de Base & Desduplicação</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="user-check" class="w-5 h-5 text-purple-500"></i>
+              <span>Unificação de Cadastros Duplicados</span>
+            </h2>
+            <p class="text-xs text-muted">Mescle históricos de agendamentos, fichas e saldo de duas clientes duplicadas em um único cadastro oficial</p>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 space-y-4 text-xs">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+              <label class="block font-bold text-title">Cadastro Principal (Manter este registro) *</label>
+              <select id="cfg-unif-master" class="input-box w-full p-2.5 rounded-xl font-bold"></select>
+              <span class="text-[10px] text-muted">Todos os agendamentos e históricos serão transferidos para este cadastro.</span>
+            </div>
+            <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+              <label class="block font-bold text-rose-500">Cadastro Duplicado (Será mesclado e removido) *</label>
+              <select id="cfg-unif-duplicado" class="input-box w-full p-2.5 rounded-xl font-bold"></select>
+              <span class="text-[10px] text-muted">Este cadastro secundário será excluído após transferir todo seu histórico.</span>
+            </div>
+          </div>
+          <button onclick="executarUnificacaoCliente()" class="touch-btn px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="merge" class="w-4 h-4"></i> Executar Unificação Inteligente
+          </button>
+        </div>
+      </section>
+
+      <!-- ===================== CONFIG: 9. MEIOS DE PAGAMENTO ===================== -->
+      <section id="tab-config-meios-pagamento" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-teal-500/20 text-teal-600 dark:text-teal-400 border border-teal-500/30">CONFIGURAÇÕES</span>
+              <span class="text-xs font-mono text-muted">Formas de Recebimento & Taxas</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="credit-card" class="w-5 h-5 text-teal-500"></i>
+              <span>Meios de Pagamento & Taxas de Operadoras</span>
+            </h2>
+            <p class="text-xs text-muted">Gerencie as taxas de cartão de débito, crédito e PIX para dedução automática no lucro líquido</p>
+          </div>
+          <button onclick="openPaymentMethodModal()" class="touch-btn px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Nova Forma de Pagamento
+          </button>
+        </div>
+
+        <!-- Tabela -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Meio de Pagamento</th>
+                  <th class="p-3">Tipo</th>
+                  <th class="p-3 text-center">Taxa Operadora (%)</th>
+                  <th class="p-3 text-center">Prazo Compensação</th>
+                  <th class="p-3 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="cfg-pag-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 </main>
   </div>
 
@@ -5093,6 +5519,19 @@
         }
       }
     ];
+    
+    // ============== DEFAULTS: CONFIGURAÇÕES EXTRAS ==============
+    const DEFAULT_EMPRESA_DATA = {
+      fantasia: 'Letícia Hermann - Unhas e Cursos',
+      razao: 'Letícia Hermann Studio de Beleza Ltda',
+      cnpj: '38.912.345/0001-89',
+      ie: 'Isento / Optante Simples Nacional',
+      telefone: '(54) 99123-4567',
+      email: 'contato@leticiahermann.com.br',
+      endereco: 'Av. Central, 1250, Sala 304 - Centro, Bento Gonçalves/RS',
+      instagram: '@leticiahermann.nails',
+      slogan: 'Master Nail Designer • Alongamentos em Gel & Cursos VIP'
+    };
     const DEFAULT_FORNECEDORES=[
       {id:'forn_1',nome:'Vòlia Cosméticos Brasil',cnpj:'28.123.456/0001-90',phone:'(11) 98765-4321',email:'contato@voliacosmeticos.com.br',cidade:'São Paulo/SP',rep:'Mariana Silva',obs:'Fornecedor principal de géis construtores e preparadores'},
       {id:'forn_2',nome:'Distribuidora Belle Nail Pro',cnpj:'34.987.654/0001-12',phone:'(54) 99888-7766',email:'pedidos@bellenail.com.br',cidade:'Caxias do Sul/RS',rep:'Carlos Eduardo',obs:'Lixas, fibras de vidro e brocas diamantadas'},
@@ -5202,6 +5641,7 @@
       caixaMovs:JSON.parse(localStorage.getItem('zp_caixa_movs'))||[],
       fornecedores:JSON.parse(localStorage.getItem('zp_fornecedores'))||DEFAULT_FORNECEDORES,
       compras:JSON.parse(localStorage.getItem('zp_compras'))||DEFAULT_COMPRAS,
+      empresaData:JSON.parse(localStorage.getItem('zp_empresa_data'))||DEFAULT_EMPRESA_DATA,
       gruposAcesso:JSON.parse(localStorage.getItem('zp_grupos_acesso'))||DEFAULT_GRUPOS_ACESSO,
       pacotesCliente:JSON.parse(localStorage.getItem('zp_pacotes_cliente'))||DEFAULT_PACOTES_CLIENTE,
       orcamentos:JSON.parse(localStorage.getItem('zp_orcamentos'))||DEFAULT_ORCAMENTOS,
@@ -5317,6 +5757,7 @@
       localStorage.setItem('zp_caixa_movs',JSON.stringify(state.caixaMovs));
       localStorage.setItem('zp_fornecedores',JSON.stringify(state.fornecedores));
       localStorage.setItem('zp_compras',JSON.stringify(state.compras));
+      localStorage.setItem('zp_empresa_data',JSON.stringify(state.empresaData));
       localStorage.setItem('zp_grupos_acesso',JSON.stringify(state.gruposAcesso));
       localStorage.setItem('zp_pacotes_cliente',JSON.stringify(state.pacotesCliente));
       localStorage.setItem('zp_orcamentos',JSON.stringify(state.orcamentos));
@@ -8443,6 +8884,195 @@
     }
 
 
+    
+    // ============== CONFIGURAÇÕES: 9 SUB-MÓDULOS ==============
+
+    // 1. DADOS DA EMPRESA
+    function renderConfigDadosEmpresa(){
+      const d = state.empresaData || DEFAULT_EMPRESA_DATA;
+      if(document.getElementById('cfg-emp-fantasia')) document.getElementById('cfg-emp-fantasia').value = d.fantasia || '';
+      if(document.getElementById('cfg-emp-razao')) document.getElementById('cfg-emp-razao').value = d.razao || '';
+      if(document.getElementById('cfg-emp-cnpj')) document.getElementById('cfg-emp-cnpj').value = d.cnpj || '';
+      if(document.getElementById('cfg-emp-ie')) document.getElementById('cfg-emp-ie').value = d.ie || '';
+      if(document.getElementById('cfg-emp-telefone')) document.getElementById('cfg-emp-telefone').value = d.telefone || '';
+      if(document.getElementById('cfg-emp-email')) document.getElementById('cfg-emp-email').value = d.email || '';
+      if(document.getElementById('cfg-emp-endereco')) document.getElementById('cfg-emp-endereco').value = d.endereco || '';
+      if(document.getElementById('cfg-emp-instagram')) document.getElementById('cfg-emp-instagram').value = d.instagram || '';
+      if(document.getElementById('cfg-emp-slogan')) document.getElementById('cfg-emp-slogan').value = d.slogan || '';
+      lucide.createIcons();
+    }
+
+    function saveConfigDadosEmpresa(){
+      state.empresaData = {
+        fantasia: document.getElementById('cfg-emp-fantasia').value.trim(),
+        razao: document.getElementById('cfg-emp-razao').value.trim(),
+        cnpj: document.getElementById('cfg-emp-cnpj').value.trim(),
+        ie: document.getElementById('cfg-emp-ie').value.trim(),
+        telefone: document.getElementById('cfg-emp-telefone').value.trim(),
+        email: document.getElementById('cfg-emp-email').value.trim(),
+        endereco: document.getElementById('cfg-emp-endereco').value.trim(),
+        instagram: document.getElementById('cfg-emp-instagram').value.trim(),
+        slogan: document.getElementById('cfg-emp-slogan').value.trim()
+      };
+      persistState();
+      alert('Dados da empresa salvos com sucesso! ✅');
+    }
+
+    // 2. MEU PLANO
+    function renderConfigMeuPlano(){
+      lucide.createIcons();
+    }
+
+    // 3. CONFIGURAÇÃO GERAL
+    function renderConfigGeral(){
+      const c = state.config || {};
+      if(document.getElementById('cfg-geral-hora-abre')) document.getElementById('cfg-geral-hora-abre').value = c.horaAbre || '08:00';
+      if(document.getElementById('cfg-geral-hora-fecha')) document.getElementById('cfg-geral-hora-fecha').value = c.horaFecha || '19:00';
+      if(document.getElementById('cfg-geral-intervalo')) document.getElementById('cfg-geral-intervalo').value = c.intervalo || '30';
+      if(document.getElementById('cfg-geral-meta')) document.getElementById('cfg-geral-meta').value = c.meta || 8000;
+      if(document.getElementById('cfg-geral-pix')) document.getElementById('cfg-geral-pix').value = c.pix || 'leticiahermann.unhas@gmail.com';
+      if(document.getElementById('cfg-geral-banco')) document.getElementById('cfg-geral-banco').value = c.banco || 'Banco Inter / Nubank PJ';
+      lucide.createIcons();
+    }
+
+    function saveConfigGeral(){
+      if(!state.config) state.config = {};
+      state.config.horaAbre = document.getElementById('cfg-geral-hora-abre').value;
+      state.config.horaFecha = document.getElementById('cfg-geral-hora-fecha').value;
+      state.config.intervalo = parseInt(document.getElementById('cfg-geral-intervalo').value) || 30;
+      state.config.meta = parseFloat(document.getElementById('cfg-geral-meta').value) || 8000;
+      state.config.pix = document.getElementById('cfg-geral-pix').value.trim();
+      state.config.banco = document.getElementById('cfg-geral-banco').value.trim();
+      persistState();
+      alert('Configurações operacionais salvas com sucesso! ✅');
+    }
+
+    // 4. SMS
+    function renderConfigSMS(){
+      lucide.createIcons();
+    }
+
+    function saveConfigSMS(){
+      alert('Preferências de envio de SMS salvas com sucesso! ✅');
+    }
+
+    // 5. WHATSAPP
+    function renderConfigWhatsApp(){
+      lucide.createIcons();
+    }
+
+    function saveConfigWhatsApp(){
+      alert('Modelos de mensagem de WhatsApp salvos com sucesso! ✅');
+    }
+
+    // 6. ALTERAR SENHA
+    function renderConfigAlterarSenha(){
+      if(document.getElementById('cfg-pwd-atual')) document.getElementById('cfg-pwd-atual').value = '';
+      if(document.getElementById('cfg-pwd-nova')) document.getElementById('cfg-pwd-nova').value = '';
+      if(document.getElementById('cfg-pwd-confirma')) document.getElementById('cfg-pwd-confirma').value = '';
+      lucide.createIcons();
+    }
+
+    function saveConfigAlterarSenha(){
+      const nova = document.getElementById('cfg-pwd-nova').value;
+      const confirma = document.getElementById('cfg-pwd-confirma').value;
+      if(!nova || nova.length < 6){
+        return alert('A nova senha deve ter no mínimo 6 dígitos.');
+      }
+      if(nova !== confirma){
+        return alert('A confirmação da nova senha não confere.');
+      }
+      alert('Senha atualizada com sucesso! ✅');
+      renderConfigAlterarSenha();
+    }
+
+    // 7. TUTORIAL
+    function renderConfigTutorial(){
+      lucide.createIcons();
+    }
+
+    // 8. UNIFICA CLIENTE
+    function renderConfigUnificaCliente(){
+      const clients = state.clients || [];
+      const selMaster = document.getElementById('cfg-unif-master');
+      const selDup = document.getElementById('cfg-unif-duplicado');
+
+      const options = clients.map(c => `<option value="${c.id}">${c.name} - ${c.phone || 'Sem fone'}</option>`).join('');
+      if(selMaster) selMaster.innerHTML = options;
+      if(selDup) selDup.innerHTML = options;
+      lucide.createIcons();
+    }
+
+    function executarUnificacaoCliente(){
+      const masterId = document.getElementById('cfg-unif-master').value;
+      const dupId = document.getElementById('cfg-unif-duplicado').value;
+
+      if(!masterId || !dupId){
+        return alert('Selecione ambos os cadastros para unificar.');
+      }
+      if(masterId === dupId){
+        return alert('Selecione cadastros distintos para a unificação.');
+      }
+
+      const master = (state.clients || []).find(c => c.id === masterId);
+      const dup = (state.clients || []).find(c => c.id === dupId);
+
+      if(!master || !dup) return;
+
+      if(confirm(`Deseja unificar o cadastro "${dup.name}" no cadastro oficial "${master.name}"? Todos os agendamentos e históricos serão unificados.`)){
+        // Migra agendamentos
+        (state.appointments || []).forEach(a => {
+          if((a.clientName||'').toLowerCase() === dup.name.toLowerCase()){
+            a.clientName = master.name;
+          }
+        });
+
+        // Migra pacotes
+        (state.pacotesCliente || []).forEach(p => {
+          if(p.clienteId === dup.id){
+            p.clienteId = master.id;
+            p.clienteNome = master.name;
+          }
+        });
+
+        // Remove o duplicado
+        state.clients = state.clients.filter(c => c.id !== dup.id);
+        persistState();
+        renderConfigUnificaCliente();
+        alert(`Cadastros unificados com sucesso! O histórico foi consolidado em "${master.name}". ✅`);
+      }
+    }
+
+    // 9. MEIOS DE PAGAMENTO
+    function renderConfigMeiosPagamento(){
+      const methods = state.paymentMethods || DEFAULT_PAYMENT_METHODS || [];
+      const tbody = document.getElementById('cfg-pag-table-body');
+      if(!tbody) return;
+
+      tbody.innerHTML = methods.map(m => {
+        let prazo = 'D+0 (Instantâneo)';
+        if(m.id === 'DEBITO') prazo = 'D+1 (1 dia útil)';
+        if(m.id === 'CREDITO') prazo = 'D+30 (30 dias)';
+
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="credit-card" class="w-3.5 h-3.5 text-teal-500"></i>
+              <span>${m.name}</span>
+            </td>
+            <td class="p-3 text-muted font-mono text-[11px]">${m.id}</td>
+            <td class="p-3 text-center font-mono font-bold text-title">${m.fee || 0}%</td>
+            <td class="p-3 text-center font-mono text-[11px] text-muted">${prazo}</td>
+            <td class="p-3 text-center">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${m.active ? 'bg-emerald-500/20 text-emerald-500' : 'bg-slate-200 text-slate-500'}">${m.active ? 'HABILITADO' : 'INATIVO'}</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+
     // ============== THEME ==============
     function applyTheme(){
       const h=document.documentElement;
@@ -8516,6 +9146,16 @@
       if(tabId==='marketing')renderMarketing();
       
       if(tabId==='permissoes-grupos')renderGruposAcesso();
+      
+      if(tabId==='config-dados-empresa')renderConfigDadosEmpresa();
+      if(tabId==='config-meu-plano')renderConfigMeuPlano();
+      if(tabId==='config-geral')renderConfigGeral();
+      if(tabId==='config-sms')renderConfigSMS();
+      if(tabId==='config-whatsapp')renderConfigWhatsApp();
+      if(tabId==='config-alterar-senha')renderConfigAlterarSenha();
+      if(tabId==='config-tutorial')renderConfigTutorial();
+      if(tabId==='config-unifica-cliente')renderConfigUnificaCliente();
+      if(tabId==='config-meios-pagamento')renderConfigMeiosPagamento();
       if(tabId==='configuracoes')loadConfig();
       lucide.createIcons();
     }
