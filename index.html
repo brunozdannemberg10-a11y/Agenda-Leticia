@@ -3636,6 +3636,10 @@
               <i data-lucide="compass" class="w-4 h-4 text-amber-300"></i>
               <span>3. Onde Pegar nas Outras Agendas (Passo a Passo)</span>
             </button>
+            <button onclick="switchMigracaoSubTab('reiniciar')" id="mig-subtab-btn-reiniciar" class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white">
+              <i data-lucide="sparkles" class="w-4 h-4 text-rose-300"></i>
+              <span>4. Reiniciar Painel (Zerar Demo)</span>
+            </button>
           </div>
         </div>
 
@@ -4133,6 +4137,111 @@
                   Se você anota seus clientes ou serviços em uma planilha Excel ou Google Sheets, basta clicar em: <br>
                   <strong class="text-title">Arquivo &gt; Fazer Download &gt; Valores separados por vírgula (.csv)</strong>. <br>
                   O ZanettIA reconhece automaticamente se o arquivo estiver separado por vírgula ou ponto-e-vírgula e mapeia colunas como <em>Nome, Telefone, Celular, Whatsapp, CPF, Email, Preço, Duração</em> mesmo se os títulos estiverem um pouco diferentes!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 4: REINICIAR PAINEL / ZERAR DADOS DE DEMONSTRAÇÃO -->
+        <div id="mig-subtab-reiniciar" class="hidden space-y-6">
+          <div class="bg-card rounded-2xl p-6 border border-border/80 shadow-sm space-y-6">
+            <!-- Header do Card -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/70 pb-5">
+              <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-semibold mb-2">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                  Ambiente Limpo & Pronto para Apresentação
+                </div>
+                <h3 class="text-lg md:text-xl font-black text-title tracking-tight flex items-center gap-2">
+                  Reiniciar Painel & Limpar Dados de Demonstração
+                </h3>
+                <p class="text-xs text-muted mt-1 max-w-2xl">
+                  Precisa apresentar o sistema do zero para uma nova cliente ou quer começar a usar o ZanettIA com a sua própria base real? Escolha exatamente o que deseja zerar abaixo.
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="exportDataBackup()" class="btn-secondary text-xs px-3.5 py-2 flex items-center gap-2">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Baixar Backup Antes de Limpar</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Modos de Reinício -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Opção 1: Zerar Somente Movimentações (Recomendado para Apresentação) -->
+              <div class="p-5 rounded-2xl border-2 border-amber-500/40 bg-amber-50/20 dark:bg-amber-950/10 flex flex-col justify-between space-y-4 hover:border-amber-500 transition-all">
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+                      <i data-lucide="calendar-x" class="w-5 h-5"></i>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300">RECOMENDADO</span>
+                  </div>
+                  <h4 class="font-bold text-title text-base">Zerar Agendamentos, Caixa & Clientes Teste</h4>
+                  <p class="text-xs text-muted leading-relaxed">
+                    Apaga a agenda fictícia, o histórico de movimentações financeiras, vendas no PDV e clientes de teste. <strong>Mantém seus procedimentos, categorias e profissionais cadastrados</strong> para o sistema ficar impecável na hora de demonstrar!
+                  </p>
+                  <ul class="text-xs text-muted space-y-1.5 pt-1">
+                    <li class="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                      <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500"></i> Zera a agenda e horários ocupados
+                    </li>
+                    <li class="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                      <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500"></i> Zera o faturamento, extrato e caixa do dia
+                    </li>
+                    <li class="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                      <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500"></i> Preserva seu catálogo de procedimentos e equipe
+                    </li>
+                  </ul>
+                </div>
+                <button onclick="executarLimpezaPainel('movimentacoes')" class="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all">
+                  <i data-lucide="brush" class="w-4 h-4"></i>
+                  <span>Zerar Movimentações (Pronto para Apresentar)</span>
+                </button>
+              </div>
+
+              <!-- Opção 2: Reset Completo de Fábrica (Zerar Absolutamente Tudo) -->
+              <div class="p-5 rounded-2xl border-2 border-rose-500/40 bg-rose-50/20 dark:bg-rose-950/10 flex flex-col justify-between space-y-4 hover:border-rose-500 transition-all">
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold">
+                      <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300">RESET TOTAL</span>
+                  </div>
+                  <h4 class="font-bold text-title text-base">Zerar Tudo (Começar 100% do Zero)</h4>
+                  <p class="text-xs text-muted leading-relaxed">
+                    Limpa completamente todos os registros do banco: agendamentos, clientes, estoque, contas a pagar/receber, compras e notas fiscais. O painel volta ao estado inicial limpo de instalação.
+                  </p>
+                  <ul class="text-xs text-muted space-y-1.5 pt-1">
+                    <li class="flex items-center gap-2 text-rose-700 dark:text-rose-300">
+                      <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-500"></i> Limpa clientes, vendas e financeiro
+                    </li>
+                    <li class="flex items-center gap-2 text-rose-700 dark:text-rose-300">
+                      <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-500"></i> Limpa compras, notas fiscais e estoque
+                    </li>
+                    <li class="flex items-center gap-2 text-rose-700 dark:text-rose-300">
+                      <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-rose-500"></i> Deixa a conta 100% zerada
+                    </li>
+                  </ul>
+                </div>
+                <button onclick="executarLimpezaPainel('total')" class="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                  <span>Zerar Tudo (Reset Geral do Sistema)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card Dica de Apresentação Comercial -->
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-border flex items-start gap-3 text-xs">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <i data-lucide="lightbulb" class="w-4 h-4"></i>
+              </div>
+              <div class="space-y-1">
+                <p class="font-bold text-title">Dica para Demonstrações Comerciais:</p>
+                <p class="text-muted leading-relaxed">
+                  Antes de abrir a reunião com sua cliente, clique em <strong>"Zerar Movimentações"</strong>. Dessa forma, a agenda e o caixa estarão vazios como em um primeiro dia de uso, permitindo que você agende o primeiro cliente ou faça uma venda ao vivo na frente dela, mostrando toda a agilidade do ZanettIA!
                 </p>
               </div>
             </div>
@@ -13352,7 +13461,7 @@
     }
 
     function switchMigracaoSubTab(subTabId){
-      ['puxar', 'exportar', 'caminhos'].forEach(s => {
+      ['puxar', 'exportar', 'caminhos', 'reiniciar'].forEach(s => {
         const pane = document.getElementById('mig-subtab-' + s);
         const btn = document.getElementById('mig-subtab-btn-' + s);
         if (pane) pane.classList.toggle('hidden', s !== subTabId);
@@ -14243,6 +14352,72 @@
           document.body.removeChild(link);
           URL.revokeObjectURL(url);
         }
+      }
+    }
+
+    // Reiniciar Painel / Limpar Dados de Demonstração
+    function executarLimpezaPainel(tipo) {
+      if (tipo === 'movimentacoes') {
+        const conf = confirm(
+          "✨ Deseja zerar os agendamentos, clientes de teste e caixa?\n\n" +
+          "• Seus procedimentos, categorias e profissionais SERÃO PRESERVADOS.\n" +
+          "• A agenda e o financeiro ficarão zerados e prontos para apresentação comercial.\n\n" +
+          "Deseja continuar?"
+        );
+        if (!conf) return;
+
+        state.appointments = [];
+        state.clients = [];
+        state.financialRecords = [];
+        if (state.pdvSales) state.pdvSales = [];
+        if (state.cashRegisters) state.cashRegisters = [];
+        if (state.nfse && Array.isArray(state.nfse.invoices)) state.nfse.invoices = [];
+
+        persistState();
+        if (typeof syncToSupabase === 'function') syncToSupabase();
+        if (typeof renderAgenda === 'function') renderAgenda();
+        if (typeof renderClients === 'function') renderClients();
+        if (typeof renderDashboard === 'function') renderDashboard();
+        if (typeof renderPDV === 'function') renderPDV();
+
+        alert("🎉 Painel Reiniciado com Sucesso!\n\nA agenda, clientes de teste e o caixa foram zerados. O sistema está limpo e impecável para você apresentar!");
+        switchTab('dashboard');
+        return;
+      }
+
+      if (tipo === 'total') {
+        const conf = confirm(
+          "⚠️ ATENÇÃO: Deseja realizar um RESET TOTAL no sistema?\n\n" +
+          "Todos os agendamentos, clientes, estoque, lançamentos financeiros, pedidos de compras e notas fiscais serão zerados.\n\n" +
+          "Esta ação deixará a conta 100% como nova de fábrica."
+        );
+        if (!conf) return;
+
+        state.appointments = [];
+        state.clients = [];
+        state.financialRecords = [];
+        if (state.products) {
+          state.products.forEach(p => p.stock = 0);
+        }
+        if (state.compras) {
+          state.compras.compras = [];
+          state.compras.cotacoes = [];
+        }
+        if (state.nfse) {
+          state.nfse.invoices = [];
+        }
+        if (state.pdvSales) state.pdvSales = [];
+        if (state.cashRegisters) state.cashRegisters = [];
+
+        persistState();
+        if (typeof syncToSupabase === 'function') syncToSupabase();
+        if (typeof renderAgenda === 'function') renderAgenda();
+        if (typeof renderClients === 'function') renderClients();
+        if (typeof renderDashboard === 'function') renderDashboard();
+
+        alert("✨ Reset Geral Concluído! O sistema foi zerado e está 100% pronto para início.");
+        switchTab('dashboard');
+        return;
       }
     }
 
