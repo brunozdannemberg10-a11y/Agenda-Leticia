@@ -172,6 +172,16 @@
             <button onclick="switchTab('financeiro-formas-pagamento');closeMobileSidebar()" id="subnav-formas-pagamento" class="flex items-center justify-between w-full"><span>Formas de Pagamento</span><i data-lucide="credit-card" class="w-3.5 h-3.5 text-teal-500"></i></button>
           </div>
         </div>
+        <div>
+          <button onclick="toggleSubmenu('sub-analise')" id="nav-analise" class="sidebar-menu-btn">
+            <span class="flex items-center gap-2.5"><i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-500"></i><span>Análise</span></span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+          <div id="sub-analise" class="sidebar-submenu hidden">
+            <button onclick="switchTab('analise-anual');closeMobileSidebar()" id="subnav-analise-anual" class="flex items-center justify-between w-full"><span>Fluxo de Caixa Anual</span><i data-lucide="calendar" class="w-3.5 h-3.5 text-indigo-500"></i></button>
+            <button onclick="switchTab('analise-mensal');closeMobileSidebar()" id="subnav-analise-mensal" class="flex items-center justify-between w-full"><span>Fluxo de Caixa Mensal</span><i data-lucide="calendar-days" class="w-3.5 h-3.5 text-emerald-500"></i></button>
+          </div>
+        </div>
         <button onclick="switchTab('consultas');closeMobileSidebar()" id="nav-consultas" class="sidebar-menu-btn">
           <span class="flex items-center gap-2.5"><i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-500"></i><span>Consultas & Relatórios</span></span>
         </button>
@@ -1194,6 +1204,286 @@
         <!-- Grade de Cards de Profissionais -->
         <div id="professionals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ===================== ANÁLISE: FLUXO DE CAIXA ANUAL ===================== -->
+      <section id="tab-analise-anual" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">DFC EXECUTIVO</span>
+              <span class="text-xs font-mono text-muted">Planejamento Estratégico</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i>
+              <span>Fluxo de Caixa Anual</span>
+            </h2>
+            <p class="text-xs text-muted">Demonstração de entradas, saídas, resultado operacional e margem mês a mês</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl shadow-xs">
+              <i data-lucide="calendar" class="w-4 h-4 text-indigo-500"></i>
+              <label for="analise-ano-select" class="text-xs font-bold text-title">Ano Exercício:</label>
+              <select id="analise-ano-select" onchange="renderAnaliseAnual()" class="bg-transparent text-xs font-mono font-bold text-title outline-none cursor-pointer">
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026" selected>2026</option>
+                <option value="2027">2027</option>
+              </select>
+            </div>
+            <button onclick="window.print()" class="touch-btn px-3.5 py-2 bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs">
+              <i data-lucide="printer" class="w-4 h-4"></i> Imprimir DFC
+            </button>
+          </div>
+        </div>
+
+        <!-- KPIs Anuais -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Entradas Anuais</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="anual-kpi-receitas">R$ 0,00</div>
+            <span class="text-[9px] text-muted">Faturamento Bruto</span>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-rose-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Saídas Anuais</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1" id="anual-kpi-despesas">R$ 0,00</div>
+            <span class="text-[9px] text-muted">Despesas Totais</span>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-indigo-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Resultado Líquido</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400 mt-1" id="anual-kpi-liquido">R$ 0,00</div>
+            <span class="text-[9px] text-muted">Lucro Acumulado</span>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Margem Líquida</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="anual-kpi-margem">0%</div>
+            <span class="text-[9px] text-muted">Lucratividade Média</span>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Média Mensal</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="anual-kpi-media">R$ 0,00</div>
+            <span class="text-[9px] text-muted">Receita / 12 meses</span>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-amber-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Melhor Mês</span>
+            <div class="text-sm font-bold font-mono text-amber-600 dark:text-amber-400 mt-1 truncate" id="anual-kpi-top-mes">—</div>
+            <span class="text-[9px] text-muted">Pico de Faturamento</span>
+          </div>
+        </div>
+
+        <!-- Gráfico Anual de Barras & Linha -->
+        <div class="glass-card rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+            <h3 class="text-xs font-bold text-title uppercase font-mono flex items-center gap-2">
+              <i data-lucide="trending-up" class="w-4 h-4 text-indigo-500"></i> Evolução Comparativa Mensal (Receitas vs Despesas vs Saldo Líquido)
+            </h3>
+            <span class="text-[10px] font-mono text-muted" id="anual-chart-subtitle">Ano 2026</span>
+          </div>
+          <div class="relative h-64 sm:h-72 w-full">
+            <canvas id="chart-fluxo-anual"></canvas>
+          </div>
+        </div>
+
+        <!-- Tabela DFC Anual Completa (Jan a Dez + Total) -->
+        <div class="glass-card rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+            <div>
+              <h3 class="text-xs font-bold text-title uppercase font-mono flex items-center gap-2">
+                <i data-lucide="table" class="w-4 h-4 text-emerald-500"></i> Demonstrativo do Fluxo de Caixa Anual (DFC)
+              </h3>
+              <p class="text-[11px] text-muted">Visão consolidada de cada mês e fechamento anual acumulado</p>
+            </div>
+            <span class="text-[10px] font-mono text-muted">Valores em R$</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs font-mono min-w-[900px]">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 uppercase text-[10px] bg-slate-50 dark:bg-slate-800/50">
+                  <th class="p-2.5 font-bold">Métrica / Mês</th>
+                  <th class="p-2.5 text-right">Jan</th>
+                  <th class="p-2.5 text-right">Fev</th>
+                  <th class="p-2.5 text-right">Mar</th>
+                  <th class="p-2.5 text-right">Abr</th>
+                  <th class="p-2.5 text-right">Mai</th>
+                  <th class="p-2.5 text-right">Jun</th>
+                  <th class="p-2.5 text-right">Jul</th>
+                  <th class="p-2.5 text-right">Ago</th>
+                  <th class="p-2.5 text-right">Set</th>
+                  <th class="p-2.5 text-right">Out</th>
+                  <th class="p-2.5 text-right">Nov</th>
+                  <th class="p-2.5 text-right">Dez</th>
+                  <th class="p-2.5 text-right font-bold text-title bg-slate-100 dark:bg-slate-800">Total Anual</th>
+                </tr>
+              </thead>
+              <tbody id="anual-dfc-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Insights Executivos -->
+        <div class="glass-card rounded-2xl p-4 border border-indigo-100 dark:border-indigo-950/60 bg-gradient-to-r from-indigo-50/50 dark:from-indigo-950/20 to-transparent space-y-2" id="anual-insights-card">
+          <div class="flex items-center gap-2 font-bold text-xs text-indigo-700 dark:text-indigo-300 uppercase font-mono">
+            <i data-lucide="sparkles" class="w-4 h-4 text-indigo-500"></i>
+            <span>Diagnóstico do Exercício Anual</span>
+          </div>
+          <p class="text-xs text-muted leading-relaxed" id="anual-insights-text">Carregando análise...</p>
+        </div>
+      </section>
+
+      <!-- ===================== ANÁLISE: FLUXO DE CAIXA MENSAL ===================== -->
+      <section id="tab-analise-mensal" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">DETALHAMENTO DIÁRIO & SEMANAL</span>
+              <span class="text-xs font-mono text-muted">Controle Operacional</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="calendar-days" class="w-5 h-5 text-emerald-500"></i>
+              <span>Fluxo de Caixa Mensal</span>
+            </h2>
+            <p class="text-xs text-muted">Acompanhe a curva de receitas diárias, semanas do mês e divisão por categorias</p>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-xl shadow-xs">
+              <i data-lucide="filter" class="w-3.5 h-3.5 text-emerald-500"></i>
+              <select id="analise-mes-select" onchange="renderAnaliseMensal()" class="bg-transparent text-xs font-bold text-title outline-none cursor-pointer">
+                <option value="0">Janeiro</option>
+                <option value="1">Fevereiro</option>
+                <option value="2">Março</option>
+                <option value="3">Abril</option>
+                <option value="4">Maio</option>
+                <option value="5">Junho</option>
+                <option value="6">Julho</option>
+                <option value="7">Agosto</option>
+                <option value="8">Setembro</option>
+                <option value="9">Outubro</option>
+                <option value="10">Novembro</option>
+                <option value="11">Dezembro</option>
+              </select>
+              <select id="analise-mes-ano-select" onchange="renderAnaliseMensal()" class="bg-transparent text-xs font-mono font-bold text-title outline-none cursor-pointer pl-1 border-l border-slate-200 dark:border-slate-700">
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+              </select>
+            </div>
+            <button onclick="window.print()" class="touch-btn px-3.5 py-2 bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs">
+              <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Mês
+            </button>
+          </div>
+        </div>
+
+        <!-- KPIs Mensais -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Entradas do Mês</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="mensal-kpi-receitas">R$ 0,00</div>
+            <span class="text-[9px] text-muted">Receitas no Período</span>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-rose-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Saídas do Mês</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1" id="mensal-kpi-despesas">R$ 0,00</div>
+            <span class="text-[9px] text-muted">Despesas no Período</span>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Saldo Líquido</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="mensal-kpi-liquido">R$ 0,00</div>
+            <span class="text-[9px] text-muted" id="mensal-kpi-status-badge">Superávit</span>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Margem Líquida</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="mensal-kpi-margem">0%</div>
+            <span class="text-[9px] text-muted">Retorno Líquido</span>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-indigo-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Média por Dia Útil</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400 mt-1" id="mensal-kpi-media-dia">R$ 0,00</div>
+            <span class="text-[9px] text-muted">Dias com Atendimento</span>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Dias Positivos</span>
+            <div class="text-lg md:text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-1" id="mensal-kpi-dias-positivos">0 dias</div>
+            <span class="text-[9px] text-muted">Com faturamento > 0</span>
+          </div>
+        </div>
+
+        <!-- Gráfico de Evolução Diária no Mês -->
+        <div class="glass-card rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+            <h3 class="text-xs font-bold text-title uppercase font-mono flex items-center gap-2">
+              <i data-lucide="line-chart" class="w-4 h-4 text-emerald-500"></i> Curva de Fluxo Diário & Saldo Acumulado no Mês
+            </h3>
+            <span class="text-[10px] font-mono text-muted" id="mensal-chart-subtitle">Setembro / 2026</span>
+          </div>
+          <div class="relative h-64 sm:h-72 w-full">
+            <canvas id="chart-fluxo-mensal"></canvas>
+          </div>
+        </div>
+
+        <!-- Detalhamento por Semanas do Mês -->
+        <div class="space-y-2">
+          <h3 class="text-xs font-bold text-title uppercase font-mono flex items-center gap-2">
+            <i data-lucide="layers" class="w-4 h-4 text-blue-500"></i> Desempenho por Semana do Mês
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" id="mensal-semanas-grid"></div>
+        </div>
+
+        <!-- Composição de Categorias no Mês: Receitas vs Despesas -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="glass-card rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+              <h3 class="text-xs font-bold text-title uppercase font-mono flex items-center gap-2">
+                <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-500"></i> Receitas por Categoria
+              </h3>
+              <span class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold" id="mensal-cat-total-rec">Total: R$ 0,00</span>
+            </div>
+            <div class="relative h-56 w-full flex items-center justify-center">
+              <canvas id="chart-cat-receitas-mes"></canvas>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+              <h3 class="text-xs font-bold text-title uppercase font-mono flex items-center gap-2">
+                <i data-lucide="pie-chart" class="w-4 h-4 text-rose-500"></i> Despesas por Categoria
+              </h3>
+              <span class="text-[10px] font-mono text-rose-600 dark:text-rose-400 font-bold" id="mensal-cat-total-desp">Total: R$ 0,00</span>
+            </div>
+            <div class="relative h-56 w-full flex items-center justify-center">
+              <canvas id="chart-cat-despesas-mes"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela Cronológica Dia a Dia -->
+        <div class="glass-card rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+            <div>
+              <h3 class="text-xs font-bold text-title uppercase font-mono flex items-center gap-2">
+                <i data-lucide="calendar" class="w-4 h-4 text-indigo-500"></i> Extrato Analítico Dia a Dia
+              </h3>
+              <p class="text-[11px] text-muted">Receitas, despesas, saldo diário e saldo acumulado de cada dia</p>
+            </div>
+            <span class="text-[10px] font-mono text-muted">Discriminação Diária</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs font-mono min-w-[750px]">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 uppercase text-[10px] bg-slate-50 dark:bg-slate-800/50">
+                  <th class="p-2.5">Data / Dia</th>
+                  <th class="p-2.5 text-right text-emerald-600 dark:text-emerald-400">Entradas (+)</th>
+                  <th class="p-2.5 text-right text-rose-600 dark:text-rose-400">Saídas (-)</th>
+                  <th class="p-2.5 text-right text-title">Saldo do Dia</th>
+                  <th class="p-2.5 text-right font-bold text-indigo-600 dark:text-indigo-400">Saldo Acumulado</th>
+                  <th class="p-2.5 text-center">Status</th>
+                  <th class="p-2.5 text-right">Movimentos</th>
+                </tr>
+              </thead>
+              <tbody id="mensal-dias-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -2323,6 +2613,499 @@
     function fmt(v){return'R$ '+(v||0).toFixed(2).replace('.',',')}
     function fmtDate(d){return d?d.split('-').reverse().join('/'):'—'}
 
+    // ============== ANÁLISE: FLUXO DE CAIXA ANUAL & MENSAL ==============
+    let chartFluxoAnual = null;
+    let chartFluxoMensal = null;
+    let chartCatReceitasMes = null;
+    let chartCatDespesasMes = null;
+
+    const MESES_NOMES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    const MESES_ABREV = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+    function renderAnaliseAnual(){
+      const anoSel = document.getElementById('analise-ano-select');
+      const ano = anoSel ? parseInt(anoSel.value) : (state.currentYear || 2026);
+
+      const subtitle = document.getElementById('anual-chart-subtitle');
+      if(subtitle) subtitle.innerText = 'Exercício Anual ' + ano;
+
+      // Calcular dados dos 12 meses
+      const mensalData = [];
+      let acumulado = 0;
+      let anoTotalRec = 0;
+      let anoTotalDesp = 0;
+      let topMesIndex = -1;
+      let topMesValor = -Infinity;
+
+      for(let m = 0; m < 12; m++){
+        const mesStr = (m + 1).toString().padStart(2, '0');
+        const prefix = `${ano}-${mesStr}`;
+
+        let rec = 0;
+        let desp = 0;
+
+        (state.financial||[]).forEach(f => {
+          if((f.date || '').startsWith(prefix)){
+            const v = Number(f.value || 0);
+            if(f.type === 'RECEITA') rec += v;
+            else if(f.type === 'DESPESA') desp += v;
+          }
+        });
+
+        const liq = rec - desp;
+        acumulado += liq;
+        anoTotalRec += rec;
+        anoTotalDesp += desp;
+
+        if(rec > topMesValor){
+          topMesValor = rec;
+          topMesIndex = m;
+        }
+
+        mensalData.push({
+          mesNome: MESES_ABREV[m],
+          mesCompleto: MESES_NOMES[m],
+          rec,
+          desp,
+          liq,
+          acumulado,
+          margem: rec > 0 ? ((liq / rec) * 100).toFixed(1) : '0.0'
+        });
+      }
+
+      const anoResultadoLiq = anoTotalRec - anoTotalDesp;
+      const anoMargem = anoTotalRec > 0 ? ((anoResultadoLiq / anoTotalRec) * 100).toFixed(1) : '0.0';
+      const anoMedia = anoTotalRec / 12;
+
+      // Atualizar KPIs
+      if(document.getElementById('anual-kpi-receitas')) document.getElementById('anual-kpi-receitas').innerText = fmt(anoTotalRec);
+      if(document.getElementById('anual-kpi-despesas')) document.getElementById('anual-kpi-despesas').innerText = fmt(anoTotalDesp);
+      if(document.getElementById('anual-kpi-liquido')){
+        const el = document.getElementById('anual-kpi-liquido');
+        el.innerText = fmt(anoResultadoLiq);
+        el.className = `text-lg md:text-xl font-bold font-mono mt-1 ${anoResultadoLiq>=0?'text-emerald-600 dark:text-emerald-400':'text-rose-600 dark:text-rose-400'}`;
+      }
+      if(document.getElementById('anual-kpi-margem')) document.getElementById('anual-kpi-margem').innerText = anoMargem + '%';
+      if(document.getElementById('anual-kpi-media')) document.getElementById('anual-kpi-media').innerText = fmt(anoMedia);
+      if(document.getElementById('anual-kpi-top-mes')){
+        document.getElementById('anual-kpi-top-mes').innerText = (topMesIndex !== -1 && topMesValor > 0) ? `${MESES_NOMES[topMesIndex]} (${fmt(topMesValor)})` : '—';
+      }
+
+      // Gráfico Anual (Receitas, Despesas, Saldo Líquido)
+      const ctx = document.getElementById('chart-fluxo-anual')?.getContext('2d');
+      if(ctx){
+        if(chartFluxoAnual) chartFluxoAnual.destroy();
+
+        chartFluxoAnual = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: MESES_ABREV,
+            datasets: [
+              {
+                label: 'Receitas (Entradas)',
+                data: mensalData.map(d => d.rec),
+                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                borderColor: '#10b981',
+                borderWidth: 1.5,
+                borderRadius: 6,
+                order: 2
+              },
+              {
+                label: 'Despesas (Saídas)',
+                data: mensalData.map(d => d.desp),
+                backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                borderColor: '#ef4444',
+                borderWidth: 1.5,
+                borderRadius: 6,
+                order: 2
+              },
+              {
+                label: 'Saldo Líquido Mensal',
+                data: mensalData.map(d => d.liq),
+                type: 'line',
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                borderWidth: 2.5,
+                pointBackgroundColor: '#6366f1',
+                pointBorderColor: '#ffffff',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                tension: 0.3,
+                order: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { font: { family: 'JetBrains Mono', size: 11 }, boxWidth: 14 }
+              },
+              tooltip: {
+                callbacks: {
+                  label: ctx => `${ctx.dataset.label}: ${fmt(ctx.raw)}`
+                }
+              }
+            },
+            scales: {
+              y: {
+                ticks: {
+                  font: { family: 'JetBrains Mono', size: 10 },
+                  callback: v => 'R$ ' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v)
+                },
+                grid: { color: 'rgba(148, 163, 184, 0.1)' }
+              },
+              x: {
+                ticks: { font: { family: 'JetBrains Mono', size: 11, weight: 'bold' } },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+      }
+
+      // Tabela DFC Anual
+      const dfcTbody = document.getElementById('anual-dfc-tbody');
+      if(dfcTbody){
+        dfcTbody.innerHTML = `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 font-semibold">
+            <td class="p-2.5 text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5"><i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> (+) Receitas Operacionais</td>
+            ${mensalData.map(d => `<td class="p-2.5 text-right font-mono text-emerald-600 dark:text-emerald-400">${d.rec > 0 ? fmt(d.rec) : '—'}</td>`).join('')}
+            <td class="p-2.5 text-right font-bold font-mono text-emerald-600 dark:text-emerald-400 bg-slate-50 dark:bg-slate-800">${fmt(anoTotalRec)}</td>
+          </tr>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 font-semibold">
+            <td class="p-2.5 text-rose-600 dark:text-rose-400 flex items-center gap-1.5"><i data-lucide="minus-circle" class="w-3.5 h-3.5"></i> (-) Despesas Operacionais</td>
+            ${mensalData.map(d => `<td class="p-2.5 text-right font-mono text-rose-600 dark:text-rose-400">${d.desp > 0 ? fmt(d.desp) : '—'}</td>`).join('')}
+            <td class="p-2.5 text-right font-bold font-mono text-rose-600 dark:text-rose-400 bg-slate-50 dark:bg-slate-800">${fmt(anoTotalDesp)}</td>
+          </tr>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 font-bold border-t border-slate-200 dark:border-slate-700">
+            <td class="p-2.5 text-title flex items-center gap-1.5"><i data-lucide="equal" class="w-3.5 h-3.5 text-indigo-500"></i> (=) Saldo Operacional Mensal</td>
+            ${mensalData.map(d => `<td class="p-2.5 text-right font-mono ${d.liq>=0?'text-emerald-600 dark:text-emerald-400':'text-rose-600 dark:text-rose-400'}">${d.rec>0||d.desp>0 ? fmt(d.liq) : '—'}</td>`).join('')}
+            <td class="p-2.5 text-right font-bold font-mono text-base ${anoResultadoLiq>=0?'text-emerald-600 dark:text-emerald-400':'text-rose-600 dark:text-rose-400'} bg-slate-50 dark:bg-slate-800">${fmt(anoResultadoLiq)}</td>
+          </tr>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 text-muted">
+            <td class="p-2.5 flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5 text-purple-500"></i> (=) Saldo Acumulado no Ano</td>
+            ${mensalData.map(d => `<td class="p-2.5 text-right font-mono font-medium text-title">${fmt(d.acumulado)}</td>`).join('')}
+            <td class="p-2.5 text-right font-bold font-mono text-title bg-slate-50 dark:bg-slate-800">${fmt(acumulado)}</td>
+          </tr>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 text-[11px] text-muted">
+            <td class="p-2.5 flex items-center gap-1.5"><i data-lucide="percent" class="w-3.5 h-3.5 text-teal-500"></i> Margem Líquida (%)</td>
+            ${mensalData.map(d => `<td class="p-2.5 text-right font-mono font-bold ${parseFloat(d.margem)>=0?'text-teal-600 dark:text-teal-400':'text-rose-600 dark:text-rose-400'}">${d.rec>0 ? d.margem + '%' : '—'}</td>`).join('')}
+            <td class="p-2.5 text-right font-bold font-mono text-teal-600 dark:text-teal-400 bg-slate-50 dark:bg-slate-800">${anoMargem}%</td>
+          </tr>
+        `;
+      }
+
+      // Insights inteligentes
+      const insText = document.getElementById('anual-insights-text');
+      if(insText){
+        const mesesAtivos = mensalData.filter(d => d.rec > 0 || d.desp > 0).length;
+        const mesesLucro = mensalData.filter(d => d.liq > 0).length;
+        insText.innerHTML = `
+          No exercício anual de <b>${ano}</b>, o negócio acumulou um faturamento bruto de <b class="text-emerald-600 dark:text-emerald-400">${fmt(anoTotalRec)}</b> contra despesas operacionais totais de <b class="text-rose-600 dark:text-rose-400">${fmt(anoTotalDesp)}</b>, resultando em um <b>Lucro Líquido Final de ${fmt(anoResultadoLiq)}</b> (Margem Líquida Global de <b>${anoMargem}%</b>).
+          Dos ${mesesAtivos || 12} meses avaliados, <b>${mesesLucro} mês(es) fecharam em superávit</b>. A média de receita mensal do período foi de <b>${fmt(anoMedia)}/mês</b>.
+        `;
+      }
+
+      lucide.createIcons();
+    }
+
+    function renderAnaliseMensal(){
+      const mesSel = document.getElementById('analise-mes-select');
+      const anoSel = document.getElementById('analise-mes-ano-select');
+      
+      const mes = mesSel ? parseInt(mesSel.value) : new Date().getMonth();
+      const ano = anoSel ? parseInt(anoSel.value) : new Date().getFullYear();
+
+      // Sincroniza selects se existirem
+      if(mesSel) mesSel.value = mes;
+      if(anoSel) anoSel.value = ano;
+
+      const subtitle = document.getElementById('mensal-chart-subtitle');
+      if(subtitle) subtitle.innerText = `${MESES_NOMES[mes]} / ${ano}`;
+
+      const numDias = new Date(ano, mes + 1, 0).getDate();
+      const mesStr = (mes + 1).toString().padStart(2, '0');
+
+      const diasData = [];
+      let totalRec = 0;
+      let totalDesp = 0;
+      let acumulado = 0;
+      let diasComReceita = 0;
+
+      // Por categoria
+      const catRecMap = {};
+      const catDespMap = {};
+
+      for(let d = 1; d <= numDias; d++){
+        const diaStr = d.toString().padStart(2, '0');
+        const dateKey = `${ano}-${mesStr}-${diaStr}`;
+        const dt = new Date(ano, mes, d);
+        const diaSemana = DIAS_SEMANA[dt.getDay()];
+
+        let diaRec = 0;
+        let diaDesp = 0;
+        let movCount = 0;
+
+        (state.financial||[]).forEach(f => {
+          if(f.date === dateKey){
+            const v = Number(f.value || 0);
+            movCount++;
+            if(f.type === 'RECEITA'){
+              diaRec += v;
+              const cat = f.category || 'Atendimentos';
+              catRecMap[cat] = (catRecMap[cat] || 0) + v;
+            } else if(f.type === 'DESPESA'){
+              diaDesp += v;
+              const cat = f.category || 'Outras Despesas';
+              catDespMap[cat] = (catDespMap[cat] || 0) + v;
+            }
+          }
+        });
+
+        const liq = diaRec - diaDesp;
+        acumulado += liq;
+        totalRec += diaRec;
+        totalDesp += diaDesp;
+        if(diaRec > 0) diasComReceita++;
+
+        diasData.push({
+          dia: d,
+          diaStr,
+          dataCompleta: dateKey,
+          diaSemana,
+          rec: diaRec,
+          desp: diaDesp,
+          liq,
+          acumulado,
+          movCount
+        });
+      }
+
+      const resultadoLiq = totalRec - totalDesp;
+      const margem = totalRec > 0 ? ((resultadoLiq / totalRec) * 100).toFixed(1) : '0.0';
+      const mediaDia = diasComReceita > 0 ? totalRec / diasComReceita : 0;
+
+      // KPIs
+      if(document.getElementById('mensal-kpi-receitas')) document.getElementById('mensal-kpi-receitas').innerText = fmt(totalRec);
+      if(document.getElementById('mensal-kpi-despesas')) document.getElementById('mensal-kpi-despesas').innerText = fmt(totalDesp);
+      if(document.getElementById('mensal-kpi-liquido')){
+        const el = document.getElementById('mensal-kpi-liquido');
+        el.innerText = fmt(resultadoLiq);
+        el.className = `text-lg md:text-xl font-bold font-mono mt-1 ${resultadoLiq>=0?'text-blue-600 dark:text-blue-400':'text-rose-600 dark:text-rose-400'}`;
+      }
+      if(document.getElementById('mensal-kpi-status-badge')){
+        document.getElementById('mensal-kpi-status-badge').innerText = resultadoLiq >= 0 ? 'Superávit Operacional' : 'Déficit Operacional';
+      }
+      if(document.getElementById('mensal-kpi-margem')) document.getElementById('mensal-kpi-margem').innerText = margem + '%';
+      if(document.getElementById('mensal-kpi-media-dia')) document.getElementById('mensal-kpi-media-dia').innerText = fmt(mediaDia);
+      if(document.getElementById('mensal-kpi-dias-positivos')) document.getElementById('mensal-kpi-dias-positivos').innerText = diasComReceita + ' dias';
+
+      if(document.getElementById('mensal-cat-total-rec')) document.getElementById('mensal-cat-total-rec').innerText = 'Total: ' + fmt(totalRec);
+      if(document.getElementById('mensal-cat-total-desp')) document.getElementById('mensal-cat-total-desp').innerText = 'Total: ' + fmt(totalDesp);
+
+      // Gráfico de Linha Diário do Mês
+      const ctxLinha = document.getElementById('chart-fluxo-mensal')?.getContext('2d');
+      if(ctxLinha){
+        if(chartFluxoMensal) chartFluxoMensal.destroy();
+
+        chartFluxoMensal = new Chart(ctxLinha, {
+          type: 'line',
+          data: {
+            labels: diasData.map(d => `${d.diaStr}/${mesStr}`),
+            datasets: [
+              {
+                label: 'Receitas Diárias (+)',
+                data: diasData.map(d => d.rec),
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                borderWidth: 2,
+                pointRadius: 3,
+                fill: true,
+                tension: 0.2
+              },
+              {
+                label: 'Despesas Diárias (-)',
+                data: diasData.map(d => d.desp),
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderWidth: 2,
+                pointRadius: 3,
+                fill: true,
+                tension: 0.2
+              },
+              {
+                label: 'Saldo Acumulado',
+                data: diasData.map(d => d.acumulado),
+                borderColor: '#6366f1',
+                borderWidth: 2.5,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false,
+                tension: 0.3
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { position: 'top', labels: { font: { family: 'JetBrains Mono', size: 11 } } },
+              tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${fmt(ctx.raw)}` } }
+            },
+            scales: {
+              y: {
+                ticks: { font: { family: 'JetBrains Mono', size: 10 }, callback: v => 'R$ ' + v },
+                grid: { color: 'rgba(148, 163, 184, 0.1)' }
+              },
+              x: {
+                ticks: { font: { family: 'JetBrains Mono', size: 9 }, maxTicksLimit: 16 },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+      }
+
+      // Detalhamento por Semanas do Mês
+      const semanasGrid = document.getElementById('mensal-semanas-grid');
+      if(semanasGrid){
+        const semanasDef = [
+          { nome: 'Semana 1', ini: 1, fim: 7 },
+          { nome: 'Semana 2', ini: 8, fim: 14 },
+          { nome: 'Semana 3', ini: 15, fim: 21 },
+          { nome: 'Semana 4', ini: 22, fim: 28 },
+          { nome: 'Semana 5', ini: 29, fim: numDias }
+        ];
+
+        semanasGrid.innerHTML = semanasDef.map((sem, idx) => {
+          const diasSem = diasData.filter(d => d.dia >= sem.ini && d.dia <= sem.fim);
+          const sRec = diasSem.reduce((s,d) => s + d.rec, 0);
+          const sDesp = diasSem.reduce((s,d) => s + d.desp, 0);
+          const sLiq = sRec - sDesp;
+          const pct = totalRec > 0 ? Math.min(100, Math.round((sRec / totalRec) * 100)) : 0;
+
+          return `
+            <div class="glass-card rounded-2xl p-3.5 space-y-2.5 border-t-4 transition-all hover:shadow-md" style="border-top-color:${sLiq>=0?'#10b981':'#ef4444'}">
+              <div class="flex items-center justify-between">
+                <b class="text-xs font-bold text-title uppercase font-mono">${sem.nome}</b>
+                <span class="text-[10px] text-muted font-mono">${sem.ini.toString().padStart(2,'0')} a ${sem.fim.toString().padStart(2,'0')}</span>
+              </div>
+              <div class="space-y-1 text-xs font-mono">
+                <div class="flex justify-between text-muted text-[11px]"><span>Entradas:</span><span class="text-emerald-600 dark:text-emerald-400 font-semibold">${fmt(sRec)}</span></div>
+                <div class="flex justify-between text-muted text-[11px]"><span>Saídas:</span><span class="text-rose-600 dark:text-rose-400 font-semibold">${fmt(sDesp)}</span></div>
+                <div class="flex justify-between border-t border-slate-200 dark:border-slate-700 pt-1 font-bold text-title">
+                  <span>Saldo:</span>
+                  <span class="${sLiq>=0?'text-emerald-600 dark:text-emerald-400':'text-rose-600 dark:text-rose-400'}">${fmt(sLiq)}</span>
+                </div>
+              </div>
+              <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-emerald-500 h-1.5 rounded-full" style="width:${pct}%"></div>
+              </div>
+              <span class="text-[9px] text-muted font-mono block text-right">${pct}% do total de receitas</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Gráficos Donut de Categorias de Receitas e Despesas
+      const ctxCatRec = document.getElementById('chart-cat-receitas-mes')?.getContext('2d');
+      if(ctxCatRec){
+        if(chartCatReceitasMes) chartCatReceitasMes.destroy();
+        const rLabels = Object.keys(catRecMap);
+        const rVals = Object.values(catRecMap);
+        const rColors = ['#10b981', '#06b6d4', '#6366f1', '#a855f7', '#f59e0b', '#ec4899'];
+
+        chartCatReceitasMes = new Chart(ctxCatRec, {
+          type: 'doughnut',
+          data: {
+            labels: rLabels.length ? rLabels : ['Sem receitas'],
+            datasets: [{
+              data: rVals.length ? rVals : [1],
+              backgroundColor: rLabels.length ? rColors.slice(0, rLabels.length) : ['#cbd5e1'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'right', labels: { font: { family: 'JetBrains Mono', size: 10 }, boxWidth: 12 } },
+              tooltip: { callbacks: { label: ctx => `${ctx.label}: ${rLabels.length ? fmt(ctx.raw) : 'R$ 0,00'}` } }
+            },
+            cutout: '65%'
+          }
+        });
+      }
+
+      const ctxCatDesp = document.getElementById('chart-cat-despesas-mes')?.getContext('2d');
+      if(ctxCatDesp){
+        if(chartCatDespesasMes) chartCatDespesasMes.destroy();
+        const dLabels = Object.keys(catDespMap);
+        const dVals = Object.values(catDespMap);
+        const dColors = ['#ef4444', '#f97316', '#eab308', '#8b5cf6', '#ec4899', '#64748b'];
+
+        chartCatDespesasMes = new Chart(ctxCatDesp, {
+          type: 'doughnut',
+          data: {
+            labels: dLabels.length ? dLabels : ['Sem despesas'],
+            datasets: [{
+              data: dVals.length ? dVals : [1],
+              backgroundColor: dLabels.length ? dColors.slice(0, dLabels.length) : ['#cbd5e1'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'right', labels: { font: { family: 'JetBrains Mono', size: 10 }, boxWidth: 12 } },
+              tooltip: { callbacks: { label: ctx => `${ctx.label}: ${dLabels.length ? fmt(ctx.raw) : 'R$ 0,00'}` } }
+            },
+            cutout: '65%'
+          }
+        });
+      }
+
+      // Tabela Cronológica Dia a Dia
+      const diasTbody = document.getElementById('mensal-dias-tbody');
+      if(diasTbody){
+        diasTbody.innerHTML = diasData.map(d => {
+          const isWeekend = d.diaSemana === 'Dom' || d.diaSemana === 'Sáb';
+          let statusBadge = '<span class="text-[10px] text-muted font-mono">Sem mov.</span>';
+          if(d.rec > 0 || d.desp > 0){
+            if(d.liq > 0) statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">Superávit</span>';
+            else if(d.liq < 0) statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300">Déficit</span>';
+            else statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Equilibrado</span>';
+          }
+
+          return `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 ${isWeekend ? 'bg-slate-50/50 dark:bg-slate-900/30' : ''}">
+              <td class="p-2.5 font-bold text-title flex items-center gap-2">
+                <span class="w-7 text-[10px] uppercase font-mono px-1 py-0.5 rounded text-center ${isWeekend?'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300':'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">${d.diaSemana}</span>
+                <span>${d.diaStr}/${mesStr}/${ano}</span>
+              </td>
+              <td class="p-2.5 text-right font-mono font-semibold text-emerald-600 dark:text-emerald-400">${d.rec > 0 ? fmt(d.rec) : '—'}</td>
+              <td class="p-2.5 text-right font-mono font-semibold text-rose-600 dark:text-rose-400">${d.desp > 0 ? fmt(d.desp) : '—'}</td>
+              <td class="p-2.5 text-right font-mono font-bold ${d.liq>0?'text-emerald-600 dark:text-emerald-400':(d.liq<0?'text-rose-600 dark:text-rose-400':'text-muted')}">${d.rec>0||d.desp>0 ? fmt(d.liq) : '—'}</td>
+              <td class="p-2.5 text-right font-mono font-bold text-indigo-600 dark:text-indigo-400">${fmt(d.acumulado)}</td>
+              <td class="p-2.5 text-center">${statusBadge}</td>
+              <td class="p-2.5 text-right font-mono text-muted text-[11px]">${d.movCount > 0 ? `${d.movCount} mov.` : '—'}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      lucide.createIcons();
+    }
+
     // ============== THEME ==============
     function applyTheme(){
       const h=document.documentElement;
@@ -2363,6 +3146,8 @@
       if(tabId==='financeiro-categorias')renderCategorias();
       if(tabId==='financeiro-contas')renderContas();
       if(tabId==='financeiro-formas-pagamento')renderFormasPagamento();
+      if(tabId==='analise-anual')renderAnaliseAnual();
+      if(tabId==='analise-mensal')renderAnaliseMensal();
       if(tabId==='consultas')renderConsulta();
       if(tabId==='produtos-servicos')renderServices();
       if(tabId==='estoque')renderStock();
