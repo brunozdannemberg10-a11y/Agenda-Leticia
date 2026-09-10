@@ -220,6 +220,24 @@
             <button onclick="switchTab('compras-fornecedores');closeMobileSidebar()" id="subnav-compras-fornecedores" class="flex items-center justify-between w-full"><span>Fornecedor</span><i data-lucide="truck" class="w-3.5 h-3.5 text-blue-500"></i></button>
           </div>
         </div>
+
+        <!-- CADASTROS GERAIS SUBMENU -->
+        <div>
+          <button onclick="toggleSubmenu('sub-cadastros')" id="nav-cadastros" class="sidebar-menu-btn">
+            <span class="flex items-center gap-2.5"><i data-lucide="database" class="w-4 h-4 text-sky-500"></i><span>Cadastros Gerais</span></span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+          <div id="sub-cadastros" class="sidebar-submenu hidden">
+            <button onclick="switchTab('cadastros-anamnese');closeMobileSidebar()" id="subnav-cadastros-anamnese" class="flex items-center justify-between w-full"><span>Anamnese, Fichas e Contratos</span><i data-lucide="file-text" class="w-3.5 h-3.5 text-sky-500"></i></button>
+            <button onclick="switchTab('cadastros-campos-personalizados');closeMobileSidebar()" id="subnav-cadastros-campos" class="flex items-center justify-between w-full"><span>Campo Personalizado</span><i data-lucide="sliders" class="w-3.5 h-3.5 text-indigo-500"></i></button>
+            <button onclick="switchTab('cadastros-como-conheceu');closeMobileSidebar()" id="subnav-cadastros-como-conheceu" class="flex items-center justify-between w-full"><span>Como nos Conheceu</span><i data-lucide="megaphone" class="w-3.5 h-3.5 text-amber-500"></i></button>
+            <button onclick="switchTab('cadastros-equipamentos');closeMobileSidebar()" id="subnav-cadastros-equipamentos" class="flex items-center justify-between w-full"><span>Equipamentos</span><i data-lucide="cpu" class="w-3.5 h-3.5 text-emerald-500"></i></button>
+            <button onclick="switchTab('cadastros-feriados');closeMobileSidebar()" id="subnav-cadastros-feriados" class="flex items-center justify-between w-full"><span>Feriado</span><i data-lucide="calendar-off" class="w-3.5 h-3.5 text-rose-500"></i></button>
+            <button onclick="switchTab('cadastros-grupos-servicos');closeMobileSidebar()" id="subnav-cadastros-grupos-servicos" class="flex items-center justify-between w-full"><span>Grupo de Serviços</span><i data-lucide="layers" class="w-3.5 h-3.5 text-purple-500"></i></button>
+            <button onclick="switchTab('cadastros-marcas');closeMobileSidebar()" id="subnav-cadastros-marcas" class="flex items-center justify-between w-full"><span>Marcas</span><i data-lucide="award" class="w-3.5 h-3.5 text-teal-500"></i></button>
+            <button onclick="switchTab('cadastros-salas');closeMobileSidebar()" id="subnav-cadastros-salas" class="flex items-center justify-between w-full"><span>Salas</span><i data-lucide="door-open" class="w-3.5 h-3.5 text-cyan-500"></i></button>
+          </div>
+        </div>
         <button onclick="switchTab('consultas');closeMobileSidebar()" id="nav-consultas" class="sidebar-menu-btn">
           <span class="flex items-center gap-2.5"><i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-500"></i><span>Consultas & Relatórios</span></span>
         </button>
@@ -1790,7 +1808,451 @@
         </div>
       </section>
 
-    </main>
+    
+      <!-- ===================== CADASTROS GERAIS: 1. ANAMNESE, FICHAS E CONTRATOS ===================== -->
+      <section id="tab-cadastros-anamnese" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/30">CADASTROS GERAIS</span>
+              <span class="text-xs font-mono text-muted">Documentos & Termos Clínicos</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="file-text" class="w-5 h-5 text-sky-500"></i>
+              <span>Anamnese, Fichas e Contratos</span>
+            </h2>
+            <p class="text-xs text-muted">Modelos de fichas de anamnese, termos de consentimento e contratos de alunas/cursos</p>
+          </div>
+          <button onclick="openAnamneseModal()" class="touch-btn px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Novo Modelo
+          </button>
+        </div>
+
+        <!-- KPIs de Anamnese -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-sky-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Total de Modelos</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="ana-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Fichas de Anamnese</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="ana-kpi-fichas">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Termos de Consentimento</span>
+            <div class="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-1" id="ana-kpi-termos">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-indigo-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Contratos Educacionais</span>
+            <div class="text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400 mt-1" id="ana-kpi-contratos">0</div>
+          </div>
+        </div>
+
+        <!-- Barra de Busca -->
+        <div class="glass-card rounded-2xl p-3 flex flex-col sm:flex-row items-center gap-3">
+          <div class="relative flex-1 w-full">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input type="text" id="ana-search" oninput="renderAnamnese()" placeholder="Buscar por título ou descrição..." class="input-box pl-9 py-2 text-xs w-full">
+          </div>
+          <select id="ana-filter-tipo" onchange="renderAnamnese()" class="input-box py-2 text-xs w-full sm:w-48 font-bold">
+            <option value="ALL">Todos os Tipos</option>
+            <option value="ANAMNESE">Ficha de Anamnese</option>
+            <option value="TERMO">Termo de Consentimento</option>
+            <option value="CONTRATO">Contrato de Curso</option>
+          </select>
+        </div>
+
+        <!-- Lista de Modelos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="ana-list-container"></div>
+      </section>
+
+      <!-- ===================== CADASTROS GERAIS: 2. CAMPO PERSONALIZADO ===================== -->
+      <section id="tab-cadastros-campos-personalizados" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">CADASTROS GERAIS</span>
+              <span class="text-xs font-mono text-muted">Campos & Formulários Dinâmicos</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="sliders" class="w-5 h-5 text-indigo-500"></i>
+              <span>Campos Personalizados</span>
+            </h2>
+            <p class="text-xs text-muted">Crie campos extras para personalizar o prontuário de clientes, agendamentos e procedimentos</p>
+          </div>
+          <button onclick="openCampoPersonalizadoModal()" class="touch-btn px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Novo Campo
+          </button>
+        </div>
+
+        <!-- KPIs de Campos Personalizados -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-indigo-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Total de Campos</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="cp-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Entidade Clientes</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="cp-kpi-clientes">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Agendamentos</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="cp-kpi-agendamentos">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Campos Ativos</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="cp-kpi-ativos">0</div>
+          </div>
+        </div>
+
+        <!-- Tabela de Campos -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Nome do Campo</th>
+                  <th class="p-3">Entidade</th>
+                  <th class="p-3">Tipo de Dado</th>
+                  <th class="p-3">Opções / Validação</th>
+                  <th class="p-3 text-center">Obrigatório</th>
+                  <th class="p-3 text-center">Status</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="cp-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CADASTROS GERAIS: 3. COMO NOS CONHECEU ===================== -->
+      <section id="tab-cadastros-como-conheceu" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">CADASTROS GERAIS</span>
+              <span class="text-xs font-mono text-muted">Origem de Clientes & Aquisição</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="megaphone" class="w-5 h-5 text-amber-500"></i>
+              <span>Como nos Conheceu</span>
+            </h2>
+            <p class="text-xs text-muted">Canais de captação e atração de clientes para medir o retorno das suas divulgações</p>
+          </div>
+          <button onclick="openComoConheceuModal()" class="touch-btn px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Novo Canal
+          </button>
+        </div>
+
+        <!-- KPIs de Como nos Conheceu -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-amber-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Canais Cadastrados</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="cc-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Canal Campeão</span>
+            <div class="text-sm font-bold text-purple-600 dark:text-purple-400 mt-1 truncate" id="cc-kpi-campeao">—</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Clientes Rasteados</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="cc-kpi-clientes">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Faturamento Rastreado</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="cc-kpi-fat">R$ 0</div>
+          </div>
+        </div>
+
+        <!-- Tabela de Canais -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Canal / Origem</th>
+                  <th class="p-3">Categoria</th>
+                  <th class="p-3 text-center">Clientes</th>
+                  <th class="p-3 text-right">Faturamento Gerado</th>
+                  <th class="p-3 text-center">Participação</th>
+                  <th class="p-3 text-center">Status</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="cc-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CADASTROS GERAIS: 4. EQUIPAMENTOS ===================== -->
+      <section id="tab-cadastros-equipamentos" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">CADASTROS GERAIS</span>
+              <span class="text-xs font-mono text-muted">Patrimônio & Manutenção</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="cpu" class="w-5 h-5 text-emerald-500"></i>
+              <span>Gestão de Equipamentos</span>
+            </h2>
+            <p class="text-xs text-muted">Controle de autoclave, cabines LED/UV, lixadeiras elétricas e preventivas</p>
+          </div>
+          <button onclick="openEquipamentoModal()" class="touch-btn px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Novo Equipamento
+          </button>
+        </div>
+
+        <!-- KPIs de Equipamentos -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Total Equipamentos</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="eq-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Operacionais</span>
+            <div class="text-xl font-bold font-mono text-teal-600 dark:text-teal-400 mt-1" id="eq-kpi-operacionais">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-amber-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Em Manutenção</span>
+            <div class="text-xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1" id="eq-kpi-manutencao">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Patrimônio Total</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="eq-kpi-valor">R$ 0</div>
+          </div>
+        </div>
+
+        <!-- Tabela de Equipamentos -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Equipamento</th>
+                  <th class="p-3">Tipo / Categoria</th>
+                  <th class="p-3">Marca / Modelo</th>
+                  <th class="p-3">Nº Série</th>
+                  <th class="p-3 text-right">Valor Compra</th>
+                  <th class="p-3">Próx. Revisão</th>
+                  <th class="p-3 text-center">Status</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="eq-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CADASTROS GERAIS: 5. FERIADO ===================== -->
+      <section id="tab-cadastros-feriados" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30">CADASTROS GERAIS</span>
+              <span class="text-xs font-mono text-muted">Calendário & Bloqueios</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="calendar-off" class="w-5 h-5 text-rose-500"></i>
+              <span>Feriados & Recessos</span>
+            </h2>
+            <p class="text-xs text-muted">Dias não úteis, feriados municipais e recessos programados do estúdio</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openFeriadoModal()" class="touch-btn px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i> + Novo Feriado
+            </button>
+          </div>
+        </div>
+
+        <!-- KPIs de Feriados -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-rose-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Feriados no Ano</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="fer-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-amber-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Próximo Feriado</span>
+            <div class="text-xs font-bold text-amber-600 dark:text-amber-400 mt-1 truncate" id="fer-kpi-proximo">—</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Bloqueio Total</span>
+            <div class="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-1" id="fer-kpi-bloqueados">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Horário Reduzido</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="fer-kpi-meio">0</div>
+          </div>
+        </div>
+
+        <!-- Tabela de Feriados -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Data</th>
+                  <th class="p-3">Nome / Descrição</th>
+                  <th class="p-3">Tipo</th>
+                  <th class="p-3 text-center">Impacto na Agenda</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="fer-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CADASTROS GERAIS: 6. GRUPO DE SERVIÇOS ===================== -->
+      <section id="tab-cadastros-grupos-servicos" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30">CADASTROS GERAIS</span>
+              <span class="text-xs font-mono text-muted">Classificação & Comissões</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="layers" class="w-5 h-5 text-purple-500"></i>
+              <span>Grupo de Serviços</span>
+            </h2>
+            <p class="text-xs text-muted">Agrupamento dos procedimentos e cursos para organização da grade e tabelas de preços</p>
+          </div>
+          <button onclick="openGrupoServicoModal()" class="touch-btn px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Novo Grupo
+          </button>
+        </div>
+
+        <!-- KPIs de Grupo de Serviços -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Total de Grupos</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="gs-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Grupos Ativos</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="gs-kpi-ativos">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Serviços Vinculados</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="gs-kpi-servicos">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-amber-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Comissão Média</span>
+            <div class="text-xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1" id="gs-kpi-comissao">50%</div>
+          </div>
+        </div>
+
+        <!-- Grid de Cards de Grupos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="gs-list-container"></div>
+      </section>
+
+      <!-- ===================== CADASTROS GERAIS: 7. MARCAS ===================== -->
+      <section id="tab-cadastros-marcas" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-teal-500/20 text-teal-600 dark:text-teal-400 border border-teal-500/30">CADASTROS GERAIS</span>
+              <span class="text-xs font-mono text-muted">Fabricantes & Linhas de Cosméticos</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="award" class="w-5 h-5 text-teal-500"></i>
+              <span>Marcas & Fabricantes</span>
+            </h2>
+            <p class="text-xs text-muted">Cadastro de marcas de géis, esmaltes, insumos e equipamentos utilizados</p>
+          </div>
+          <button onclick="openMarcaModal()" class="touch-btn px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Nova Marca
+          </button>
+        </div>
+
+        <!-- KPIs de Marcas -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-teal-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Total de Marcas</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="mar-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Marcas Nacionais</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="mar-kpi-nacionais">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-indigo-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Importadas / Premium</span>
+            <div class="text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400 mt-1" id="mar-kpi-importadas">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Ativas no Estoque</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="mar-kpi-ativas">0</div>
+          </div>
+        </div>
+
+        <!-- Tabela de Marcas -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/80 font-mono text-[11px] text-muted border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-3">Nome da Marca</th>
+                  <th class="p-3">Categoria Principal</th>
+                  <th class="p-3">Origem</th>
+                  <th class="p-3">Fornecedor / Distribuidor</th>
+                  <th class="p-3">Observações</th>
+                  <th class="p-3 text-center">Status</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="mar-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== CADASTROS GERAIS: 8. SALAS ===================== -->
+      <section id="tab-cadastros-salas" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">CADASTROS GERAIS</span>
+              <span class="text-xs font-mono text-muted">Espaço Físico & Bancadas</span>
+            </div>
+            <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
+              <i data-lucide="door-open" class="w-5 h-5 text-cyan-500"></i>
+              <span>Salas & Bancadas de Atendimento</span>
+            </h2>
+            <p class="text-xs text-muted">Gestão das estações de unhas, cabines VIP e salas de treinamentos práticos</p>
+          </div>
+          <button onclick="openSalaModal()" class="touch-btn px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> + Nova Sala / Estação
+          </button>
+        </div>
+
+        <!-- KPIs de Salas -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-cyan-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Salas / Estações</span>
+            <div class="text-xl font-bold font-mono text-title mt-1" id="sal-kpi-total">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-emerald-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Disponíveis</span>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="sal-kpi-disponiveis">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Capacidade Simultânea</span>
+            <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="sal-kpi-capacidade">0</div>
+          </div>
+          <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
+            <span class="text-[10px] uppercase font-mono text-muted block">Cabines VIP</span>
+            <div class="text-xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-1" id="sal-kpi-vip">0</div>
+          </div>
+        </div>
+
+        <!-- Grid de Salas e Estações -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="sal-list-container"></div>
+      </section>
+</main>
   </div>
 
   <!-- BOTTOM NAV MOBILE -->
@@ -1803,6 +2265,473 @@
   </nav>
 
   <!-- ==================== MODALS ==================== -->
+
+  
+  <!-- MODAL: ANAMNESE MODELO -->
+  <div id="modal-anamnese" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-xl w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="ana-modal-title">
+          <i data-lucide="file-text" class="w-5 h-5 text-sky-500"></i> Modelo de Ficha / Termo / Contrato
+        </h3>
+        <button onclick="closeModal('modal-anamnese')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="ana-edit-id" value="">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Título do Documento *</label>
+          <input type="text" id="ana-titulo" placeholder="Ex: Ficha de Anamnese - Alongamento em Gel" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Tipo de Documento *</label>
+            <select id="ana-tipo" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="ANAMNESE">Ficha de Anamnese</option>
+              <option value="TERMO">Termo de Consentimento / Garantia</option>
+              <option value="CONTRATO">Contrato de Prestação de Serviços</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Status</label>
+            <select id="ana-status" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="ATIVO">Ativo</option>
+              <option value="INATIVO">Inativo</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Descrição Breve / Finalidade</label>
+          <input type="text" id="ana-descricao" placeholder="Finalidade e público alvo deste termo" class="input-box w-full p-2.5 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Itens de Verificação / Cláusulas (1 por linha) *</label>
+          <textarea id="ana-itens" rows="6" placeholder="Digite uma cláusula ou pergunta por linha..." class="input-box w-full p-2.5 rounded-xl font-mono text-xs"></textarea>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-anamnese')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button onclick="saveAnamnese()" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i> Salvar Modelo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PREVIEW DE DOCUMENTO -->
+  <div id="modal-anamnese-preview" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full p-5 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="ana-preview-title">
+          <i data-lucide="printer" class="w-5 h-5 text-emerald-500"></i> Visualização para Assinatura
+        </h3>
+        <button onclick="closeModal('modal-anamnese-preview')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="ana-preview-body" class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs leading-relaxed"></div>
+      <div class="flex justify-between items-center pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
+          <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / PDF
+        </button>
+        <button onclick="closeModal('modal-anamnese-preview')" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CAMPO PERSONALIZADO -->
+  <div id="modal-campo-personalizado" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="cp-modal-title">
+          <i data-lucide="sliders" class="w-5 h-5 text-indigo-500"></i> Campo Personalizado
+        </h3>
+        <button onclick="closeModal('modal-campo-personalizado')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="cp-edit-id" value="">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Nome do Campo *</label>
+          <input type="text" id="cp-nome" placeholder="Ex: Bebida Preferida, Formato de Unha" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Entidade Alvo *</label>
+            <select id="cp-entidade" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="CLIENTES">Clientes & Fichas</option>
+              <option value="AGENDAMENTOS">Agendamentos</option>
+              <option value="SERVICOS">Procedimentos & Cursos</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Tipo de Dado *</label>
+            <select id="cp-tipo" onchange="toggleCpOpcoes()" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="TEXTO">Texto Curto</option>
+              <option value="SELECAO">Seleção (Múltipla Escolha)</option>
+              <option value="BOOLEAN">Sim / Não (Checkbox)</option>
+              <option value="NUMERO">Número</option>
+              <option value="DATA">Data</option>
+            </select>
+          </div>
+        </div>
+        <div id="cp-opcoes-wrap" class="hidden">
+          <label class="block font-bold text-muted mb-1">Opções (separadas por vírgula)</label>
+          <input type="text" id="cp-opcoes" placeholder="Opção 1, Opção 2, Opção 3" class="input-box w-full p-2.5 rounded-xl">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex items-center gap-2 pt-2">
+            <input type="checkbox" id="cp-obrigatorio" class="w-4 h-4 rounded text-indigo-600 focus:ring-0">
+            <label for="cp-obrigatorio" class="font-bold text-title cursor-pointer">Preenchimento Obrigatório</label>
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Status</label>
+            <select id="cp-status" class="input-box w-full p-2 rounded-xl font-bold">
+              <option value="ATIVO">Ativo</option>
+              <option value="INATIVO">Inativo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-campo-personalizado')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button onclick="saveCampoPersonalizado()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i> Salvar Campo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: COMO NOS CONHECEU -->
+  <div id="modal-como-conheceu" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="cc-modal-title">
+          <i data-lucide="megaphone" class="w-5 h-5 text-amber-500"></i> Canal de Origem / Captação
+        </h3>
+        <button onclick="closeModal('modal-como-conheceu')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="cc-edit-id" value="">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Nome do Canal / Origem *</label>
+          <input type="text" id="cc-nome" placeholder="Ex: Instagram Reels, Indicação de Amiga" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Categoria *</label>
+            <select id="cc-categoria" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="Redes Sociais">Redes Sociais</option>
+              <option value="Indicação">Indicação</option>
+              <option value="Busca Orgânica">Busca Orgânica (Google)</option>
+              <option value="Tráfego Pago">Tráfego Pago (Anúncios)</option>
+              <option value="Ponto Físico">Ponto Físico</option>
+              <option value="Parcerias">Parcerias & Influencers</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Status</label>
+            <select id="cc-status" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="ATIVO">Ativo</option>
+              <option value="INATIVO">Inativo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-como-conheceu')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button onclick="saveComoConheceu()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i> Salvar Canal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EQUIPAMENTO -->
+  <div id="modal-equipamento" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-4 md:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="eq-modal-title">
+          <i data-lucide="cpu" class="w-5 h-5 text-emerald-500"></i> Ficha de Equipamento
+        </h3>
+        <button onclick="closeModal('modal-equipamento')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="eq-edit-id" value="">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Nome do Equipamento *</label>
+          <input type="text" id="eq-nome" placeholder="Ex: Autoclave Stermax Digital 12L" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Tipo / Categoria *</label>
+            <select id="eq-tipo" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="Esterilização">Esterilização</option>
+              <option value="Secagem UV/LED">Secagem UV/LED</option>
+              <option value="Desbaste Motorizado">Desbaste Motorizado (Micromotor)</option>
+              <option value="Exaustão de Pó">Exaustão de Pó</option>
+              <option value="Iluminação">Iluminação & Ring Light</option>
+              <option value="Mobiliário Clínico">Mobiliário Clínico</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Status Operacional *</label>
+            <select id="eq-status" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="OPERACIONAL">Operacional</option>
+              <option value="MANUTENCAO">Em Manutenção</option>
+              <option value="CALIBRACAO">Calibração Pendente</option>
+              <option value="DESATIVADO">Desativado</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Marca / Fabricante</label>
+            <input type="text" id="eq-marca" placeholder="Ex: Stermax, Saeyang, Sun X" class="input-box w-full p-2.5 rounded-xl font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Número de Série / Patrimônio</label>
+            <input type="text" id="eq-num-serie" placeholder="Ex: STX-2024-889" class="input-box w-full p-2.5 rounded-xl font-mono">
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Data Aquisição</label>
+            <input type="date" id="eq-data-compra" class="input-box w-full p-2.5 rounded-xl font-mono">
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Valor de Compra (R$)</label>
+            <input type="number" id="eq-valor" step="0.01" placeholder="0.00" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Próxima Revisão</label>
+            <input type="date" id="eq-prox-revisao" class="input-box w-full p-2.5 rounded-xl font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Observações Técnicas / Laudo</label>
+          <input type="text" id="eq-obs" placeholder="Ex: Laudo de teste biológico em dia, troca periódica de peças" class="input-box w-full p-2.5 rounded-xl">
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-equipamento')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button onclick="saveEquipamento()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i> Salvar Equipamento
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: FERIADO -->
+  <div id="modal-feriado" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="fer-modal-title">
+          <i data-lucide="calendar-off" class="w-5 h-5 text-rose-500"></i> Feriado / Recesso
+        </h3>
+        <button onclick="closeModal('modal-feriado')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="fer-edit-id" value="">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Data *</label>
+          <input type="date" id="fer-data" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Nome / Descrição *</label>
+          <input type="text" id="fer-nome" placeholder="Ex: Carnaval, Feriado Municipal, Recesso" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Tipo *</label>
+            <select id="fer-tipo" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="NACIONAL">Feriado Nacional</option>
+              <option value="MUNICIPAL">Estadual / Municipal</option>
+              <option value="RECESSO">Recesso do Estúdio</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Impacto na Agenda *</label>
+            <select id="fer-acao" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="BLOQUEAR">Bloquear Dia Inteiro</option>
+              <option value="MEIO_PERIODO">Horário Reduzido</option>
+              <option value="INFORMATIVO">Apenas Informativo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-feriado')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button onclick="saveFeriado()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i> Salvar Feriado
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GRUPO DE SERVICOS -->
+  <div id="modal-grupo-servico" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="gs-modal-title">
+          <i data-lucide="layers" class="w-5 h-5 text-purple-500"></i> Grupo de Serviços
+        </h3>
+        <button onclick="closeModal('modal-grupo-servico')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="gs-edit-id" value="">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Nome do Grupo *</label>
+          <input type="text" id="gs-nome" placeholder="Ex: Alongamento em Gel, Cursos VIP" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Cor de Identificação</label>
+            <input type="color" id="gs-cor" value="#8b5cf6" class="input-box w-full h-10 p-1 rounded-xl cursor-pointer">
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Comissão Padrão (%)</label>
+            <input type="number" id="gs-comissao" value="50" min="0" max="100" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Descrição</label>
+          <input type="text" id="gs-descricao" placeholder="Descrição resumida deste grupo" class="input-box w-full p-2.5 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Status</label>
+          <select id="gs-status" class="input-box w-full p-2.5 rounded-xl font-bold">
+            <option value="ATIVO">Ativo</option>
+            <option value="INATIVO">Inativo</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-grupo-servico')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button onclick="saveGrupoServico()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i> Salvar Grupo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MARCA -->
+  <div id="modal-marca" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="mar-modal-title">
+          <i data-lucide="award" class="w-5 h-5 text-teal-500"></i> Marca / Fabricante
+        </h3>
+        <button onclick="closeModal('modal-marca')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="mar-edit-id" value="">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Nome da Marca *</label>
+          <input type="text" id="mar-nome" placeholder="Ex: Vòlia Cosméticos, Cuccio, Staleks" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Categoria Principal *</label>
+            <select id="mar-categoria" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="Géis & Preparadores">Géis & Preparadores</option>
+              <option value="Esmaltes Tradicionais">Esmaltes Tradicionais</option>
+              <option value="Instrumental Cirúrgico">Instrumental Cirúrgico</option>
+              <option value="Acessórios & Brocas">Acessórios & Brocas</option>
+              <option value="Equipamentos">Equipamentos</option>
+              <option value="Descartáveis">Descartáveis</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Origem *</label>
+            <select id="mar-origem" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="Nacional">Nacional</option>
+              <option value="Importada">Importada</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Distribuidor / Fornecedor Preferencial</label>
+          <input type="text" id="mar-fornecedor" placeholder="Ex: Vòlia Brasil, Belle Nail Pro" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Observações / Produtos Destaque</label>
+          <input type="text" id="mar-obs" placeholder="Ex: Linha Classic, top coat, alicates expert" class="input-box w-full p-2.5 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Status</label>
+          <select id="mar-status" class="input-box w-full p-2.5 rounded-xl font-bold">
+            <option value="ATIVO">Ativo</option>
+            <option value="INATIVO">Inativo</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-marca')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button onclick="saveMarca()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i> Salvar Marca
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SALA -->
+  <div id="modal-sala" class="modal-overlay">
+    <div class="glass-card bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-4 md:p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-bold text-title uppercase font-mono flex items-center gap-2" id="sal-modal-title">
+          <i data-lucide="door-open" class="w-5 h-5 text-cyan-500"></i> Sala / Estação de Atendimento
+        </h3>
+        <button onclick="closeModal('modal-sala')" class="text-slate-400 hover:text-title p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <input type="hidden" id="sal-edit-id" value="">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Nome da Sala / Bancada *</label>
+          <input type="text" id="sal-nome" placeholder="Ex: Estação 01 - Letícia Hermann, Cabine VIP" class="input-box w-full p-2.5 rounded-xl font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Tipo de Espaço *</label>
+            <select id="sal-tipo" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="CABINE_VIP">Cabine VIP Individual</option>
+              <option value="BANCADA">Bancada Manicure</option>
+              <option value="POLTRONA_SPA">Poltrona Spa / Pedicure</option>
+              <option value="SALA_CURSOS">Sala de Cursos / Alunas</option>
+              <option value="OUTRO">Outro</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Capacidade Simultânea</label>
+            <input type="number" id="sal-capacidade" value="1" min="1" max="50" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">Equipamentos Presentes</label>
+          <input type="text" id="sal-equipamentos" placeholder="Ex: Cabine LED, Micromotor, Ring Light" class="input-box w-full p-2.5 rounded-xl">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-muted mb-1">Status Atual</label>
+            <select id="sal-status" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <option value="DISPONIVEL">Disponível</option>
+              <option value="OCUPADO">Em Atendimento</option>
+              <option value="MANUTENCAO">Em Manutenção / Limpeza</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-muted mb-1">Observações</label>
+            <input type="text" id="sal-obs" placeholder="Ex: Vista panorâmica, climatizada" class="input-box w-full p-2.5 rounded-xl">
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeModal('modal-sala')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button onclick="saveSala()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="check" class="w-4 h-4"></i> Salvar Sala
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: PROFISSIONAL -->
   <div id="modal-professional" class="modal-overlay">
@@ -2835,6 +3764,119 @@
   <script>
     const todayStr = new Date().toISOString().split('T')[0];
     const todayBR = todayStr.split('-').reverse().join('/');
+    
+    // ============== DEFAULTS: CADASTROS GERAIS ==============
+    const DEFAULT_ANAMNESE_TEMPLATES = [
+      {
+        id: 'ana_1',
+        titulo: 'Ficha de Anamnese - Alongamento de Unhas',
+        tipo: 'ANAMNESE',
+        descricao: 'Avaliação clínica das unhas naturais, sensibilidades e histórico de saúde.',
+        status: 'ATIVO',
+        itens: [
+          'Histórico de reações alérgicas a cosméticos, esmaltes ou monômero',
+          'Diabetes, hemofilia ou problemas de cicatrização',
+          'Gestação ou período de lactação',
+          'Hábito de roer unhas (onicofagia)',
+          'Presença de fungos, micoses, descolamentos ou manchas nas lâminas ungueais',
+          'Uso de medicamentos contínuos (antibióticos ou corticóides)',
+          'Contato diário com produtos químicos de limpeza sem luvas'
+        ]
+      },
+      {
+        id: 'ana_2',
+        titulo: 'Termo de Consentimento & Garantia - Gel & Fibra',
+        tipo: 'TERMO',
+        descricao: 'Termo de responsabilidade pós-procedimento e orientações de durabilidade.',
+        status: 'ATIVO',
+        itens: [
+          'Garantia de 7 dias corridos para eventuais descolamentos ou quebras estruturais espontâneas',
+          'Prazo recomendado de manutenção preventiva: 20 a 25 dias para preservar a saúde da lâmina',
+          'Proibido arrancar, forçar com os dentes ou utilizar alicates em casa para remover o produto',
+          'Necessidade de retorno profissional imediato caso ocorra batida violenta ou dor na matriz'
+        ]
+      },
+      {
+        id: 'ana_3',
+        titulo: 'Contrato de Prestação de Serviços Educacionais - Cursos VIP',
+        tipo: 'CONTRATO',
+        descricao: 'Contrato de formação profissional em Alongamento de Unhas e Aperfeiçoamento.',
+        status: 'ATIVO',
+        itens: [
+          'Carga horária total de 16 horas divididas em 2 dias intensivos com aulas práticas',
+          'Apostila técnica completa, kit inicial para treinamento e certificado de conclusão emitido',
+          'Política de cancelamento ou reagendamento com aviso prévio mínimo de 7 dias úteis',
+          'Suporte vitalício para esclarecimento de dúvidas diretamente com a Master Letícia Hermann'
+        ]
+      }
+    ];
+
+    const DEFAULT_CAMPOS_PERSONALIZADOS = [
+      { id: 'cp_1', nome: 'Bebida de Preferência', entidade: 'CLIENTES', tipo: 'SELECAO', opcoes: 'Café Expresso, Chá Gelado, Água com Gás, Capuccino, Água Mineral', obrigatorio: false, status: 'ATIVO' },
+      { id: 'cp_2', nome: 'Formato de Unha Favorito', entidade: 'CLIENTES', tipo: 'SELECAO', opcoes: 'Almond (Amendoada), Quadrada, Bailarina, Stiletto, Oval', obrigatorio: false, status: 'ATIVO' },
+      { id: 'cp_3', nome: 'Possui Hábito de Roer?', entidade: 'CLIENTES', tipo: 'BOOLEAN', opcoes: '', obrigatorio: false, status: 'ATIVO' },
+      { id: 'cp_4', nome: 'Profissão / Ocupação', entidade: 'CLIENTES', tipo: 'TEXTO', opcoes: '', obrigatorio: false, status: 'ATIVO' }
+    ];
+
+    const DEFAULT_COMO_CONHECEU = [
+      { id: 'cc_1', nome: 'Instagram (@leticiahermann.nails)', categoria: 'Redes Sociais', clientes: 68, faturamento: 11250, status: 'ATIVO' },
+      { id: 'cc_2', nome: 'Indicação de Amiga / Cliente', categoria: 'Indicação', clientes: 42, faturamento: 8400, status: 'ATIVO' },
+      { id: 'cc_3', nome: 'Google / Pesquisa Local', categoria: 'Busca Orgânica', clientes: 19, faturamento: 3100, status: 'ATIVO' },
+      { id: 'cc_4', nome: 'Passando em Frente ao Espaço', categoria: 'Ponto Físico', clientes: 12, faturamento: 1950, status: 'ATIVO' },
+      { id: 'cc_5', nome: 'TikTok / Vídeos de Unhas', categoria: 'Redes Sociais', clientes: 9, faturamento: 1350, status: 'ATIVO' },
+      { id: 'cc_6', nome: 'Anúncios Facebook / Insta Ads', categoria: 'Tráfego Pago', clientes: 14, faturamento: 2400, status: 'ATIVO' }
+    ];
+
+    const DEFAULT_EQUIPAMENTOS = [
+      { id: 'eq_1', nome: 'Autoclave Stermax Digital 12L', tipo: 'Esterilização', marca: 'Stermax', numSerie: 'STX-2024-889', dataAquisicao: '2024-02-10', valor: 4850, status: 'OPERACIONAL', ultRevisao: '2026-08-01', proxRevisao: '2026-11-01', obs: 'Laudo biológico mensal em dia' },
+      { id: 'eq_2', nome: 'Cabine LED/UV Sun X Plus 72W (Estação 01)', tipo: 'Secagem UV/LED', marca: 'Sun X', numSerie: 'SUN-72W-01', dataAquisicao: '2025-01-15', valor: 280, status: 'OPERACIONAL', ultRevisao: '2026-08-10', proxRevisao: '2026-10-10', obs: 'LEDs testados com fotômetro' },
+      { id: 'eq_3', nome: 'Cabine LED/UV Sun X Plus 72W (Estação 02)', tipo: 'Secagem UV/LED', marca: 'Sun X', numSerie: 'SUN-72W-02', dataAquisicao: '2025-03-20', valor: 280, status: 'OPERACIONAL', ultRevisao: '2026-08-10', proxRevisao: '2026-10-10', obs: 'Higienização periódica de base' },
+      { id: 'eq_4', nome: 'Micromotor Marathon Champion 3', tipo: 'Desbaste Motorizado', marca: 'Marathon / Saeyang', numSerie: 'MC3-88219', dataAquisicao: '2024-06-18', valor: 1450, status: 'OPERACIONAL', ultRevisao: '2026-07-15', proxRevisao: '2026-10-15', obs: 'Caneta silenciosa sem vibração' },
+      { id: 'eq_5', nome: 'Aspirador Coletor de Pó Embutido 80W', tipo: 'Exaustão de Pó', marca: 'NailMaster', numSerie: 'ASP-80W-44', dataAquisicao: '2025-02-11', valor: 590, status: 'OPERACIONAL', ultRevisao: '2026-08-20', proxRevisao: '2026-09-20', obs: 'Troca periódica de filtro HEPA' },
+      { id: 'eq_6', nome: 'Luminária Articulada LED Ring Light 50W', tipo: 'Iluminação', marca: 'Neewer', numSerie: 'NW-RL50', dataAquisicao: '2024-09-05', valor: 390, status: 'OPERACIONAL', ultRevisao: '2026-06-01', proxRevisao: '2026-12-01', obs: 'Temperatura de cor regulada para fotos' }
+    ];
+
+    const DEFAULT_FERIADOS = [
+      { id: 'fer_1', data: '2026-01-01', nome: 'Confraternização Universal', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_2', data: '2026-02-17', nome: 'Carnaval (Terça-feira)', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_3', data: '2026-04-03', nome: 'Sexta-feira Santa / Paixão de Cristo', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_4', data: '2026-04-21', nome: 'Tiradentes', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_5', data: '2026-05-01', nome: 'Dia do Trabalhador', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_6', data: '2026-06-04', nome: 'Corpus Christi', tipo: 'NACIONAL', acao: 'MEIO_PERIODO' },
+      { id: 'fer_7', data: '2026-09-07', nome: 'Independência do Brasil', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_8', data: '2026-10-12', nome: 'Nossa Senhora Aparecida', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_9', data: '2026-11-02', nome: 'Finados', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_10', data: '2026-11-15', nome: 'Proclamação da República', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_11', data: '2026-11-20', nome: 'Dia da Consciência Negra', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_12', data: '2026-12-25', nome: 'Natal', tipo: 'NACIONAL', acao: 'BLOQUEAR' },
+      { id: 'fer_13', data: '2026-12-31', nome: 'Recesso de Fim de Ano ZanettIA', tipo: 'RECESSO', acao: 'BLOQUEAR' }
+    ];
+
+    const DEFAULT_GRUPOS_SERVICOS = [
+      { id: 'gs_1', nome: 'Alongamento & Extensão em Gel', cor: '#8b5cf6', comissao: 50, descricao: 'Procedimentos de construção de borda livre com molde F1, tips e fibra', status: 'ATIVO', totalServicos: 4 },
+      { id: 'gs_2', nome: 'Manutenção & Reparo de Unhas', cor: '#3b82f6', comissao: 50, descricao: 'Manutenções periódicas de 20-25 dias, ponto de tensão e reposição', status: 'ATIVO', totalServicos: 3 },
+      { id: 'gs_3', nome: 'Esmaltação em Gel & Blindagem', cor: '#10b981', comissao: 50, descricao: 'Blindagem de unhas naturais com pó acrílico ou gel e esmaltação curada', status: 'ATIVO', totalServicos: 3 },
+      { id: 'gs_4', nome: 'Manicure & Pedicure Tradicional', cor: '#ec4899', comissao: 60, descricao: 'Cutilagem russa e combinada, hidratação e esmaltação comum', status: 'ATIVO', totalServicos: 2 },
+      { id: 'gs_5', nome: 'Spa dos Pés & Plástica dos Pés', cor: '#f59e0b', comissao: 50, descricao: 'Remoção de calosidades, esfoliação profunda, hidratação e massagem', status: 'ATIVO', totalServicos: 2 },
+      { id: 'gs_6', nome: 'Cursos Profissionalizantes VIP', cor: '#6366f1', comissao: 100, descricao: 'Capacitação presencial para iniciantes e aperfeiçoamento avançado', status: 'ATIVO', totalServicos: 2 }
+    ];
+
+    const DEFAULT_MARCAS = [
+      { id: 'mar_1', nome: 'Vòlia Cosméticos', categoria: 'Géis & Preparadores', origem: 'Nacional', status: 'ATIVO', fornecedor: 'Vòlia Cosméticos Brasil', obs: 'Géis Classic Nude, Blanc, Cover e primers' },
+      { id: 'mar_2', nome: 'Cuccio Pro Brasil', categoria: 'Géis & Spa', origem: 'Importada', status: 'ATIVO', fornecedor: 'Distribuidora Belle Nail Pro', obs: 'Linha T3, hard gels e manteigas hidratantes' },
+      { id: 'mar_3', nome: 'Beltrat Cosméticos', categoria: 'Géis Construtores', origem: 'Nacional', status: 'ATIVO', fornecedor: 'Distribuidora Belle Nail Pro', obs: 'Gel Hard e linha de pré-moldagem' },
+      { id: 'mar_4', nome: 'Staleks Pro', categoria: 'Instrumental Cirúrgico', origem: 'Importada', status: 'ATIVO', fornecedor: 'Distribuidora Belle Nail Pro', obs: 'Alicates Expert 20, espátulas e tesouras de cutícula' },
+      { id: 'mar_5', nome: 'D&Z', categoria: 'Acessórios & Brocas', origem: 'Importada', status: 'ATIVO', fornecedor: 'Insumos Médicos & Descartáveis Sul', obs: 'Cabines, brocas tungstênio e cerâmica' },
+      { id: 'mar_6', nome: 'Risqué & Impala', categoria: 'Esmaltes Tradicionais', origem: 'Nacional', status: 'ATIVO', fornecedor: 'Insumos Médicos & Descartáveis Sul', obs: 'Linha tradicional de alta rotatividade' },
+      { id: 'mar_7', nome: 'OPI Professional', categoria: 'Esmaltes & Finalizadores', origem: 'Importada', status: 'ATIVO', fornecedor: 'Distribuidora Belle Nail Pro', obs: 'Top coats e esmaltes cremosos premium' }
+    ];
+
+    const DEFAULT_SALAS = [
+      { id: 'sal_1', nome: 'Estação Master 01 - Letícia Hermann', tipo: 'CABINE_VIP', capacidade: 1, status: 'DISPONIVEL', equipamentos: 'Cabine LED Sun X, Micromotor Marathon, Coletor 80W, Ring Light', obs: 'Bancada principal de atendimento VIP' },
+      { id: 'sal_2', nome: 'Estação 02 - Manicure / Designer Assistente', tipo: 'BANCADA', capacidade: 1, status: 'DISPONIVEL', equipamentos: 'Cabine LED Sun X, Micromotor Champion 3, Luminária Articulada', obs: 'Bancada de atendimento simultâneo' },
+      { id: 'sal_3', nome: 'Espaço Spa dos Pés & Podologia Estética', tipo: 'POLTRONA_SPA', capacidade: 1, status: 'DISPONIVEL', equipamentos: 'Poltrona Reclinável Elétrica, Bacia de Hidromassagem, Carrinho Auxiliar', obs: 'Cabine reservada para relaxamento' },
+      { id: 'sal_4', nome: 'Sala de Cursos VIP & Alunas', tipo: 'SALA_CURSOS', capacidade: 4, status: 'DISPONIVEL', equipamentos: '2 Bancadas Duplas com 4 Cabines, Projetor, Quadro Branco', obs: 'Espaço exclusivo para alunas do curso de formação' }
+    ];
     const DEFAULT_FORNECEDORES=[
       {id:'forn_1',nome:'Vòlia Cosméticos Brasil',cnpj:'28.123.456/0001-90',phone:'(11) 98765-4321',email:'contato@voliacosmeticos.com.br',cidade:'São Paulo/SP',rep:'Mariana Silva',obs:'Fornecedor principal de géis construtores e preparadores'},
       {id:'forn_2',nome:'Distribuidora Belle Nail Pro',cnpj:'34.987.654/0001-12',phone:'(54) 99888-7766',email:'pedidos@bellenail.com.br',cidade:'Caxias do Sul/RS',rep:'Carlos Eduardo',obs:'Lixas, fibras de vidro e brocas diamantadas'},
@@ -2944,6 +3986,14 @@
       caixaMovs:JSON.parse(localStorage.getItem('zp_caixa_movs'))||[],
       fornecedores:JSON.parse(localStorage.getItem('zp_fornecedores'))||DEFAULT_FORNECEDORES,
       compras:JSON.parse(localStorage.getItem('zp_compras'))||DEFAULT_COMPRAS,
+      anamneseTemplates:JSON.parse(localStorage.getItem('zp_anamnese_templates'))||DEFAULT_ANAMNESE_TEMPLATES,
+      camposPersonalizados:JSON.parse(localStorage.getItem('zp_campos_personalizados'))||DEFAULT_CAMPOS_PERSONALIZADOS,
+      comoConheceu:JSON.parse(localStorage.getItem('zp_como_conheceu'))||DEFAULT_COMO_CONHECEU,
+      equipamentos:JSON.parse(localStorage.getItem('zp_equipamentos'))||DEFAULT_EQUIPAMENTOS,
+      feriados:JSON.parse(localStorage.getItem('zp_feriados'))||DEFAULT_FERIADOS,
+      gruposServicos:JSON.parse(localStorage.getItem('zp_grupos_servicos'))||DEFAULT_GRUPOS_SERVICOS,
+      marcas:JSON.parse(localStorage.getItem('zp_marcas'))||DEFAULT_MARCAS,
+      salas:JSON.parse(localStorage.getItem('zp_salas'))||DEFAULT_SALAS,
       comprasFilterFornecedor:'ALL',
       comprasFilterMes:new Date().getMonth(),
       comprasFilterAno:new Date().getFullYear(),
@@ -3048,6 +4098,14 @@
       localStorage.setItem('zp_caixa_movs',JSON.stringify(state.caixaMovs));
       localStorage.setItem('zp_fornecedores',JSON.stringify(state.fornecedores));
       localStorage.setItem('zp_compras',JSON.stringify(state.compras));
+      localStorage.setItem('zp_anamnese_templates',JSON.stringify(state.anamneseTemplates));
+      localStorage.setItem('zp_campos_personalizados',JSON.stringify(state.camposPersonalizados));
+      localStorage.setItem('zp_como_conheceu',JSON.stringify(state.comoConheceu));
+      localStorage.setItem('zp_equipamentos',JSON.stringify(state.equipamentos));
+      localStorage.setItem('zp_feriados',JSON.stringify(state.feriados));
+      localStorage.setItem('zp_grupos_servicos',JSON.stringify(state.gruposServicos));
+      localStorage.setItem('zp_marcas',JSON.stringify(state.marcas));
+      localStorage.setItem('zp_salas',JSON.stringify(state.salas));
       localStorage.setItem('zp_caixa',JSON.stringify(state.caixa));
       localStorage.setItem('zp_caixas_fechados',JSON.stringify(state.caixasFechados));
       localStorage.setItem('zanettia_theme',state.theme);
@@ -4235,6 +5293,1033 @@
       }
     }
 
+    
+    // ============== CADASTROS GERAIS: RENDER & CRUD LOGIC ==============
+
+    // 1. ANAMNESE, FICHAS E CONTRATOS
+    function renderAnamnese(){
+      const list = state.anamneseTemplates || [];
+      const search = (document.getElementById('ana-search')?.value || '').toLowerCase();
+      const tipo = document.getElementById('ana-filter-tipo')?.value || 'ALL';
+
+      const filtered = list.filter(m => {
+        const matchSearch = !search || m.titulo.toLowerCase().includes(search) || (m.descricao||'').toLowerCase().includes(search);
+        const matchTipo = tipo === 'ALL' || m.tipo === tipo;
+        return matchSearch && matchTipo;
+      });
+
+      // KPIs
+      document.getElementById('ana-kpi-total').textContent = list.length;
+      document.getElementById('ana-kpi-fichas').textContent = list.filter(x => x.tipo === 'ANAMNESE').length;
+      document.getElementById('ana-kpi-termos').textContent = list.filter(x => x.tipo === 'TERMO').length;
+      document.getElementById('ana-kpi-contratos').textContent = list.filter(x => x.tipo === 'CONTRATO').length;
+
+      const container = document.getElementById('ana-list-container');
+      if(!container) return;
+
+      if(filtered.length === 0){
+        container.innerHTML = '<div class="col-span-full py-12 text-center text-muted font-mono text-xs">Nenhum modelo encontrado. Clique em "+ Novo Modelo" para adicionar.</div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(m => {
+        let badgeColor = 'bg-sky-500/20 text-sky-600 dark:text-sky-400 border-sky-500/30';
+        let tipoLabel = 'Ficha de Anamnese';
+        if(m.tipo === 'TERMO'){
+          badgeColor = 'bg-purple-500/20 text-purple-600 dark:text-purple-400 border-purple-500/30';
+          tipoLabel = 'Termo de Consentimento';
+        } else if(m.tipo === 'CONTRATO'){
+          badgeColor = 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border-indigo-500/30';
+          tipoLabel = 'Contrato Educacional';
+        }
+
+        const itensList = (m.itens || []).map(it => `<li class="flex items-start gap-1.5"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5"></i><span>${it}</span></li>`).join('');
+
+        return `
+          <div class="glass-card rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:border-sky-500/50 transition-all">
+            <div class="space-y-2">
+              <div class="flex items-start justify-between gap-2">
+                <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold border ${badgeColor}">${tipoLabel}</span>
+                <span class="text-[10px] font-mono font-bold ${m.status === 'ATIVO' ? 'text-emerald-500' : 'text-slate-400'}">${m.status}</span>
+              </div>
+              <h3 class="font-bold text-title text-sm leading-snug">${m.titulo}</h3>
+              <p class="text-[11px] text-muted leading-relaxed">${m.descricao || 'Sem descrição informada.'}</p>
+              <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                <span class="text-[10px] font-mono text-muted uppercase block mb-1.5 font-bold">Tópicos & Cláusulas (${(m.itens||[]).length}):</span>
+                <ul class="text-[11px] text-muted space-y-1 max-h-32 overflow-y-auto pr-1">
+                  ${itensList}
+                </ul>
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+              <button onclick="previewAnamnese('${m.id}')" class="px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 text-[11px] font-bold flex items-center gap-1">
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i> Visualizar / Imprimir
+              </button>
+              <div class="flex items-center gap-1">
+                <button onclick="editAnamnese('${m.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-title hover:bg-slate-100 dark:hover:bg-slate-800" title="Editar"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+                <button onclick="deleteAnamnese('${m.id}')" class="p-1.5 rounded-lg text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openAnamneseModal(){
+      document.getElementById('ana-edit-id').value = '';
+      document.getElementById('ana-modal-title').innerHTML = '<i data-lucide="file-text" class="w-5 h-5 text-sky-500"></i> Novo Modelo de Ficha / Termo';
+      document.getElementById('ana-titulo').value = '';
+      document.getElementById('ana-tipo').value = 'ANAMNESE';
+      document.getElementById('ana-status').value = 'ATIVO';
+      document.getElementById('ana-descricao').value = '';
+      document.getElementById('ana-itens').value = '';
+      openModal('modal-anamnese');
+      lucide.createIcons();
+    }
+
+    function editAnamnese(id){
+      const m = (state.anamneseTemplates||[]).find(x => x.id === id);
+      if(!m) return;
+      document.getElementById('ana-edit-id').value = m.id;
+      document.getElementById('ana-modal-title').innerHTML = '<i data-lucide="edit" class="w-5 h-5 text-sky-500"></i> Editar Modelo';
+      document.getElementById('ana-titulo').value = m.titulo;
+      document.getElementById('ana-tipo').value = m.tipo;
+      document.getElementById('ana-status').value = m.status;
+      document.getElementById('ana-descricao').value = m.descricao || '';
+      document.getElementById('ana-itens').value = (m.itens || []).join('\n');
+      openModal('modal-anamnese');
+      lucide.createIcons();
+    }
+
+    function saveAnamnese(){
+      const id = document.getElementById('ana-edit-id').value;
+      const titulo = document.getElementById('ana-titulo').value.trim();
+      const tipo = document.getElementById('ana-tipo').value;
+      const status = document.getElementById('ana-status').value;
+      const descricao = document.getElementById('ana-descricao').value.trim();
+      const itensRaw = document.getElementById('ana-itens').value.trim();
+
+      if(!titulo){
+        return alert('Por favor, informe o título do documento.');
+      }
+      if(!itensRaw){
+        return alert('Por favor, adicione ao menos um item de verificação ou cláusula.');
+      }
+
+      const itens = itensRaw.split('\n').map(l => l.trim()).filter(Boolean);
+
+      if(!state.anamneseTemplates) state.anamneseTemplates = [];
+
+      if(id){
+        const idx = state.anamneseTemplates.findIndex(x => x.id === id);
+        if(idx !== -1){
+          state.anamneseTemplates[idx] = { ...state.anamneseTemplates[idx], titulo, tipo, status, descricao, itens };
+        }
+      } else {
+        state.anamneseTemplates.unshift({
+          id: 'ana_' + Date.now(),
+          titulo, tipo, status, descricao, itens
+        });
+      }
+
+      persistState();
+      closeModal('modal-anamnese');
+      renderAnamnese();
+      alert('Modelo de documento salvo com sucesso! ✅');
+    }
+
+    function deleteAnamnese(id){
+      const m = (state.anamneseTemplates||[]).find(x => x.id === id);
+      if(!m) return;
+      if(confirm(`Deseja realmente excluir o modelo "${m.titulo}"?`)){
+        state.anamneseTemplates = state.anamneseTemplates.filter(x => x.id !== id);
+        persistState();
+        renderAnamnese();
+      }
+    }
+
+    function previewAnamnese(id){
+      const m = (state.anamneseTemplates||[]).find(x => x.id === id);
+      if(!m) return;
+
+      document.getElementById('ana-preview-title').innerHTML = `<i data-lucide="file-check" class="w-5 h-5 text-sky-500"></i> ${m.titulo}`;
+      
+      const body = document.getElementById('ana-preview-body');
+      let tipoHeader = m.tipo === 'ANAMNESE' ? 'FICHA CLÍNICA DE ANAMNESE E SAÚDE' : (m.tipo === 'TERMO' ? 'TERMO DE CONSENTIMENTO E ORIENTAÇÕES PÓS-PROCEDIMENTO' : 'CONTRATO DE FORMAÇÃO PROFISSIONAL');
+
+      body.innerHTML = `
+        <div class="text-center pb-3 border-b border-slate-200 dark:border-slate-700">
+          <h2 class="text-sm font-black font-mono tracking-wide text-title uppercase">ZanettIA Pro • Letícia Hermann Unhas & Cursos</h2>
+          <span class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">${tipoHeader}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-[11px] p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+          <div><strong class="text-title">Cliente / Aluna:</strong> ___________________________</div>
+          <div><strong class="text-title">Data:</strong> ${todayBR}</div>
+          <div><strong class="text-title">Profissional Responsável:</strong> Letícia Hermann</div>
+          <div><strong class="text-title">Status:</strong> ${m.status}</div>
+        </div>
+        <div class="space-y-2 pt-1">
+          <p class="font-bold text-title text-xs">Cláusulas e Declarações de Responsabilidade:</p>
+          <div class="space-y-2">
+            ${(m.itens||[]).map((it, idx) => `
+              <div class="flex items-start gap-2 p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800">
+                <span class="w-5 h-5 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-mono font-bold text-[10px] text-muted shrink-0">${idx+1}</span>
+                <p class="text-[11px] text-title leading-snug">${it}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="pt-6 mt-4 border-t border-dashed border-slate-300 dark:border-slate-700 grid grid-cols-2 gap-6 text-center text-[10px]">
+          <div>
+            <div class="border-b border-slate-400 dark:border-slate-600 mb-1 w-48 mx-auto"></div>
+            <span class="text-muted">Assinatura da Cliente / Aluna</span>
+          </div>
+          <div>
+            <div class="border-b border-slate-400 dark:border-slate-600 mb-1 w-48 mx-auto"></div>
+            <span class="text-muted">Letícia Hermann (Master Designer)</span>
+          </div>
+        </div>
+      `;
+      openModal('modal-anamnese-preview');
+      lucide.createIcons();
+    }
+
+    // 2. CAMPOS PERSONALIZADOS
+    function renderCamposPersonalizados(){
+      const list = state.camposPersonalizados || [];
+      document.getElementById('cp-kpi-total').textContent = list.length;
+      document.getElementById('cp-kpi-clientes').textContent = list.filter(x => x.entidade === 'CLIENTES').length;
+      document.getElementById('cp-kpi-agendamentos').textContent = list.filter(x => x.entidade === 'AGENDAMENTOS').length;
+      document.getElementById('cp-kpi-ativos').textContent = list.filter(x => x.status === 'ATIVO').length;
+
+      const tbody = document.getElementById('cp-table-body');
+      if(!tbody) return;
+
+      if(list.length === 0){
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-muted font-mono">Nenhum campo personalizado cadastrado.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(c => {
+        let entColor = 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30';
+        if(c.entidade === 'AGENDAMENTOS') entColor = 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30';
+        if(c.entidade === 'SERVICOS') entColor = 'bg-purple-500/20 text-purple-600 dark:text-purple-400 border-purple-500/30';
+
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="sliders" class="w-3.5 h-3.5 text-indigo-500"></i>
+              <span>${c.nome}</span>
+            </td>
+            <td class="p-3">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${entColor}">${c.entidade}</span>
+            </td>
+            <td class="p-3 font-mono text-[11px] text-muted">${c.tipo}</td>
+            <td class="p-3 text-muted text-[11px] max-w-xs truncate">${c.opcoes || '—'}</td>
+            <td class="p-3 text-center">
+              ${c.obrigatorio ? '<span class="text-rose-500 font-bold font-mono text-[10px]">SIM</span>' : '<span class="text-slate-400 font-mono text-[10px]">NÃO</span>'}
+            </td>
+            <td class="p-3 text-center">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${c.status === 'ATIVO' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-slate-200 text-slate-500'}">${c.status}</span>
+            </td>
+            <td class="p-3 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button onclick="editCampoPersonalizado('${c.id}')" class="p-1.5 text-slate-400 hover:text-title hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+                <button onclick="deleteCampoPersonalizado('${c.id}')" class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function toggleCpOpcoes(){
+      const tipo = document.getElementById('cp-tipo').value;
+      const wrap = document.getElementById('cp-opcoes-wrap');
+      if(tipo === 'SELECAO') wrap.classList.remove('hidden');
+      else wrap.classList.add('hidden');
+    }
+
+    function openCampoPersonalizadoModal(){
+      document.getElementById('cp-edit-id').value = '';
+      document.getElementById('cp-modal-title').innerHTML = '<i data-lucide="sliders" class="w-5 h-5 text-indigo-500"></i> Novo Campo Personalizado';
+      document.getElementById('cp-nome').value = '';
+      document.getElementById('cp-entidade').value = 'CLIENTES';
+      document.getElementById('cp-tipo').value = 'TEXTO';
+      document.getElementById('cp-opcoes').value = '';
+      document.getElementById('cp-obrigatorio').checked = false;
+      document.getElementById('cp-status').value = 'ATIVO';
+      toggleCpOpcoes();
+      openModal('modal-campo-personalizado');
+      lucide.createIcons();
+    }
+
+    function editCampoPersonalizado(id){
+      const c = (state.camposPersonalizados||[]).find(x => x.id === id);
+      if(!c) return;
+      document.getElementById('cp-edit-id').value = c.id;
+      document.getElementById('cp-modal-title').innerHTML = '<i data-lucide="edit" class="w-5 h-5 text-indigo-500"></i> Editar Campo Personalizado';
+      document.getElementById('cp-nome').value = c.nome;
+      document.getElementById('cp-entidade').value = c.entidade;
+      document.getElementById('cp-tipo').value = c.tipo;
+      document.getElementById('cp-opcoes').value = c.opcoes || '';
+      document.getElementById('cp-obrigatorio').checked = !!c.obrigatorio;
+      document.getElementById('cp-status').value = c.status;
+      toggleCpOpcoes();
+      openModal('modal-campo-personalizado');
+      lucide.createIcons();
+    }
+
+    function saveCampoPersonalizado(){
+      const id = document.getElementById('cp-edit-id').value;
+      const nome = document.getElementById('cp-nome').value.trim();
+      const entidade = document.getElementById('cp-entidade').value;
+      const tipo = document.getElementById('cp-tipo').value;
+      const opcoes = document.getElementById('cp-opcoes').value.trim();
+      const obrigatorio = document.getElementById('cp-obrigatorio').checked;
+      const status = document.getElementById('cp-status').value;
+
+      if(!nome) return alert('Por favor, informe o nome do campo.');
+
+      if(!state.camposPersonalizados) state.camposPersonalizados = [];
+
+      if(id){
+        const idx = state.camposPersonalizados.findIndex(x => x.id === id);
+        if(idx !== -1){
+          state.camposPersonalizados[idx] = { ...state.camposPersonalizados[idx], nome, entidade, tipo, opcoes, obrigatorio, status };
+        }
+      } else {
+        state.camposPersonalizados.push({
+          id: 'cp_' + Date.now(),
+          nome, entidade, tipo, opcoes, obrigatorio, status
+        });
+      }
+
+      persistState();
+      closeModal('modal-campo-personalizado');
+      renderCamposPersonalizados();
+      alert('Campo personalizado salvo com sucesso! ✅');
+    }
+
+    function deleteCampoPersonalizado(id){
+      const c = (state.camposPersonalizados||[]).find(x => x.id === id);
+      if(!c) return;
+      if(confirm(`Deseja realmente excluir o campo "${c.nome}"?`)){
+        state.camposPersonalizados = state.camposPersonalizados.filter(x => x.id !== id);
+        persistState();
+        renderCamposPersonalizados();
+      }
+    }
+
+    // 3. COMO NOS CONHECEU
+    function renderComoConheceu(){
+      const list = state.comoConheceu || [];
+      const totalClientes = list.reduce((s, x) => s + (x.clientes || 0), 0);
+      const totalFat = list.reduce((s, x) => s + (x.faturamento || 0), 0);
+      const top = [...list].sort((a,b) => (b.clientes||0) - (a.clientes||0))[0];
+
+      document.getElementById('cc-kpi-total').textContent = list.length;
+      document.getElementById('cc-kpi-campeao').textContent = top ? `${top.nome} (${top.clientes})` : '—';
+      document.getElementById('cc-kpi-clientes').textContent = totalClientes;
+      document.getElementById('cc-kpi-fat').textContent = fmt(totalFat);
+
+      const tbody = document.getElementById('cc-table-body');
+      if(!tbody) return;
+
+      if(list.length === 0){
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-muted font-mono">Nenhum canal cadastrado.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(c => {
+        const pct = totalClientes > 0 ? Math.round(((c.clientes||0) / totalClientes) * 100) : 0;
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="megaphone" class="w-3.5 h-3.5 text-amber-500"></i>
+              <span>${c.nome}</span>
+            </td>
+            <td class="p-3 text-muted text-[11px] font-mono">${c.categoria}</td>
+            <td class="p-3 text-center font-mono font-bold text-title">${c.clientes || 0}</td>
+            <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(c.faturamento || 0)}</td>
+            <td class="p-3 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <div class="w-16 bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-amber-500 h-1.5 rounded-full" style="width: ${pct}%"></div>
+                </div>
+                <span class="font-mono text-[10px] text-muted">${pct}%</span>
+              </div>
+            </td>
+            <td class="p-3 text-center">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${c.status === 'ATIVO' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-slate-200 text-slate-500'}">${c.status}</span>
+            </td>
+            <td class="p-3 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button onclick="editComoConheceu('${c.id}')" class="p-1.5 text-slate-400 hover:text-title hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+                <button onclick="deleteComoConheceu('${c.id}')" class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openComoConheceuModal(){
+      document.getElementById('cc-edit-id').value = '';
+      document.getElementById('cc-modal-title').innerHTML = '<i data-lucide="megaphone" class="w-5 h-5 text-amber-500"></i> Novo Canal de Origem';
+      document.getElementById('cc-nome').value = '';
+      document.getElementById('cc-categoria').value = 'Redes Sociais';
+      document.getElementById('cc-status').value = 'ATIVO';
+      openModal('modal-como-conheceu');
+      lucide.createIcons();
+    }
+
+    function editComoConheceu(id){
+      const c = (state.comoConheceu||[]).find(x => x.id === id);
+      if(!c) return;
+      document.getElementById('cc-edit-id').value = c.id;
+      document.getElementById('cc-modal-title').innerHTML = '<i data-lucide="edit" class="w-5 h-5 text-amber-500"></i> Editar Canal de Origem';
+      document.getElementById('cc-nome').value = c.nome;
+      document.getElementById('cc-categoria').value = c.categoria;
+      document.getElementById('cc-status').value = c.status;
+      openModal('modal-como-conheceu');
+      lucide.createIcons();
+    }
+
+    function saveComoConheceu(){
+      const id = document.getElementById('cc-edit-id').value;
+      const nome = document.getElementById('cc-nome').value.trim();
+      const categoria = document.getElementById('cc-categoria').value;
+      const status = document.getElementById('cc-status').value;
+
+      if(!nome) return alert('Por favor, informe o nome do canal.');
+
+      if(!state.comoConheceu) state.comoConheceu = [];
+
+      if(id){
+        const idx = state.comoConheceu.findIndex(x => x.id === id);
+        if(idx !== -1){
+          state.comoConheceu[idx] = { ...state.comoConheceu[idx], nome, categoria, status };
+        }
+      } else {
+        state.comoConheceu.push({
+          id: 'cc_' + Date.now(),
+          nome, categoria, clientes: 0, faturamento: 0, status
+        });
+      }
+
+      persistState();
+      closeModal('modal-como-conheceu');
+      renderComoConheceu();
+      alert('Canal salvo com sucesso! ✅');
+    }
+
+    function deleteComoConheceu(id){
+      const c = (state.comoConheceu||[]).find(x => x.id === id);
+      if(!c) return;
+      if(confirm(`Deseja realmente excluir o canal "${c.nome}"?`)){
+        state.comoConheceu = state.comoConheceu.filter(x => x.id !== id);
+        persistState();
+        renderComoConheceu();
+      }
+    }
+
+    // 4. EQUIPAMENTOS
+    function renderEquipamentos(){
+      const list = state.equipamentos || [];
+      const totalPatrimonio = list.reduce((s, x) => s + (x.valor || 0), 0);
+
+      document.getElementById('eq-kpi-total').textContent = list.length;
+      document.getElementById('eq-kpi-operacionais').textContent = list.filter(x => x.status === 'OPERACIONAL').length;
+      document.getElementById('eq-kpi-manutencao').textContent = list.filter(x => x.status === 'MANUTENCAO').length;
+      document.getElementById('eq-kpi-valor').textContent = fmt(totalPatrimonio);
+
+      const tbody = document.getElementById('eq-table-body');
+      if(!tbody) return;
+
+      if(list.length === 0){
+        tbody.innerHTML = '<tr><td colspan="8" class="p-8 text-center text-muted font-mono">Nenhum equipamento cadastrado.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(eq => {
+        let statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">OPERACIONAL</span>';
+        if(eq.status === 'MANUTENCAO') statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-500">MANUTENÇÃO</span>';
+        if(eq.status === 'CALIBRACAO') statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-500">CALIBRAÇÃO</span>';
+        if(eq.status === 'DESATIVADO') statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-200 text-slate-500">DESATIVADO</span>';
+
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+            <td class="p-3">
+              <div class="font-bold text-title flex items-center gap-1.5">
+                <i data-lucide="cpu" class="w-3.5 h-3.5 text-emerald-500"></i>
+                <span>${eq.nome}</span>
+              </div>
+              <div class="text-[10px] text-muted truncate max-w-xs">${eq.obs || ''}</div>
+            </td>
+            <td class="p-3 text-muted text-[11px] font-mono">${eq.tipo}</td>
+            <td class="p-3 text-title text-[11px] font-bold">${eq.marca || '—'}</td>
+            <td class="p-3 text-muted font-mono text-[11px]">${eq.numSerie || '—'}</td>
+            <td class="p-3 text-right font-mono font-bold text-title">${fmt(eq.valor || 0)}</td>
+            <td class="p-3 font-mono text-[11px] text-muted">${eq.proxRevisao ? eq.proxRevisao.split('-').reverse().join('/') : '—'}</td>
+            <td class="p-3 text-center">${statusBadge}</td>
+            <td class="p-3 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button onclick="editEquipamento('${eq.id}')" class="p-1.5 text-slate-400 hover:text-title hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+                <button onclick="deleteEquipamento('${eq.id}')" class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openEquipamentoModal(){
+      document.getElementById('eq-edit-id').value = '';
+      document.getElementById('eq-modal-title').innerHTML = '<i data-lucide="cpu" class="w-5 h-5 text-emerald-500"></i> Novo Equipamento';
+      document.getElementById('eq-nome').value = '';
+      document.getElementById('eq-tipo').value = 'Esterilização';
+      document.getElementById('eq-status').value = 'OPERACIONAL';
+      document.getElementById('eq-marca').value = '';
+      document.getElementById('eq-num-serie').value = '';
+      document.getElementById('eq-data-compra').value = todayStr;
+      document.getElementById('eq-valor').value = '';
+      document.getElementById('eq-prox-revisao').value = '';
+      document.getElementById('eq-obs').value = '';
+      openModal('modal-equipamento');
+      lucide.createIcons();
+    }
+
+    function editEquipamento(id){
+      const eq = (state.equipamentos||[]).find(x => x.id === id);
+      if(!eq) return;
+      document.getElementById('eq-edit-id').value = eq.id;
+      document.getElementById('eq-modal-title').innerHTML = '<i data-lucide="edit" class="w-5 h-5 text-emerald-500"></i> Editar Equipamento';
+      document.getElementById('eq-nome').value = eq.nome;
+      document.getElementById('eq-tipo').value = eq.tipo;
+      document.getElementById('eq-status').value = eq.status;
+      document.getElementById('eq-marca').value = eq.marca || '';
+      document.getElementById('eq-num-serie').value = eq.numSerie || '';
+      document.getElementById('eq-data-compra').value = eq.dataAquisicao || '';
+      document.getElementById('eq-valor').value = eq.valor || '';
+      document.getElementById('eq-prox-revisao').value = eq.proxRevisao || '';
+      document.getElementById('eq-obs').value = eq.obs || '';
+      openModal('modal-equipamento');
+      lucide.createIcons();
+    }
+
+    function saveEquipamento(){
+      const id = document.getElementById('eq-edit-id').value;
+      const nome = document.getElementById('eq-nome').value.trim();
+      const tipo = document.getElementById('eq-tipo').value;
+      const status = document.getElementById('eq-status').value;
+      const marca = document.getElementById('eq-marca').value.trim();
+      const numSerie = document.getElementById('eq-num-serie').value.trim();
+      const dataAquisicao = document.getElementById('eq-data-compra').value;
+      const valor = parseFloat(document.getElementById('eq-valor').value) || 0;
+      const proxRevisao = document.getElementById('eq-prox-revisao').value;
+      const obs = document.getElementById('eq-obs').value.trim();
+
+      if(!nome) return alert('Por favor, informe o nome do equipamento.');
+
+      if(!state.equipamentos) state.equipamentos = [];
+
+      if(id){
+        const idx = state.equipamentos.findIndex(x => x.id === id);
+        if(idx !== -1){
+          state.equipamentos[idx] = { ...state.equipamentos[idx], nome, tipo, status, marca, numSerie, dataAquisicao, valor, proxRevisao, obs };
+        }
+      } else {
+        state.equipamentos.push({
+          id: 'eq_' + Date.now(),
+          nome, tipo, status, marca, numSerie, dataAquisicao, valor, ultRevisao: todayStr, proxRevisao, obs
+        });
+      }
+
+      persistState();
+      closeModal('modal-equipamento');
+      renderEquipamentos();
+      alert('Equipamento salvo com sucesso! ✅');
+    }
+
+    function deleteEquipamento(id){
+      const eq = (state.equipamentos||[]).find(x => x.id === id);
+      if(!eq) return;
+      if(confirm(`Deseja realmente excluir o equipamento "${eq.nome}"?`)){
+        state.equipamentos = state.equipamentos.filter(x => x.id !== id);
+        persistState();
+        renderEquipamentos();
+      }
+    }
+
+    // 5. FERIADOS
+    function renderFeriados(){
+      const list = [...(state.feriados || [])].sort((a,b) => a.data.localeCompare(b.data));
+      const today = todayStr;
+      const futuros = list.filter(x => x.data >= today);
+      const proximo = futuros[0];
+
+      document.getElementById('fer-kpi-total').textContent = list.length;
+      document.getElementById('fer-kpi-proximo').textContent = proximo ? `${proximo.nome} (${proximo.data.split('-').reverse().slice(0,2).join('/')})` : 'Nenhum próximo';
+      document.getElementById('fer-kpi-bloqueados').textContent = list.filter(x => x.acao === 'BLOQUEAR').length;
+      document.getElementById('fer-kpi-meio').textContent = list.filter(x => x.acao === 'MEIO_PERIODO').length;
+
+      const tbody = document.getElementById('fer-table-body');
+      if(!tbody) return;
+
+      if(list.length === 0){
+        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-muted font-mono">Nenhum feriado cadastrado.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(fer => {
+        const pass = fer.data < today;
+        let acaoBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-500 border border-rose-500/30">BLOQUEIO TOTAL</span>';
+        if(fer.acao === 'MEIO_PERIODO') acaoBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30">HORÁRIO REDUZIDO</span>';
+        if(fer.acao === 'INFORMATIVO') acaoBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-500 border border-blue-500/30">INFORMATIVO</span>';
+
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 ${pass ? 'opacity-50' : ''}">
+            <td class="p-3 font-mono font-bold text-title">${fer.data.split('-').reverse().join('/')}</td>
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-rose-500"></i>
+              <span>${fer.nome}</span>
+            </td>
+            <td class="p-3 text-muted text-[11px] font-mono">${fer.tipo}</td>
+            <td class="p-3 text-center">${acaoBadge}</td>
+            <td class="p-3 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button onclick="editFeriado('${fer.id}')" class="p-1.5 text-slate-400 hover:text-title hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+                <button onclick="deleteFeriado('${fer.id}')" class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openFeriadoModal(){
+      document.getElementById('fer-edit-id').value = '';
+      document.getElementById('fer-modal-title').innerHTML = '<i data-lucide="calendar-off" class="w-5 h-5 text-rose-500"></i> Novo Feriado / Recesso';
+      document.getElementById('fer-data').value = todayStr;
+      document.getElementById('fer-nome').value = '';
+      document.getElementById('fer-tipo').value = 'NACIONAL';
+      document.getElementById('fer-acao').value = 'BLOQUEAR';
+      openModal('modal-feriado');
+      lucide.createIcons();
+    }
+
+    function editFeriado(id){
+      const fer = (state.feriados||[]).find(x => x.id === id);
+      if(!fer) return;
+      document.getElementById('fer-edit-id').value = fer.id;
+      document.getElementById('fer-modal-title').innerHTML = '<i data-lucide="edit" class="w-5 h-5 text-rose-500"></i> Editar Feriado';
+      document.getElementById('fer-data').value = fer.data;
+      document.getElementById('fer-nome').value = fer.nome;
+      document.getElementById('fer-tipo').value = fer.tipo;
+      document.getElementById('fer-acao').value = fer.acao;
+      openModal('modal-feriado');
+      lucide.createIcons();
+    }
+
+    function saveFeriado(){
+      const id = document.getElementById('fer-edit-id').value;
+      const data = document.getElementById('fer-data').value;
+      const nome = document.getElementById('fer-nome').value.trim();
+      const tipo = document.getElementById('fer-tipo').value;
+      const acao = document.getElementById('fer-acao').value;
+
+      if(!data || !nome) return alert('Por favor, informe a data e o nome do feriado.');
+
+      if(!state.feriados) state.feriados = [];
+
+      if(id){
+        const idx = state.feriados.findIndex(x => x.id === id);
+        if(idx !== -1){
+          state.feriados[idx] = { ...state.feriados[idx], data, nome, tipo, acao };
+        }
+      } else {
+        state.feriados.push({
+          id: 'fer_' + Date.now(),
+          data, nome, tipo, acao
+        });
+      }
+
+      persistState();
+      closeModal('modal-feriado');
+      renderFeriados();
+      alert('Feriado salvo com sucesso! ✅');
+    }
+
+    function deleteFeriado(id){
+      const fer = (state.feriados||[]).find(x => x.id === id);
+      if(!fer) return;
+      if(confirm(`Deseja realmente excluir o feriado "${fer.nome}"?`)){
+        state.feriados = state.feriados.filter(x => x.id !== id);
+        persistState();
+        renderFeriados();
+      }
+    }
+
+    // 6. GRUPOS DE SERVIÇOS
+    function renderGruposServicos(){
+      const list = state.gruposServicos || [];
+      const servicos = state.services || [];
+
+      document.getElementById('gs-kpi-total').textContent = list.length;
+      document.getElementById('gs-kpi-ativos').textContent = list.filter(x => x.status === 'ATIVO').length;
+      document.getElementById('gs-kpi-servicos').textContent = servicos.length;
+      const avgCom = list.length > 0 ? Math.round(list.reduce((s, x) => s + (x.comissao || 0), 0) / list.length) : 50;
+      document.getElementById('gs-kpi-comissao').textContent = avgCom + '%';
+
+      const container = document.getElementById('gs-list-container');
+      if(!container) return;
+
+      if(list.length === 0){
+        container.innerHTML = '<div class="col-span-full py-12 text-center text-muted font-mono">Nenhum grupo cadastrado.</div>';
+        return;
+      }
+
+      container.innerHTML = list.map(g => {
+        return `
+          <div class="glass-card rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:border-purple-500/50 transition-all border-l-4" style="border-left-color: ${g.cor || '#8b5cf6'}">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-3.5 h-3.5 rounded-full" style="background-color: ${g.cor || '#8b5cf6'}"></div>
+                  <h3 class="font-bold text-title text-sm">${g.nome}</h3>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${g.status === 'ATIVO' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-slate-200 text-slate-500'}">${g.status}</span>
+              </div>
+              <p class="text-[11px] text-muted leading-relaxed">${g.descricao || 'Sem descrição informada.'}</p>
+              <div class="pt-2 flex items-center justify-between text-[11px] font-mono border-t border-slate-100 dark:border-slate-800">
+                <span class="text-muted">Comissão Padrão: <strong class="text-title font-bold">${g.comissao || 50}%</strong></span>
+                <span class="text-muted">Serviços: <strong class="text-purple-600 dark:text-purple-400 font-bold">${g.totalServicos || 0}</strong></span>
+              </div>
+            </div>
+            <div class="flex items-center justify-end gap-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <button onclick="editGrupoServico('${g.id}')" class="p-1.5 text-slate-400 hover:text-title hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+              <button onclick="deleteGrupoServico('${g.id}')" class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openGrupoServicoModal(){
+      document.getElementById('gs-edit-id').value = '';
+      document.getElementById('gs-modal-title').innerHTML = '<i data-lucide="layers" class="w-5 h-5 text-purple-500"></i> Novo Grupo de Serviços';
+      document.getElementById('gs-nome').value = '';
+      document.getElementById('gs-cor').value = '#8b5cf6';
+      document.getElementById('gs-comissao').value = '50';
+      document.getElementById('gs-descricao').value = '';
+      document.getElementById('gs-status').value = 'ATIVO';
+      openModal('modal-grupo-servico');
+      lucide.createIcons();
+    }
+
+    function editGrupoServico(id){
+      const g = (state.gruposServicos||[]).find(x => x.id === id);
+      if(!g) return;
+      document.getElementById('gs-edit-id').value = g.id;
+      document.getElementById('gs-modal-title').innerHTML = '<i data-lucide="edit" class="w-5 h-5 text-purple-500"></i> Editar Grupo de Serviços';
+      document.getElementById('gs-nome').value = g.nome;
+      document.getElementById('gs-cor').value = g.cor || '#8b5cf6';
+      document.getElementById('gs-comissao').value = g.comissao !== undefined ? g.comissao : 50;
+      document.getElementById('gs-descricao').value = g.descricao || '';
+      document.getElementById('gs-status').value = g.status;
+      openModal('modal-grupo-servico');
+      lucide.createIcons();
+    }
+
+    function saveGrupoServico(){
+      const id = document.getElementById('gs-edit-id').value;
+      const nome = document.getElementById('gs-nome').value.trim();
+      const cor = document.getElementById('gs-cor').value;
+      const comissao = parseFloat(document.getElementById('gs-comissao').value) || 0;
+      const descricao = document.getElementById('gs-descricao').value.trim();
+      const status = document.getElementById('gs-status').value;
+
+      if(!nome) return alert('Por favor, informe o nome do grupo.');
+
+      if(!state.gruposServicos) state.gruposServicos = [];
+
+      if(id){
+        const idx = state.gruposServicos.findIndex(x => x.id === id);
+        if(idx !== -1){
+          state.gruposServicos[idx] = { ...state.gruposServicos[idx], nome, cor, comissao, descricao, status };
+        }
+      } else {
+        state.gruposServicos.push({
+          id: 'gs_' + Date.now(),
+          nome, cor, comissao, descricao, status, totalServicos: 0
+        });
+      }
+
+      persistState();
+      closeModal('modal-grupo-servico');
+      renderGruposServicos();
+      alert('Grupo de serviços salvo com sucesso! ✅');
+    }
+
+    function deleteGrupoServico(id){
+      const g = (state.gruposServicos||[]).find(x => x.id === id);
+      if(!g) return;
+      if(confirm(`Deseja realmente excluir o grupo "${g.nome}"?`)){
+        state.gruposServicos = state.gruposServicos.filter(x => x.id !== id);
+        persistState();
+        renderGruposServicos();
+      }
+    }
+
+    // 7. MARCAS
+    function renderMarcas(){
+      const list = state.marcas || [];
+      document.getElementById('mar-kpi-total').textContent = list.length;
+      document.getElementById('mar-kpi-nacionais').textContent = list.filter(x => x.origem === 'Nacional').length;
+      document.getElementById('mar-kpi-importadas').textContent = list.filter(x => x.origem === 'Importada').length;
+      document.getElementById('mar-kpi-ativas').textContent = list.filter(x => x.status === 'ATIVO').length;
+
+      const tbody = document.getElementById('mar-table-body');
+      if(!tbody) return;
+
+      if(list.length === 0){
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-muted font-mono">Nenhuma marca cadastrada.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(m => {
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="award" class="w-3.5 h-3.5 text-teal-500"></i>
+              <span>${m.nome}</span>
+            </td>
+            <td class="p-3 text-muted text-[11px] font-mono">${m.categoria}</td>
+            <td class="p-3 font-mono text-[11px]">${m.origem === 'Nacional' ? '<span class="text-emerald-500 font-bold">🇧🇷 Nacional</span>' : '<span class="text-indigo-500 font-bold">🌐 Importada</span>'}</td>
+            <td class="p-3 text-title text-[11px] font-bold">${m.fornecedor || '—'}</td>
+            <td class="p-3 text-muted text-[11px] max-w-xs truncate">${m.obs || '—'}</td>
+            <td class="p-3 text-center">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${m.status === 'ATIVO' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-slate-200 text-slate-500'}">${m.status}</span>
+            </td>
+            <td class="p-3 text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button onclick="editMarca('${m.id}')" class="p-1.5 text-slate-400 hover:text-title hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+                <button onclick="deleteMarca('${m.id}')" class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openMarcaModal(){
+      document.getElementById('mar-edit-id').value = '';
+      document.getElementById('mar-modal-title').innerHTML = '<i data-lucide="award" class="w-5 h-5 text-teal-500"></i> Nova Marca / Fabricante';
+      document.getElementById('mar-nome').value = '';
+      document.getElementById('mar-categoria').value = 'Géis & Preparadores';
+      document.getElementById('mar-origem').value = 'Nacional';
+      document.getElementById('mar-fornecedor').value = '';
+      document.getElementById('mar-obs').value = '';
+      document.getElementById('mar-status').value = 'ATIVO';
+      openModal('modal-marca');
+      lucide.createIcons();
+    }
+
+    function editMarca(id){
+      const m = (state.marcas||[]).find(x => x.id === id);
+      if(!m) return;
+      document.getElementById('mar-edit-id').value = m.id;
+      document.getElementById('mar-modal-title').innerHTML = '<i data-lucide="edit" class="w-5 h-5 text-teal-500"></i> Editar Marca';
+      document.getElementById('mar-nome').value = m.nome;
+      document.getElementById('mar-categoria').value = m.categoria;
+      document.getElementById('mar-origem').value = m.origem;
+      document.getElementById('mar-fornecedor').value = m.fornecedor || '';
+      document.getElementById('mar-obs').value = m.obs || '';
+      document.getElementById('mar-status').value = m.status;
+      openModal('modal-marca');
+      lucide.createIcons();
+    }
+
+    function saveMarca(){
+      const id = document.getElementById('mar-edit-id').value;
+      const nome = document.getElementById('mar-nome').value.trim();
+      const categoria = document.getElementById('mar-categoria').value;
+      const origem = document.getElementById('mar-origem').value;
+      const fornecedor = document.getElementById('mar-fornecedor').value.trim();
+      const obs = document.getElementById('mar-obs').value.trim();
+      const status = document.getElementById('mar-status').value;
+
+      if(!nome) return alert('Por favor, informe o nome da marca.');
+
+      if(!state.marcas) state.marcas = [];
+
+      if(id){
+        const idx = state.marcas.findIndex(x => x.id === id);
+        if(idx !== -1){
+          state.marcas[idx] = { ...state.marcas[idx], nome, categoria, origem, fornecedor, obs, status };
+        }
+      } else {
+        state.marcas.push({
+          id: 'mar_' + Date.now(),
+          nome, categoria, origem, fornecedor, obs, status
+        });
+      }
+
+      persistState();
+      closeModal('modal-marca');
+      renderMarcas();
+      alert('Marca salva com sucesso! ✅');
+    }
+
+    function deleteMarca(id){
+      const m = (state.marcas||[]).find(x => x.id === id);
+      if(!m) return;
+      if(confirm(`Deseja realmente excluir a marca "${m.nome}"?`)){
+        state.marcas = state.marcas.filter(x => x.id !== id);
+        persistState();
+        renderMarcas();
+      }
+    }
+
+    // 8. SALAS & BANCADAS
+    function renderSalas(){
+      const list = state.salas || [];
+      const totalCapacidade = list.reduce((s, x) => s + (x.capacidade || 1), 0);
+
+      document.getElementById('sal-kpi-total').textContent = list.length;
+      document.getElementById('sal-kpi-disponiveis').textContent = list.filter(x => x.status === 'DISPONIVEL').length;
+      document.getElementById('sal-kpi-capacidade').textContent = totalCapacidade;
+      document.getElementById('sal-kpi-vip').textContent = list.filter(x => x.tipo === 'CABINE_VIP').length;
+
+      const container = document.getElementById('sal-list-container');
+      if(!container) return;
+
+      if(list.length === 0){
+        container.innerHTML = '<div class="col-span-full py-12 text-center text-muted font-mono">Nenhuma sala cadastrada.</div>';
+        return;
+      }
+
+      container.innerHTML = list.map(sal => {
+        let tipoBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-500 border border-cyan-500/30">BANCADA</span>';
+        if(sal.tipo === 'CABINE_VIP') tipoBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-500 border border-purple-500/30">CABINE VIP</span>';
+        if(sal.tipo === 'POLTRONA_SPA') tipoBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30">POLTRONA SPA</span>';
+        if(sal.tipo === 'SALA_CURSOS') tipoBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-500 border border-indigo-500/30">SALA DE CURSOS</span>';
+
+        let statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">DISPONÍVEL</span>';
+        if(sal.status === 'OCUPADO') statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-500">EM ATENDIMENTO</span>';
+        if(sal.status === 'MANUTENCAO') statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-500">MANUTENÇÃO</span>';
+
+        return `
+          <div class="glass-card rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:border-cyan-500/50 transition-all">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                ${tipoBadge}
+                ${statusBadge}
+              </div>
+              <h3 class="font-bold text-title text-sm flex items-center gap-1.5">
+                <i data-lucide="door-open" class="w-4 h-4 text-cyan-500"></i>
+                <span>${sal.nome}</span>
+              </h3>
+              <p class="text-[11px] text-muted">${sal.obs || 'Espaço climatizado com isolamento acústico.'}</p>
+              <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1 text-[11px] font-mono">
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Capacidade Simultânea:</span>
+                  <span class="font-bold text-title">${sal.capacidade || 1} pessoa(s)</span>
+                </div>
+                <div class="text-[10px] text-muted pt-1">
+                  <span class="font-bold block text-title mb-0.5">Equipamentos Instalados:</span>
+                  ${sal.equipamentos || 'Nenhum equipamento específico.'}
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-end gap-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <button onclick="editSala('${sal.id}')" class="p-1.5 text-slate-400 hover:text-title hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+              <button onclick="deleteSala('${sal.id}')" class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openSalaModal(){
+      document.getElementById('sal-edit-id').value = '';
+      document.getElementById('sal-modal-title').innerHTML = '<i data-lucide="door-open" class="w-5 h-5 text-cyan-500"></i> Nova Sala / Estação';
+      document.getElementById('sal-nome').value = '';
+      document.getElementById('sal-tipo').value = 'CABINE_VIP';
+      document.getElementById('sal-capacidade').value = '1';
+      document.getElementById('sal-equipamentos').value = '';
+      document.getElementById('sal-status').value = 'DISPONIVEL';
+      document.getElementById('sal-obs').value = '';
+      openModal('modal-sala');
+      lucide.createIcons();
+    }
+
+    function editSala(id){
+      const sal = (state.salas||[]).find(x => x.id === id);
+      if(!sal) return;
+      document.getElementById('sal-edit-id').value = sal.id;
+      document.getElementById('sal-modal-title').innerHTML = '<i data-lucide="edit" class="w-5 h-5 text-cyan-500"></i> Editar Sala / Estação';
+      document.getElementById('sal-nome').value = sal.nome;
+      document.getElementById('sal-tipo').value = sal.tipo;
+      document.getElementById('sal-capacidade').value = sal.capacidade || 1;
+      document.getElementById('sal-equipamentos').value = sal.equipamentos || '';
+      document.getElementById('sal-status').value = sal.status;
+      document.getElementById('sal-obs').value = sal.obs || '';
+      openModal('modal-sala');
+      lucide.createIcons();
+    }
+
+    function saveSala(){
+      const id = document.getElementById('sal-edit-id').value;
+      const nome = document.getElementById('sal-nome').value.trim();
+      const tipo = document.getElementById('sal-tipo').value;
+      const capacidade = parseInt(document.getElementById('sal-capacidade').value) || 1;
+      const equipamentos = document.getElementById('sal-equipamentos').value.trim();
+      const status = document.getElementById('sal-status').value;
+      const obs = document.getElementById('sal-obs').value.trim();
+
+      if(!nome) return alert('Por favor, informe o nome da sala ou estação.');
+
+      if(!state.salas) state.salas = [];
+
+      if(id){
+        const idx = state.salas.findIndex(x => x.id === id);
+        if(idx !== -1){
+          state.salas[idx] = { ...state.salas[idx], nome, tipo, capacidade, equipamentos, status, obs };
+        }
+      } else {
+        state.salas.push({
+          id: 'sal_' + Date.now(),
+          nome, tipo, capacidade, equipamentos, status, obs
+        });
+      }
+
+      persistState();
+      closeModal('modal-sala');
+      renderSalas();
+      alert('Sala salva com sucesso! ✅');
+    }
+
+    function deleteSala(id){
+      const sal = (state.salas||[]).find(x => x.id === id);
+      if(!sal) return;
+      if(confirm(`Deseja realmente excluir a sala "${sal.nome}"?`)){
+        state.salas = state.salas.filter(x => x.id !== id);
+        persistState();
+        renderSalas();
+      }
+    }
+
+
     // ============== THEME ==============
     function applyTheme(){
       const h=document.documentElement;
@@ -4279,6 +6364,14 @@
       if(tabId==='analise-mensal')renderAnaliseMensal();
       if(tabId==='compras-lista')renderCompras();
       if(tabId==='compras-fornecedores')renderFornecedores();
+      if(tabId==='cadastros-anamnese')renderAnamnese();
+      if(tabId==='cadastros-campos-personalizados')renderCamposPersonalizados();
+      if(tabId==='cadastros-como-conheceu')renderComoConheceu();
+      if(tabId==='cadastros-equipamentos')renderEquipamentos();
+      if(tabId==='cadastros-feriados')renderFeriados();
+      if(tabId==='cadastros-grupos-servicos')renderGruposServicos();
+      if(tabId==='cadastros-marcas')renderMarcas();
+      if(tabId==='cadastros-salas')renderSalas();
       if(tabId==='consultas')renderConsulta();
       if(tabId==='produtos-servicos')renderServices();
       if(tabId==='estoque')renderStock();
