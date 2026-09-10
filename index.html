@@ -329,6 +329,23 @@
           </span>
           <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">PUXAR</span>
         </button>
+
+        <!-- AJUDA ACCORDION SUBMENU -->
+        <div>
+          <button onclick="toggleSubmenu('sub-ajuda')" id="nav-ajuda" class="sidebar-menu-btn">
+            <span class="flex items-center gap-2.5">
+              <i data-lucide="help-circle" class="w-4 h-4 text-sky-500"></i>
+              <span>Ajuda</span>
+            </span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+          <div id="sub-ajuda" class="sidebar-submenu hidden">
+            <button onclick="switchTab('ajuda-agenda-online');closeMobileSidebar()" id="subnav-ajuda-agenda-online" class="flex items-center justify-between w-full"><span>Como Ativar a <strong>Agenda Online</strong>?</span><i data-lucide="globe" class="w-3.5 h-3.5 text-emerald-500"></i></button>
+            <button onclick="switchTab('ajuda-pacote-sessao');closeMobileSidebar()" id="subnav-ajuda-pacote-sessao" class="flex items-center justify-between w-full"><span>Como Controlar <strong>Pacote</strong> ou <strong>Sessão</strong>?</span><i data-lucide="layers" class="w-3.5 h-3.5 text-indigo-500"></i></button>
+            <button onclick="switchTab('ajuda-ficha-anamnese');closeMobileSidebar()" id="subnav-ajuda-ficha-anamnese" class="flex items-center justify-between w-full"><span>Como Preencher <strong>Ficha de Anamnese</strong>?</span><i data-lucide="clipboard-check" class="w-3.5 h-3.5 text-teal-500"></i></button>
+            <button onclick="switchTab('ajuda-faq');closeMobileSidebar()" id="subnav-ajuda-faq" class="flex items-center justify-between w-full"><span>Portal <strong>Dúvidas</strong> Frequentes</span><i data-lucide="message-circle" class="w-3.5 h-3.5 text-sky-500"></i></button>
+          </div>
+        </div>
       </div>
       <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-2 shrink-0">
         <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-mono">
@@ -10244,6 +10261,11 @@
       if(tabId==='nfse-servico-municipal')renderNfseServicoMunicipal();
       if(tabId==='nfse-lc116')renderNfseLc116();
       if(tabId==='nfse-cnae')renderNfseCnae();
+      if(tabId==='ajuda-agenda-online')renderAjudaAgendaOnline();
+      if(tabId==='ajuda-pacote-sessao')renderAjudaPacoteSessao();
+      if(tabId==='ajuda-ficha-anamnese')renderAjudaFichaAnamnese();
+      if(tabId==='ajuda-faq')renderAjudaFAQ();
+      if(tabId==='ajuda'){toggleSubmenu('sub-ajuda');switchTab('ajuda-agenda-online');}
       if(tabId==='nfse'){toggleSubmenu('sub-nfse');switchTab('nfse-caixa-saida');}
       if(tabId==='dashboard')renderDashboard();
       if(tabId==='agenda')renderAgenda();
@@ -15166,6 +15188,126 @@
       if (typeof syncToSupabase === 'function') syncToSupabase();
       alert('CNAE adicionado com sucesso!');
       renderNfseCnae();
+    }
+
+
+        // ============== MODULO AJUDA (SEM VIDEOS TUTORIAIS) ==============
+    const FAQ_DATA = [
+      {
+        cat: 'agenda',
+        pergunta: 'Como funciona o agendamento de horários e bloqueios na agenda?',
+        resposta: 'Para agendar, acesse a aba Agenda e clique em qualquer horário vago na grade ou use o botão "+ Novo Agendamento". Para bloquear intervalos de almoço ou folga, utilize a opção "Bloqueio de Horário" escolhendo o profissional e o intervalo desejado.'
+      },
+      {
+        cat: 'agenda',
+        pergunta: 'As clientes recebem confirmação de agendamento no WhatsApp?',
+        resposta: 'Sim! Na tela de agendamento ou na lista de clientes, você pode clicar no ícone do WhatsApp para disparar a mensagem pré-formatada com o dia, horário, procedimento e endereço do estúdio com 1 clique.'
+      },
+      {
+        cat: 'financeiro',
+        pergunta: 'Como fazer o fechamento diário do caixa?',
+        resposta: 'Acesse Financeiro > Meus Caixas (ou Caixa > Fechamento de Caixa). O sistema exibe o total recebido em dinheiro, PIX e cartões. Basta conferir os valores da gaveta, registrar eventuais sangrias e clicar em "Fechar Caixa Atual".'
+      },
+      {
+        cat: 'financeiro',
+        pergunta: 'Como calcular e fechar a comissão das profissionais parceiras?',
+        resposta: 'Na aba Consultas > Comissões, selecione o profissional e o período. O sistema lista todos os atendimentos realizados, a porcentagem de comissão cadastrada e o valor líquido exato a pagar, permitindo gerar o recibo de pagamento.'
+      },
+      {
+        cat: 'clientes',
+        pergunta: 'Onde encontro o histórico completo de procedimentos da cliente?',
+        resposta: 'Na aba Clientes, localize a cliente desejada e clique em "Histórico / Prontuário". Você verá todas as visitas anteriores, serviços realizados, fichas de anamnese assinadas e pacotes em andamento.'
+      },
+      {
+        cat: 'fiscal',
+        pergunta: 'Como emitir a NFS-e para a cliente?',
+        resposta: 'No módulo NFS-e > Caixa de Saída, clique em "Emitir Nova NFS-e". Selecione a cliente, o serviço municipal prestado e confirme o envio. O sistema calcula o ISS e gera o espelho DANFSE e o XML para download.'
+      },
+      {
+        cat: 'migracao',
+        pergunta: 'Posso puxar meus clientes e contatos da agenda antiga ou do WhatsApp?',
+        resposta: 'Sim! Na aba Migração & Dados, você pode soltar um arquivo .CSV exportado do Simples Agenda, Trinks, Avec ou contatos do celular (.vcf). O sistema importa tudo e detecta clientes repetidos automaticamente.'
+      }
+    ];
+
+    function renderAjudaAgendaOnline(){
+      const linkEl = document.getElementById('ajuda-link-agenda-input');
+      if (linkEl) {
+        linkEl.value = 'https://zanettia.com/agendar/leticia-hermann-vip';
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function copiarLinkAgendaOnline(){
+      const linkEl = document.getElementById('ajuda-link-agenda-input');
+      if (linkEl) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(linkEl.value);
+        }
+        alert('📋 Link da sua Agenda Online copiado para a área de transferência!\n\nCole na bio do Instagram ou envie para suas clientes no WhatsApp.');
+      }
+    }
+
+    function salvarConfigAgendaOnline(){
+      alert('Configurações da Agenda Online salvas com sucesso!');
+    }
+
+    function renderAjudaPacoteSessao(){
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function simularAbateSessao(pacoteId){
+      const elSaldo = document.getElementById('sim-pacote-saldo-' + pacoteId);
+      if (!elSaldo) return;
+      let saldo = parseInt(elSaldo.textContent, 10);
+      if (saldo > 0) {
+        saldo--;
+        elSaldo.textContent = saldo;
+        alert(`Sessão realizada com sucesso! Restam ${saldo} sessões neste pacote.`);
+      } else {
+        alert('Todas as sessões deste pacote já foram utilizadas!');
+      }
+    }
+
+    function renderAjudaFichaAnamnese(){
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderAjudaFAQ(){
+      const termo = (document.getElementById('ajuda-faq-busca') ? document.getElementById('ajuda-faq-busca').value : '').toLowerCase().trim();
+      const cat = document.getElementById('ajuda-faq-cat') ? document.getElementById('ajuda-faq-cat').value : 'todas';
+
+      const container = document.getElementById('ajuda-faq-container');
+      if (!container) return;
+
+      const filtrados = FAQ_DATA.filter(item => {
+        const matchCat = (cat === 'todas' || item.cat === cat);
+        const matchTermo = (item.pergunta.toLowerCase().includes(termo) || item.resposta.toLowerCase().includes(termo));
+        return matchCat && matchTermo;
+      });
+
+      if (filtrados.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-muted bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-border">
+            <i data-lucide="help-circle" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+            Nenhuma dúvida encontrada para sua busca. Tente palavras como "agenda", "caixa" ou "comissão".
+          </div>
+        `;
+      } else {
+        container.innerHTML = filtrados.map((item, idx) => `
+          <div class="p-5 rounded-2xl border border-border/80 bg-card hover:border-sky-500/50 transition-all space-y-2">
+            <h4 class="font-bold text-title text-sm flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs font-mono font-bold shrink-0">?</span>
+              <span>${item.pergunta}</span>
+            </h4>
+            <p class="text-xs text-muted leading-relaxed pl-8">
+              ${item.resposta}
+            </p>
+          </div>
+        `).join('');
+      }
+
+      if (window.lucide) lucide.createIcons();
     }
 
 
