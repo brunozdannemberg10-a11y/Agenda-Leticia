@@ -302,6 +302,15 @@
             <button onclick="switchTab('config-meios-pagamento');closeMobileSidebar()" id="subnav-config-meios-pagamento" class="flex items-center justify-between w-full"><span>Meios de Pagamento</span><i data-lucide="credit-card" class="w-3.5 h-3.5 text-teal-500"></i></button>
           </div>
         </div>
+
+        <!-- MIGRACAO & DADOS (IMPORTAR / EXPORTAR) -->
+        <button onclick="switchTab('migracao-dados');closeMobileSidebar()" id="nav-migracao-dados" class="sidebar-menu-btn group transition-all">
+          <span class="flex items-center gap-2.5">
+            <i data-lucide="database-backup" class="w-4 h-4 text-emerald-500 group-hover:text-emerald-400"></i>
+            <span class="font-medium">Migração & Dados</span>
+          </span>
+          <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">PUXAR</span>
+        </button>
       </div>
       <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-2 shrink-0">
         <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-mono">
@@ -3559,6 +3568,556 @@
               </thead>
               <tbody id="cfg-pag-table-body" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium"></tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: CENTRAL DE MIGRAÇÃO & IMPORTAÇÃO/EXPORTAÇÃO DE DADOS -->
+      <section id="tab-migracao-dados" class="hidden space-y-6 animate-fade-in pb-12">
+        <!-- Top Header Banner -->
+        <div class="bg-gradient-to-r from-emerald-600/90 via-teal-600/90 to-cyan-700/90 dark:from-emerald-950 dark:via-teal-950 dark:to-cyan-950 rounded-2xl p-6 border border-emerald-500/20 shadow-xl text-white relative overflow-hidden">
+          <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+            <i data-lucide="database-backup" class="w-64 h-64"></i>
+          </div>
+          <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur border border-white/20 text-xs font-semibold uppercase tracking-wider mb-2">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
+                Portabilidade & Transição Sem Dor de Cabeça
+              </div>
+              <h2 class="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-3">
+                Central de Migração & Dados
+              </h2>
+              <p class="text-white/80 text-sm mt-1 max-w-2xl">
+                Já usa outro sistema ou planilhas? Puxe todos os seus clientes, procedimentos e estoque para o ZanettIA com 1 clique, ou exporte suas informações a qualquer momento em planilhas Excel / CSV.
+              </p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <button onclick="switchMigracaoSubTab('caminhos')" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-semibold flex items-center gap-2 border border-white/20 transition-all shadow-sm">
+                <i data-lucide="map" class="w-4 h-4 text-amber-300"></i>
+                <span>Onde Clicar no Outro App?</span>
+              </button>
+              <button onclick="switchMigracaoSubTab('exportar')" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-semibold flex items-center gap-2 border border-white/20 transition-all shadow-sm">
+                <i data-lucide="download" class="w-4 h-4 text-cyan-300"></i>
+                <span>Exportar Meus Dados</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Navigation SubTabs -->
+          <div class="flex items-center gap-2 mt-6 pt-4 border-t border-white/15 overflow-x-auto">
+            <button onclick="switchMigracaoSubTab('puxar')" id="mig-subtab-btn-puxar" class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-white text-emerald-900 shadow-md">
+              <i data-lucide="upload-cloud" class="w-4 h-4 text-emerald-600"></i>
+              <span>1. Puxar Dados de Outra Agenda</span>
+            </button>
+            <button onclick="switchMigracaoSubTab('exportar')" id="mig-subtab-btn-exportar" class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white">
+              <i data-lucide="download" class="w-4 h-4 text-white"></i>
+              <span>2. Exportar Minha Agenda (.CSV / .JSON)</span>
+            </button>
+            <button onclick="switchMigracaoSubTab('caminhos')" id="mig-subtab-btn-caminhos" class="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white">
+              <i data-lucide="compass" class="w-4 h-4 text-amber-300"></i>
+              <span>3. Onde Pegar nas Outras Agendas (Passo a Passo)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SUBTAB 1: PUXAR DADOS (IMPORTAÇÃO INTELIGENTE) -->
+        <div id="mig-subtab-puxar" class="space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Coluna 1 & 2: Configuração e Upload -->
+            <div class="lg:col-span-2 space-y-6">
+              <!-- Card: Tipo de Informação -->
+              <div class="bg-card rounded-2xl p-6 border border-border/80 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm">
+                      1
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-title text-base">O que você deseja puxar para o ZanettIA?</h3>
+                      <p class="text-xs text-muted">Selecione a categoria dos dados do seu arquivo antigo</p>
+                    </div>
+                  </div>
+                  <button onclick="downloadModeloCSV()" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1.5">
+                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+                    <span>Baixar Modelo CSV Exemplo</span>
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                  <label class="relative flex flex-col items-center justify-center p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20 cursor-pointer transition-all hover:border-emerald-500" id="lbl-tipo-clientes">
+                    <input type="radio" name="mig-tipo-dados" value="clientes" checked onchange="handleTipoMigracaoChange(this.value)" class="sr-only">
+                    <i data-lucide="users" class="w-6 h-6 text-emerald-600 dark:text-emerald-400 mb-2"></i>
+                    <span class="text-xs font-bold text-title text-center">Clientes</span>
+                    <span class="text-[10px] text-muted text-center mt-0.5">Nome, Celular, CPF</span>
+                  </label>
+
+                  <label class="relative flex flex-col items-center justify-center p-4 rounded-xl border-2 border-border/70 bg-card hover:border-emerald-400 cursor-pointer transition-all" id="lbl-tipo-servicos">
+                    <input type="radio" name="mig-tipo-dados" value="servicos" onchange="handleTipoMigracaoChange(this.value)" class="sr-only">
+                    <i data-lucide="scissors" class="w-6 h-6 text-indigo-500 mb-2"></i>
+                    <span class="text-xs font-bold text-title text-center">Serviços</span>
+                    <span class="text-[10px] text-muted text-center mt-0.5">Nome, Preço, Tempo</span>
+                  </label>
+
+                  <label class="relative flex flex-col items-center justify-center p-4 rounded-xl border-2 border-border/70 bg-card hover:border-emerald-400 cursor-pointer transition-all" id="lbl-tipo-produtos">
+                    <input type="radio" name="mig-tipo-dados" value="produtos" onchange="handleTipoMigracaoChange(this.value)" class="sr-only">
+                    <i data-lucide="package" class="w-6 h-6 text-amber-500 mb-2"></i>
+                    <span class="text-xs font-bold text-title text-center">Estoque</span>
+                    <span class="text-[10px] text-muted text-center mt-0.5">Produtos & Preços</span>
+                  </label>
+
+                  <label class="relative flex flex-col items-center justify-center p-4 rounded-xl border-2 border-border/70 bg-card hover:border-emerald-400 cursor-pointer transition-all" id="lbl-tipo-backup">
+                    <input type="radio" name="mig-tipo-dados" value="backup" onchange="handleTipoMigracaoChange(this.value)" class="sr-only">
+                    <i data-lucide="hard-drive-download" class="w-6 h-6 text-sky-500 mb-2"></i>
+                    <span class="text-xs font-bold text-title text-center">Backup Geral</span>
+                    <span class="text-[10px] text-muted text-center mt-0.5">JSON Completo</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Card: Upload do Arquivo -->
+              <div class="bg-card rounded-2xl p-6 border border-border/80 shadow-sm space-y-4">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold text-sm">
+                    2
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-title text-base">Selecione o arquivo da sua agenda anterior</h3>
+                    <p class="text-xs text-muted">Formatos suportados: .CSV, .TXT, .VCF (vCard de contatos do celular) ou .JSON</p>
+                  </div>
+                </div>
+
+                <!-- Dropzone -->
+                <div id="mig-dropzone" onclick="document.getElementById('mig-file-input').click()" class="border-2 border-dashed border-border hover:border-emerald-500/80 bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl p-8 text-center cursor-pointer transition-all hover:bg-emerald-50/20 dark:hover:bg-emerald-950/10 group">
+                  <input type="file" id="mig-file-input" accept=".csv,.txt,.vcf,.json" onchange="handleMigracaoFileSelect(event)" class="hidden">
+                  <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <i data-lucide="upload-cloud" class="w-7 h-7"></i>
+                  </div>
+                  <p class="font-bold text-title text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    Clique para selecionar ou arraste o arquivo aqui
+                  </p>
+                  <p class="text-xs text-muted mt-1">
+                    Exportado do Simples Agenda, Trinks, Avec, AppBarber, Belle Software, Google Contatos ou Excel
+                  </p>
+                  <div class="mt-4 flex items-center justify-center gap-2 text-[11px] text-muted">
+                    <span class="px-2 py-0.5 rounded bg-card border border-border">.CSV</span>
+                    <span class="px-2 py-0.5 rounded bg-card border border-border">.VCF (Agenda do Celular)</span>
+                    <span class="px-2 py-0.5 rounded bg-card border border-border">.JSON</span>
+                  </div>
+                </div>
+
+                <!-- Arquivo selecionado status -->
+                <div id="mig-file-info" class="hidden items-center justify-between p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/30 text-xs">
+                  <div class="flex items-center gap-2.5">
+                    <i data-lucide="file-check-2" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
+                    <div>
+                      <p class="font-bold text-title" id="mig-file-name">planilha.csv</p>
+                      <p class="text-[11px] text-muted" id="mig-file-details">0 KB • 0 registros identificados</p>
+                    </div>
+                  </div>
+                  <button onclick="limparArquivoMigracao()" class="p-1.5 rounded-lg hover:bg-emerald-200/50 dark:hover:bg-emerald-900/50 text-muted hover:text-rose-500">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Card: Opções de Duplicação e Mesclagem -->
+              <div class="bg-card rounded-2xl p-5 border border-border/80 shadow-sm space-y-3">
+                <h4 class="font-bold text-title text-xs uppercase tracking-wider text-muted flex items-center gap-1.5">
+                  <i data-lucide="sliders" class="w-3.5 h-3.5 text-emerald-500"></i>
+                  Regras de Importação & Anti-Duplicação
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <label class="flex items-center gap-2.5 p-3 rounded-xl border border-border/70 hover:bg-slate-50 dark:hover:bg-slate-800/30 cursor-pointer">
+                    <input type="checkbox" id="mig-opt-dedup" checked class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-700">
+                    <div>
+                      <span class="font-bold text-title block">Evitar Cadastros Duplicados</span>
+                      <span class="text-[11px] text-muted">Checar se celular ou nome já existem no sistema</span>
+                    </div>
+                  </label>
+                  <label class="flex items-center gap-2.5 p-3 rounded-xl border border-border/70 hover:bg-slate-50 dark:hover:bg-slate-800/30 cursor-pointer">
+                    <input type="checkbox" id="mig-opt-update" checked class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-700">
+                    <div>
+                      <span class="font-bold text-title block">Atualizar Dados Existentes</span>
+                      <span class="text-[11px] text-muted">Preenche CPF, e-mail ou observações faltantes</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Coluna 3: Dicas Rápidas & Segurança -->
+            <div class="space-y-6">
+              <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-2xl p-6 border border-slate-800 shadow-lg space-y-4">
+                <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                  <i data-lucide="shield-check" class="w-4 h-4"></i>
+                  <span>Segurança Garantida</span>
+                </div>
+                <h4 class="text-base font-bold leading-snug">Seus dados anteriores continuam intactos</h4>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  O processo de puxar dados apenas lê o arquivo exportado da outra agenda e cadastra no seu banco do ZanettIA. Nenhuma informação anterior é perdida ou modificada no seu outro sistema.
+                </p>
+                <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 space-y-2 text-xs">
+                  <div class="flex items-center gap-2 text-slate-200">
+                    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Reconhece colunas com acentos e pontos</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-slate-200">
+                    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Formata telefones para padrão WhatsApp</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-slate-200">
+                    <i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Sincroniza instantaneamente com a nuvem</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card com links para tutoriais rápidos -->
+              <div class="bg-card rounded-2xl p-5 border border-border/80 shadow-sm space-y-3">
+                <h4 class="font-bold text-title text-xs uppercase tracking-wider text-muted flex items-center gap-1.5">
+                  <i data-lucide="help-circle" class="w-3.5 h-3.5 text-indigo-500"></i>
+                  De onde você está vindo?
+                </h4>
+                <div class="space-y-2 text-xs">
+                  <button onclick="exibirGuiaRapidoModal('simples-agenda')" class="w-full text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 border border-border flex items-center justify-between transition-colors">
+                    <span class="font-semibold text-title">Vindo do Simples Agenda</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-emerald-500"></i>
+                  </button>
+                  <button onclick="exibirGuiaRapidoModal('trinks')" class="w-full text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 border border-border flex items-center justify-between transition-colors">
+                    <span class="font-semibold text-title">Vindo do Trinks</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-emerald-500"></i>
+                  </button>
+                  <button onclick="exibirGuiaRapidoModal('avec')" class="w-full text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 border border-border flex items-center justify-between transition-colors">
+                    <span class="font-semibold text-title">Vindo do Avec / Belle / AppBarber</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-emerald-500"></i>
+                  </button>
+                  <button onclick="exibirGuiaRapidoModal('celular')" class="w-full text-left p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 border border-border flex items-center justify-between transition-colors">
+                    <span class="font-semibold text-title">Contatos do Celular / WhatsApp</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-emerald-500"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preview dos Registros Prontos para Importar -->
+          <div id="mig-preview-container" class="hidden bg-card rounded-2xl p-6 border border-border/80 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 class="font-bold text-title text-base flex items-center gap-2">
+                  <i data-lucide="eye" class="w-4 h-4 text-emerald-500"></i>
+                  Pré-visualização dos Dados Encontrados
+                </h3>
+                <p class="text-xs text-muted" id="mig-preview-summary">Foram identificados 0 registros no arquivo.</p>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <button onclick="limparArquivoMigracao()" class="btn-secondary px-3.5 py-2 text-xs">
+                  Cancelar
+                </button>
+                <button onclick="confirmarImportacaoMigracao()" id="btn-confirmar-migracao" class="btn-primary px-5 py-2 text-xs flex items-center gap-2 shadow-md">
+                  <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                  <span>Confirmar e Puxar Dados para Minha Agenda</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Tabela de Prévia -->
+            <div class="overflow-x-auto rounded-xl border border-border">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 dark:bg-slate-800 text-muted font-bold text-[11px] uppercase tracking-wider" id="mig-preview-thead">
+                  <!-- Colunas Dinâmicas -->
+                </thead>
+                <tbody class="divide-y divide-border" id="mig-preview-tbody">
+                  <!-- Linhas Dinâmicas -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 2: EXPORTAR MINHA AGENDA -->
+        <div id="mig-subtab-exportar" class="hidden space-y-6">
+          <div class="bg-card rounded-2xl p-6 border border-border/80 shadow-sm">
+            <div class="max-w-xl">
+              <h3 class="text-base font-bold text-title flex items-center gap-2">
+                <i data-lucide="download" class="w-4 h-4 text-teal-500"></i>
+                Exportar Seus Dados em Planilhas e Arquivos
+              </h3>
+              <p class="text-xs text-muted mt-1">
+                Gere planilhas no formato Excel / CSV ou arquivos de backup de toda a sua conta. Seus dados são seus e você pode baixá-los quando quiser.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+              <!-- Clientes -->
+              <div class="p-5 rounded-xl border border-border bg-slate-50/50 dark:bg-slate-900/30 flex flex-col justify-between space-y-3 hover:border-emerald-500 transition-all">
+                <div class="flex items-start justify-between">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">EXCEL / CSV</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-title text-sm">Lista de Clientes</h4>
+                  <p class="text-xs text-muted mt-0.5">Nome completo, celular, CPF, e-mail, aniversário e observações.</p>
+                </div>
+                <button onclick="exportarTabelaCSV('clientes')" class="btn-secondary w-full text-xs py-2 flex items-center justify-center gap-1.5 font-bold">
+                  <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-600"></i>
+                  <span>Baixar Planilha de Clientes</span>
+                </button>
+              </div>
+
+              <!-- Serviços / Procedimentos -->
+              <div class="p-5 rounded-xl border border-border bg-slate-50/50 dark:bg-slate-900/30 flex flex-col justify-between space-y-3 hover:border-indigo-500 transition-all">
+                <div class="flex items-start justify-between">
+                  <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                    <i data-lucide="scissors" class="w-5 h-5"></i>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">EXCEL / CSV</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-title text-sm">Tabela de Procedimentos</h4>
+                  <p class="text-xs text-muted mt-0.5">Todos os serviços cadastrados, valores de venda e duração em minutos.</p>
+                </div>
+                <button onclick="exportarTabelaCSV('servicos')" class="btn-secondary w-full text-xs py-2 flex items-center justify-center gap-1.5 font-bold">
+                  <i data-lucide="download" class="w-3.5 h-3.5 text-indigo-600"></i>
+                  <span>Baixar Planilha de Serviços</span>
+                </button>
+              </div>
+
+              <!-- Estoque e Produtos -->
+              <div class="p-5 rounded-xl border border-border bg-slate-50/50 dark:bg-slate-900/30 flex flex-col justify-between space-y-3 hover:border-amber-500 transition-all">
+                <div class="flex items-start justify-between">
+                  <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                    <i data-lucide="package" class="w-5 h-5"></i>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300">EXCEL / CSV</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-title text-sm">Estoque & Produtos</h4>
+                  <p class="text-xs text-muted mt-0.5">Produtos de revenda e consumo com custo, preço de venda e saldo atual.</p>
+                </div>
+                <button onclick="exportarTabelaCSV('produtos')" class="btn-secondary w-full text-xs py-2 flex items-center justify-center gap-1.5 font-bold">
+                  <i data-lucide="download" class="w-3.5 h-3.5 text-amber-600"></i>
+                  <span>Baixar Planilha de Estoque</span>
+                </button>
+              </div>
+
+              <!-- Agendamentos -->
+              <div class="p-5 rounded-xl border border-border bg-slate-50/50 dark:bg-slate-900/30 flex flex-col justify-between space-y-3 hover:border-cyan-500 transition-all">
+                <div class="flex items-start justify-between">
+                  <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300">EXCEL / CSV</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-title text-sm">Histórico de Agendamentos</h4>
+                  <p class="text-xs text-muted mt-0.5">Data, horário, cliente, procedimento, profissional, valor e status.</p>
+                </div>
+                <button onclick="exportarTabelaCSV('agendamentos')" class="btn-secondary w-full text-xs py-2 flex items-center justify-center gap-1.5 font-bold">
+                  <i data-lucide="download" class="w-3.5 h-3.5 text-cyan-600"></i>
+                  <span>Baixar Agendamentos</span>
+                </button>
+              </div>
+
+              <!-- Lançamentos Financeiros -->
+              <div class="p-5 rounded-xl border border-border bg-slate-50/50 dark:bg-slate-900/30 flex flex-col justify-between space-y-3 hover:border-rose-500 transition-all">
+                <div class="flex items-start justify-between">
+                  <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                    <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300">EXCEL / CSV</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-title text-sm">Lançamentos Financeiros</h4>
+                  <p class="text-xs text-muted mt-0.5">Todas as receitas, despesas, categorias, formas de pagamento e contas.</p>
+                </div>
+                <button onclick="exportarTabelaCSV('financeiro')" class="btn-secondary w-full text-xs py-2 flex items-center justify-center gap-1.5 font-bold">
+                  <i data-lucide="download" class="w-3.5 h-3.5 text-rose-600"></i>
+                  <span>Baixar Financeiro</span>
+                </button>
+              </div>
+
+              <!-- Backup Geral do Sistema -->
+              <div class="p-5 rounded-xl border-2 border-emerald-500/40 bg-emerald-50/30 dark:bg-emerald-950/20 flex flex-col justify-between space-y-3">
+                <div class="flex items-start justify-between">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center">
+                    <i data-lucide="database" class="w-5 h-5"></i>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500 text-white">BACKUP TOTAL</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-title text-sm">Backup Completo do Sistema</h4>
+                  <p class="text-xs text-muted mt-0.5">Arquivo .JSON estruturado contendo 100% de todas as tabelas e configurações.</p>
+                </div>
+                <button onclick="exportDataBackup()" class="btn-primary w-full text-xs py-2 flex items-center justify-center gap-1.5 font-bold shadow-md">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Baixar Backup Completo (.JSON)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 3: CAMINHOS DE OUTRAS AGENDAS (PASSO A PASSO) -->
+        <div id="mig-subtab-caminhos" class="hidden space-y-6">
+          <div class="bg-card rounded-2xl p-6 border border-border/80 shadow-sm space-y-6">
+            <div>
+              <h3 class="text-base font-bold text-title flex items-center gap-2">
+                <i data-lucide="compass" class="w-4 h-4 text-amber-500"></i>
+                Onde Clicar na Sua Agenda Anterior para Baixar o Arquivo
+              </h3>
+              <p class="text-xs text-muted mt-1">
+                Siga os passos do seu sistema antigo abaixo para gerar o arquivo e depois basta soltar na aba <strong>1. Puxar Dados</strong>.
+              </p>
+            </div>
+
+            <!-- Accordion / Grid de Guias -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Simples Agenda -->
+              <div class="p-5 rounded-2xl border border-border bg-slate-50/50 dark:bg-slate-900/30 space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-black text-sm">
+                    SA
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-title text-sm">Simples Agenda</h4>
+                    <span class="text-[10px] text-muted">Clientes, Serviços e Financeiro</span>
+                  </div>
+                </div>
+                <ol class="space-y-2 text-xs text-muted pt-1">
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-sky-600 dark:text-sky-400">1.</span>
+                    <span>No menu lateral esquerdo, clique em <strong>Relatórios</strong>.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-sky-600 dark:text-sky-400">2.</span>
+                    <span>Selecione a opção <strong>Clientes</strong> (ou Cadastros).</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-sky-600 dark:text-sky-400">3.</span>
+                    <span>No topo da lista, clique no botão <strong>Exportar para Excel / CSV</strong>.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-sky-600 dark:text-sky-400">4.</span>
+                    <span>Pronto! Pegue a planilha gerada e arraste para o ZanettIA.</span>
+                  </li>
+                </ol>
+              </div>
+
+              <!-- Trinks -->
+              <div class="p-5 rounded-2xl border border-border bg-slate-50/50 dark:bg-slate-900/30 space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center font-black text-sm">
+                    TK
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-title text-sm">Trinks</h4>
+                    <span class="text-[10px] text-muted">Exportação de Base de Clientes</span>
+                  </div>
+                </div>
+                <ol class="space-y-2 text-xs text-muted pt-1">
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-rose-600 dark:text-rose-400">1.</span>
+                    <span>No menu superior, passe o mouse em <strong>Relatórios</strong>.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-rose-600 dark:text-rose-400">2.</span>
+                    <span>Clique em <strong>Clientes</strong> ou <strong>Exportar Base</strong>.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-rose-600 dark:text-rose-400">3.</span>
+                    <span>Selecione o formato <strong>CSV ou Excel</strong> e clique em Baixar.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-rose-600 dark:text-rose-400">4.</span>
+                    <span>Importe direto na aba Puxar Dados do ZanettIA.</span>
+                  </li>
+                </ol>
+              </div>
+
+              <!-- Avec / AppBarber / Belle Software -->
+              <div class="p-5 rounded-2xl border border-border bg-slate-50/50 dark:bg-slate-900/30 space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-black text-sm">
+                    AV
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-title text-sm">Avec / AppBarber / Belle</h4>
+                    <span class="text-[10px] text-muted">Sistemas de Salão e Barbearia</span>
+                  </div>
+                </div>
+                <ol class="space-y-2 text-xs text-muted pt-1">
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-purple-600 dark:text-purple-400">1.</span>
+                    <span>Acesse a aba <strong>Clientes</strong> ou <strong>Cadastros Gerais</strong>.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-purple-600 dark:text-purple-400">2.</span>
+                    <span>Clique em <strong>Ações</strong> ou no ícone de <strong>Engrenagem / Opções</strong>.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-purple-600 dark:text-purple-400">3.</span>
+                    <span>Escolha <strong>Exportar Dados (.CSV ou .XLSX)</strong>.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-purple-600 dark:text-purple-400">4.</span>
+                    <span>Salve no computador e solte aqui no ZanettIA.</span>
+                  </li>
+                </ol>
+              </div>
+
+              <!-- Celular / Google Contatos / iPhone -->
+              <div class="p-5 rounded-2xl border border-border bg-slate-50/50 dark:bg-slate-900/30 space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-black text-sm">
+                    📱
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-title text-sm">Contatos do Celular / WhatsApp</h4>
+                    <span class="text-[10px] text-muted">Arquivo vCard (.vcf) ou Google Contatos</span>
+                  </div>
+                </div>
+                <ol class="space-y-2 text-xs text-muted pt-1">
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-emerald-600 dark:text-emerald-400">1.</span>
+                    <span>Acesse <strong>contacts.google.com</strong> (ou App Contatos no iPhone).</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-emerald-600 dark:text-emerald-400">2.</span>
+                    <span>Clique em <strong>Exportar</strong> no menu lateral ou configurações.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-emerald-600 dark:text-emerald-400">3.</span>
+                    <span>Escolha <strong>vCard (.vcf)</strong> ou <strong>Google CSV</strong>.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="font-bold text-emerald-600 dark:text-emerald-400">4.</span>
+                    <span>O ZanettIA extrai todos os nomes e números de WhatsApp instantaneamente!</span>
+                  </li>
+                </ol>
+              </div>
+
+              <!-- Planilhas Excel e Google Planilhas -->
+              <div class="p-5 rounded-2xl border border-border bg-slate-50/50 dark:bg-slate-900/30 space-y-3 md:col-span-2">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-black text-sm">
+                    📊
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-title text-sm">Planilhas do Excel ou Google Planilhas</h4>
+                    <span class="text-[10px] text-muted">Como salvar no formato correto</span>
+                  </div>
+                </div>
+                <p class="text-xs text-muted leading-relaxed">
+                  Se você anota seus clientes ou serviços em uma planilha Excel ou Google Sheets, basta clicar em: <br>
+                  <strong class="text-title">Arquivo &gt; Fazer Download &gt; Valores separados por vírgula (.csv)</strong>. <br>
+                  O ZanettIA reconhece automaticamente se o arquivo estiver separado por vírgula ou ponto-e-vírgula e mapeia colunas como <em>Nome, Telefone, Celular, Whatsapp, CPF, Email, Preço, Duração</em> mesmo se os títulos estiverem um pouco diferentes!
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -9102,6 +9661,7 @@
       document.querySelectorAll('nav button[id^="bnav-"]').forEach(b=>{b.classList.remove('text-emerald-400','font-bold');b.classList.add('text-slate-400');});
       const bn=document.getElementById('bnav-'+tabId);if(bn){bn.classList.add('text-emerald-400','font-bold');bn.classList.remove('text-slate-400');}
 
+      if(tabId==='migracao-dados')renderMigracaoDados();
       if(tabId==='dashboard')renderDashboard();
       if(tabId==='agenda')renderAgenda();
       if(tabId==='clientes')renderClients();
@@ -12304,6 +12864,919 @@
       };
       reader.readAsText(file);
     }
+
+        // ============== CENTRAL DE MIGRAÇÃO & DADOS ==============
+    let migracaoState = {
+      tipo: 'clientes', // 'clientes' | 'servicos' | 'produtos' | 'backup'
+      parsedRecords: [],
+      rawHeaders: [],
+      fileName: ''
+    };
+
+    function renderMigracaoDados(){
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function switchMigracaoSubTab(subTabId){
+      ['puxar', 'exportar', 'caminhos'].forEach(s => {
+        const pane = document.getElementById('mig-subtab-' + s);
+        const btn = document.getElementById('mig-subtab-btn-' + s);
+        if (pane) pane.classList.toggle('hidden', s !== subTabId);
+        if (btn) {
+          if (s === subTabId) {
+            btn.className = 'px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-white text-emerald-900 shadow-md';
+          } else {
+            btn.className = 'px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white';
+          }
+        }
+      });
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function handleTipoMigracaoChange(tipo){
+      migracaoState.tipo = tipo;
+      ['clientes', 'servicos', 'produtos', 'backup'].forEach(t => {
+        const lbl = document.getElementById('lbl-tipo-' + t);
+        if (lbl) {
+          if (t === tipo) {
+            lbl.className = 'relative flex flex-col items-center justify-center p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20 cursor-pointer transition-all hover:border-emerald-500';
+          } else {
+            lbl.className = 'relative flex flex-col items-center justify-center p-4 rounded-xl border-2 border-border/70 bg-card hover:border-emerald-400 cursor-pointer transition-all';
+          }
+        }
+      });
+      limparArquivoMigracao();
+    }
+
+    function limparArquivoMigracao(){
+      migracaoState.parsedRecords = [];
+      migracaoState.rawHeaders = [];
+      migracaoState.fileName = '';
+      const input = document.getElementById('mig-file-input');
+      if (input) input.value = '';
+      const info = document.getElementById('mig-file-info');
+      if (info) info.classList.add('hidden');
+      const preview = document.getElementById('mig-preview-container');
+      if (preview) preview.classList.add('hidden');
+    }
+
+    // Smart CSV Parser (handles comma, semicolon, quotes and line breaks)
+    function parseCSVText(text) {
+      if (!text || !text.trim()) return { headers: [], rows: [] };
+      const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+      if (lines.length === 0) return { headers: [], rows: [] };
+
+      // Detect delimiter by checking first line
+      const firstLine = lines[0];
+      const countComma = (firstLine.match(/,/g) || []).length;
+      const countSemi = (firstLine.match(/;/g) || []).length;
+      const delimiter = countSemi >= countComma ? ';' : ',';
+
+      function parseLine(line) {
+        const result = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === delimiter && !inQuotes) {
+            result.push(cur.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+            cur = '';
+          } else {
+            cur += char;
+          }
+        }
+        result.push(cur.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+        return result;
+      }
+
+      const headers = parseLine(lines[0]);
+      const rows = [];
+      for (let i = 1; i < lines.length; i++) {
+        const parsed = parseLine(lines[i]);
+        if (parsed.length > 0 && parsed.some(c => c !== '')) {
+          rows.push(parsed);
+        }
+      }
+      return { headers, rows, delimiter };
+    }
+
+    // Smart vCard (.vcf) Parser for phone contacts
+    function parseVCardText(text) {
+      const records = [];
+      const cards = text.split(/BEGIN:VCARD/i);
+      for (const card of cards) {
+        if (!card.trim()) continue;
+        let fn = '';
+        let tel = '';
+        let email = '';
+        const lines = card.split(/\r?\n/);
+        for (const l of lines) {
+          const line = l.trim();
+          if (line.match(/^FN:/i)) {
+            fn = line.substring(3).trim();
+          } else if (!fn && line.match(/^N:/i)) {
+            const parts = line.substring(2).split(';');
+            fn = parts.filter(Boolean).reverse().join(' ').trim();
+          } else if (line.match(/^TEL/i)) {
+            const colonIdx = line.indexOf(':');
+            if (colonIdx !== -1) {
+              const num = line.substring(colonIdx + 1).replace(/[^0-9+]/g, '');
+              if (num && (!tel || num.length > tel.length)) {
+                tel = num;
+              }
+            }
+          } else if (line.match(/^EMAIL/i)) {
+            const colonIdx = line.indexOf(':');
+            if (colonIdx !== -1) {
+              email = line.substring(colonIdx + 1).trim();
+            }
+          }
+        }
+        if (fn || tel) {
+          records.push({
+            nome: fn || 'Contato Sem Nome',
+            telefone: tel,
+            email: email,
+            cpf: '',
+            observacoes: 'Importado de contatos do celular (vCard)'
+          });
+        }
+      }
+      return records;
+    }
+
+    function handleMigracaoFileSelect(event){
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      migracaoState.fileName = file.name;
+      const lowerName = file.name.toLowerCase();
+      const reader = new FileReader();
+
+      reader.onload = function(e){
+        try {
+          const content = e.target.result;
+          processarArquivoConteudo(content, lowerName);
+        } catch(err) {
+          console.error(err);
+          alert('Erro ao processar o arquivo: ' + err.message);
+        }
+      };
+
+      if (lowerName.endsWith('.json')) {
+        reader.readAsText(file);
+      } else {
+        reader.readAsText(file, 'UTF-8');
+      }
+    }
+
+    function processarArquivoConteudo(content, fileName) {
+      migracaoState.parsedRecords = [];
+      migracaoState.rawHeaders = [];
+
+      // If JSON Backup
+      if (fileName.endsWith('.json') || migracaoState.tipo === 'backup') {
+        try {
+          const parsedJson = JSON.parse(content);
+          if (parsedJson.clients || parsedJson.services || parsedJson.products || parsedJson.financialRecords) {
+            migracaoState.tipo = 'backup';
+            migracaoState.parsedJson = parsedJson;
+            exibirPreviewBackup(parsedJson);
+            return;
+          } else if (Array.isArray(parsedJson)) {
+            migracaoState.parsedRecords = parsedJson;
+            exibirPreviewGenerico(parsedJson);
+            return;
+          }
+        } catch(err) {
+          alert('Arquivo JSON inválido ou corrompido: ' + err.message);
+          return;
+        }
+      }
+
+      // If vCard (.vcf)
+      if (fileName.endsWith('.vcf')) {
+        const contacts = parseVCardText(content);
+        if (contacts.length === 0) {
+          alert('Nenhum contato com nome ou telefone foi encontrado no arquivo .vcf.');
+          return;
+        }
+        migracaoState.tipo = 'clientes';
+        migracaoState.parsedRecords = contacts;
+        exibirPreviewClientes(contacts);
+        return;
+      }
+
+      // CSV / TXT parser
+      const { headers, rows } = parseCSVText(content);
+      if (headers.length === 0 || rows.length === 0) {
+        alert('Não foi possível identificar linhas de dados válidas nesta planilha.');
+        return;
+      }
+
+      migracaoState.rawHeaders = headers;
+
+      // Normaliza headers para buscar correspondência
+      const normHeaders = headers.map(h => h.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim());
+
+      if (migracaoState.tipo === 'clientes') {
+        const idxNome = normHeaders.findIndex(h => h.includes('nome') || h.includes('cliente') || h.includes('paciente') || h.includes('contato'));
+        const idxTel = normHeaders.findIndex(h => h.includes('celular') || h.includes('telefone') || h.includes('whatsapp') || h.includes('tel') || h.includes('fone'));
+        const idxCpf = normHeaders.findIndex(h => h.includes('cpf') || h.includes('documento'));
+        const idxEmail = normHeaders.findIndex(h => h.includes('email') || h.includes('e-mail'));
+        const idxObs = normHeaders.findIndex(h => h.includes('obs') || h.includes('nota') || h.includes('historico') || h.includes('endereco'));
+        const idxNasc = normHeaders.findIndex(h => h.includes('nasc') || h.includes('aniversario') || h.includes('data'));
+
+        const records = rows.map(r => {
+          return {
+            nome: (idxNome !== -1 && r[idxNome]) ? r[idxNome] : (r[0] || 'Cliente Importado'),
+            telefone: (idxTel !== -1 && r[idxTel]) ? r[idxTel] : (r[1] || ''),
+            cpf: (idxCpf !== -1 && r[idxCpf]) ? r[idxCpf] : '',
+            email: (idxEmail !== -1 && r[idxEmail]) ? r[idxEmail] : '',
+            observacoes: (idxObs !== -1 && r[idxObs]) ? r[idxObs] : 'Importado de agenda anterior',
+            nascimento: (idxNasc !== -1 && r[idxNasc]) ? r[idxNasc] : ''
+          };
+        }).filter(c => c.nome || c.telefone);
+
+        migracaoState.parsedRecords = records;
+        exibirPreviewClientes(records);
+      } else if (migracaoState.tipo === 'servicos') {
+        const idxNome = normHeaders.findIndex(h => h.includes('servico') || h.includes('procedimento') || h.includes('nome') || h.includes('descricao'));
+        const idxPreco = normHeaders.findIndex(h => h.includes('preco') || h.includes('valor') || h.includes('custo'));
+        const idxTempo = normHeaders.findIndex(h => h.includes('duracao') || h.includes('tempo') || h.includes('minutos') || h.includes('min'));
+        const idxCat = normHeaders.findIndex(h => h.includes('categoria') || h.includes('grupo') || h.includes('tipo'));
+
+        const records = rows.map(r => {
+          let precoRaw = (idxPreco !== -1 && r[idxPreco]) ? r[idxPreco] : '0';
+          let precoNum = parseFloat(String(precoRaw).replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
+          let tempoRaw = (idxTempo !== -1 && r[idxTempo]) ? r[idxTempo] : '45';
+          let tempoNum = parseInt(String(tempoRaw).replace(/[^0-9]/g, ''), 10) || 45;
+
+          return {
+            name: (idxNome !== -1 && r[idxNome]) ? r[idxNome] : (r[0] || 'Serviço'),
+            price: precoNum,
+            duration: tempoNum,
+            category: (idxCat !== -1 && r[idxCat]) ? r[idxCat] : 'Geral'
+          };
+        }).filter(s => s.name);
+
+        migracaoState.parsedRecords = records;
+        exibirPreviewServicos(records);
+      } else if (migracaoState.tipo === 'produtos') {
+        const idxNome = normHeaders.findIndex(h => h.includes('produto') || h.includes('nome') || h.includes('descricao') || h.includes('item'));
+        const idxPreco = normHeaders.findIndex(h => h.includes('preco') || h.includes('venda') || h.includes('valor'));
+        const idxCusto = normHeaders.findIndex(h => h.includes('custo') || h.includes('compra'));
+        const idxQtd = normHeaders.findIndex(h => h.includes('qtd') || h.includes('estoque') || h.includes('saldo') || h.includes('quantidade'));
+
+        const records = rows.map(r => {
+          let precoRaw = (idxPreco !== -1 && r[idxPreco]) ? r[idxPreco] : '0';
+          let precoNum = parseFloat(String(precoRaw).replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
+          let custoRaw = (idxCusto !== -1 && r[idxCusto]) ? r[idxCusto] : '0';
+          let custoNum = parseFloat(String(custoRaw).replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
+          let qtdRaw = (idxQtd !== -1 && r[idxQtd]) ? r[idxQtd] : '0';
+          let qtdNum = parseInt(String(qtdRaw).replace(/[^0-9-]/g, ''), 10) || 0;
+
+          return {
+            name: (idxNome !== -1 && r[idxNome]) ? r[idxNome] : (r[0] || 'Produto'),
+            salePrice: precoNum,
+            costPrice: custoNum,
+            stock: qtdNum,
+            category: 'Revenda'
+          };
+        }).filter(p => p.name);
+
+        migracaoState.parsedRecords = records;
+        exibirPreviewProdutos(records);
+      }
+    }
+
+    function exibirPreviewClientes(records){
+      const info = document.getElementById('mig-file-info');
+      const nameEl = document.getElementById('mig-file-name');
+      const detEl = document.getElementById('mig-file-details');
+      const container = document.getElementById('mig-preview-container');
+      const summary = document.getElementById('mig-preview-summary');
+      const thead = document.getElementById('mig-preview-thead');
+      const tbody = document.getElementById('mig-preview-tbody');
+
+      if (info) info.classList.remove('hidden');
+      if (nameEl) nameEl.textContent = migracaoState.fileName || 'Arquivo de Clientes';
+      if (detEl) detEl.textContent = records.length + ' clientes prontos para importar';
+
+      if (summary) summary.textContent = 'Encontramos ' + records.length + ' contatos no arquivo. Confira a prévia dos primeiros registros:';
+
+      if (thead) {
+        thead.innerHTML = `
+          <tr>
+            <th class="p-3">#</th>
+            <th class="p-3">Nome do Cliente</th>
+            <th class="p-3">Celular / WhatsApp</th>
+            <th class="p-3">CPF</th>
+            <th class="p-3">E-mail</th>
+            <th class="p-3">Status no ZanettIA</th>
+          </tr>
+        `;
+      }
+
+      const existingPhones = new Set((state.clients || []).map(c => String(c.phone || '').replace(/[^0-9]/g, '')));
+      const existingNames = new Set((state.clients || []).map(c => String(c.name || '').trim().toLowerCase()));
+
+      const previewRows = records.slice(0, 15);
+      if (tbody) {
+        tbody.innerHTML = previewRows.map((c, idx) => {
+          const cleanPhone = String(c.telefone || '').replace(/[^0-9]/g, '');
+          const isDup = (cleanPhone && existingPhones.has(cleanPhone)) || existingNames.has(String(c.nome || '').trim().toLowerCase());
+
+          return `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+              <td class="p-3 font-mono text-muted text-[10px]">${idx + 1}</td>
+              <td class="p-3 font-bold text-title flex items-center gap-2">
+                <i data-lucide="user" class="w-3.5 h-3.5 text-emerald-500"></i>
+                <span>${c.nome || 'Sem Nome'}</span>
+              </td>
+              <td class="p-3 font-mono text-muted">${c.telefone || '-'}</td>
+              <td class="p-3 font-mono text-muted text-[11px]">${c.cpf || '-'}</td>
+              <td class="p-3 text-muted">${c.email || '-'}</td>
+              <td class="p-3">
+                ${isDup 
+                  ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300">Já Existe (Será Atualizado)</span>'
+                  : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">Novo Cliente</span>'
+                }
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      if (container) container.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function exibirPreviewServicos(records){
+      const info = document.getElementById('mig-file-info');
+      const nameEl = document.getElementById('mig-file-name');
+      const detEl = document.getElementById('mig-file-details');
+      const container = document.getElementById('mig-preview-container');
+      const summary = document.getElementById('mig-preview-summary');
+      const thead = document.getElementById('mig-preview-thead');
+      const tbody = document.getElementById('mig-preview-tbody');
+
+      if (info) info.classList.remove('hidden');
+      if (nameEl) nameEl.textContent = migracaoState.fileName || 'Arquivo de Serviços';
+      if (detEl) detEl.textContent = records.length + ' procedimentos identificados';
+
+      if (summary) summary.textContent = 'Encontramos ' + records.length + ' serviços/procedimentos no arquivo.';
+
+      if (thead) {
+        thead.innerHTML = `
+          <tr>
+            <th class="p-3">#</th>
+            <th class="p-3">Nome do Serviço</th>
+            <th class="p-3 text-right">Preço de Venda</th>
+            <th class="p-3 text-center">Duração</th>
+            <th class="p-3">Categoria</th>
+          </tr>
+        `;
+      }
+
+      const previewRows = records.slice(0, 15);
+      if (tbody) {
+        tbody.innerHTML = previewRows.map((s, idx) => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-mono text-muted text-[10px]">${idx + 1}</td>
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="scissors" class="w-3.5 h-3.5 text-indigo-500"></i>
+              <span>${s.name}</span>
+            </td>
+            <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
+              R$ ${(s.price || 0).toFixed(2).replace('.', ',')}
+            </td>
+            <td class="p-3 text-center font-mono text-muted">${s.duration || 45} min</td>
+            <td class="p-3 text-muted">${s.category || 'Geral'}</td>
+          </tr>
+        `).join('');
+      }
+
+      if (container) container.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function exibirPreviewProdutos(records){
+      const info = document.getElementById('mig-file-info');
+      const nameEl = document.getElementById('mig-file-name');
+      const detEl = document.getElementById('mig-file-details');
+      const container = document.getElementById('mig-preview-container');
+      const summary = document.getElementById('mig-preview-summary');
+      const thead = document.getElementById('mig-preview-thead');
+      const tbody = document.getElementById('mig-preview-tbody');
+
+      if (info) info.classList.remove('hidden');
+      if (nameEl) nameEl.textContent = migracaoState.fileName || 'Arquivo de Estoque';
+      if (detEl) detEl.textContent = records.length + ' produtos identificados';
+
+      if (summary) summary.textContent = 'Encontramos ' + records.length + ' produtos para cadastrar no seu estoque.';
+
+      if (thead) {
+        thead.innerHTML = `
+          <tr>
+            <th class="p-3">#</th>
+            <th class="p-3">Nome do Produto</th>
+            <th class="p-3 text-right">Preço de Venda</th>
+            <th class="p-3 text-right">Preço de Custo</th>
+            <th class="p-3 text-center">Saldo em Estoque</th>
+          </tr>
+        `;
+      }
+
+      const previewRows = records.slice(0, 15);
+      if (tbody) {
+        tbody.innerHTML = previewRows.map((p, idx) => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-mono text-muted text-[10px]">${idx + 1}</td>
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="package" class="w-3.5 h-3.5 text-amber-500"></i>
+              <span>${p.name}</span>
+            </td>
+            <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
+              R$ ${(p.salePrice || 0).toFixed(2).replace('.', ',')}
+            </td>
+            <td class="p-3 text-right font-mono text-muted">
+              R$ ${(p.costPrice || 0).toFixed(2).replace('.', ',')}
+            </td>
+            <td class="p-3 text-center font-mono font-bold text-title">${p.stock || 0} un</td>
+          </tr>
+        `).join('');
+      }
+
+      if (container) container.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function exibirPreviewBackup(json){
+      const info = document.getElementById('mig-file-info');
+      const nameEl = document.getElementById('mig-file-name');
+      const detEl = document.getElementById('mig-file-details');
+      const container = document.getElementById('mig-preview-container');
+      const summary = document.getElementById('mig-preview-summary');
+      const thead = document.getElementById('mig-preview-thead');
+      const tbody = document.getElementById('mig-preview-tbody');
+
+      if (info) info.classList.remove('hidden');
+      if (nameEl) nameEl.textContent = migracaoState.fileName || 'backup_completo.json';
+      
+      const totalClientes = (json.clients || []).length;
+      const totalServicos = (json.services || []).length;
+      const totalProdutos = (json.products || []).length;
+      const totalFin = (json.financialRecords || []).length;
+      const totalAgend = (json.appointments || []).length;
+
+      if (detEl) detEl.textContent = `Backup Válido: ${totalClientes} clientes, ${totalServicos} serviços, ${totalAgend} agendamentos`;
+      if (summary) summary.textContent = 'Arquivo de Backup Total detectado. Veja o resumo dos itens contidos:';
+
+      if (thead) {
+        thead.innerHTML = `
+          <tr>
+            <th class="p-3">Tabela</th>
+            <th class="p-3 text-center">Quantidade de Registros</th>
+            <th class="p-3">Ação a Executar</th>
+          </tr>
+        `;
+      }
+
+      if (tbody) {
+        tbody.innerHTML = `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-emerald-500"></i> Clientes
+            </td>
+            <td class="p-3 text-center font-mono font-bold text-title">${totalClientes}</td>
+            <td class="p-3 text-emerald-600 dark:text-emerald-400 font-semibold text-xs">Puxar para Clientes</td>
+          </tr>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="scissors" class="w-3.5 h-3.5 text-indigo-500"></i> Procedimentos / Serviços
+            </td>
+            <td class="p-3 text-center font-mono font-bold text-title">${totalServicos}</td>
+            <td class="p-3 text-indigo-600 dark:text-indigo-400 font-semibold text-xs">Puxar para Catálogo</td>
+          </tr>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-cyan-500"></i> Agendamentos
+            </td>
+            <td class="p-3 text-center font-mono font-bold text-title">${totalAgend}</td>
+            <td class="p-3 text-cyan-600 dark:text-cyan-400 font-semibold text-xs">Puxar para a Agenda</td>
+          </tr>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="package" class="w-3.5 h-3.5 text-amber-500"></i> Produtos & Estoque
+            </td>
+            <td class="p-3 text-center font-mono font-bold text-title">${totalProdutos}</td>
+            <td class="p-3 text-amber-600 dark:text-amber-400 font-semibold text-xs">Puxar para Estoque</td>
+          </tr>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-bold text-title flex items-center gap-2">
+              <i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-rose-500"></i> Financeiro
+            </td>
+            <td class="p-3 text-center font-mono font-bold text-title">${totalFin}</td>
+            <td class="p-3 text-rose-600 dark:text-rose-400 font-semibold text-xs">Puxar para Caixa</td>
+          </tr>
+        `;
+      }
+
+      if (container) container.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function exibirPreviewGenerico(list){
+      const info = document.getElementById('mig-file-info');
+      const nameEl = document.getElementById('mig-file-name');
+      const detEl = document.getElementById('mig-file-details');
+      const container = document.getElementById('mig-preview-container');
+      const summary = document.getElementById('mig-preview-summary');
+      const thead = document.getElementById('mig-preview-thead');
+      const tbody = document.getElementById('mig-preview-tbody');
+
+      if (info) info.classList.remove('hidden');
+      if (nameEl) nameEl.textContent = migracaoState.fileName || 'Dados Importados';
+      if (detEl) detEl.textContent = list.length + ' registros encontrados';
+
+      if (summary) summary.textContent = 'Encontramos ' + list.length + ' itens no arquivo.';
+
+      if (thead) {
+        thead.innerHTML = `<tr><th class="p-3">#</th><th class="p-3">Registro</th></tr>`;
+      }
+      if (tbody) {
+        tbody.innerHTML = list.slice(0, 10).map((it, idx) => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+            <td class="p-3 font-mono text-[10px]">${idx + 1}</td>
+            <td class="p-3 font-mono text-xs">${JSON.stringify(it)}</td>
+          </tr>
+        `).join('');
+      }
+      if (container) container.classList.remove('hidden');
+    }
+
+    function confirmarImportacaoMigracao(){
+      const eviteDup = document.getElementById('mig-opt-dedup') ? document.getElementById('mig-opt-dedup').checked : true;
+      const atualize = document.getElementById('mig-opt-update') ? document.getElementById('mig-opt-update').checked : true;
+
+      // Importar Backup Total
+      if (migracaoState.tipo === 'backup' && migracaoState.parsedJson) {
+        const json = migracaoState.parsedJson;
+        if (confirm('Deseja restaurar este backup no ZanettIA? Os novos dados serão incorporados ao sistema.')) {
+          if (Array.isArray(json.clients) && json.clients.length > 0) {
+            state.clients = json.clients;
+          }
+          if (Array.isArray(json.services) && json.services.length > 0) {
+            state.services = json.services;
+          }
+          if (Array.isArray(json.appointments) && json.appointments.length > 0) {
+            state.appointments = json.appointments;
+          }
+          if (Array.isArray(json.products) && json.products.length > 0) {
+            state.products = json.products;
+          }
+          if (Array.isArray(json.financialRecords) && json.financialRecords.length > 0) {
+            state.financialRecords = json.financialRecords;
+          }
+          persistState();
+          if (typeof syncToSupabase === 'function') syncToSupabase();
+          alert('Backup restaurado com sucesso no ZanettIA!');
+          limparArquivoMigracao();
+          switchTab('dashboard');
+        }
+        return;
+      }
+
+      // Importar Clientes
+      if (migracaoState.tipo === 'clientes') {
+        const records = migracaoState.parsedRecords || [];
+        if (records.length === 0) {
+          alert('Nenhum cliente para importar.');
+          return;
+        }
+
+        let importadosNovos = 0;
+        let atualizados = 0;
+        let ignorados = 0;
+
+        if (!Array.isArray(state.clients)) state.clients = [];
+
+        records.forEach(r => {
+          const cleanPhone = String(r.telefone || '').replace(/[^0-9]/g, '');
+          const cleanName = String(r.nome || '').trim().toLowerCase();
+
+          // Find existing
+          const existing = state.clients.find(c => {
+            const cPhone = String(c.phone || '').replace(/[^0-9]/g, '');
+            const cName = String(c.name || '').trim().toLowerCase();
+            return (cleanPhone && cPhone && cleanPhone === cPhone) || (cleanName && cName && cleanName === cName);
+          });
+
+          if (existing) {
+            if (atualize) {
+              if (!existing.phone && r.telefone) existing.phone = r.telefone;
+              if (!existing.cpf && r.cpf) existing.cpf = r.cpf;
+              if (!existing.email && r.email) existing.email = r.email;
+              if (r.observacoes && !String(existing.notes || '').includes(r.observacoes)) {
+                existing.notes = (existing.notes ? existing.notes + ' | ' : '') + r.observacoes;
+              }
+              atualizados++;
+            } else if (eviteDup) {
+              ignorados++;
+            } else {
+              state.clients.push({
+                id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                name: r.nome || 'Cliente Importado',
+                phone: r.telefone || '',
+                cpf: r.cpf || '',
+                email: r.email || '',
+                notes: r.observacoes || '',
+                birthdate: r.nascimento || ''
+              });
+              importadosNovos++;
+            }
+          } else {
+            state.clients.push({
+              id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+              name: r.nome || 'Cliente Importado',
+              phone: r.telefone || '',
+              cpf: r.cpf || '',
+              email: r.email || '',
+              notes: r.observacoes || 'Importado de agenda anterior',
+              birthdate: r.nascimento || ''
+            });
+            importadosNovos++;
+          }
+        });
+
+        persistState();
+        if (typeof syncToSupabase === 'function') syncToSupabase();
+        if (typeof renderClients === 'function') renderClients();
+
+        alert(`🎉 Migração Concluída com Sucesso!\n\nNovos clientes puxados: ${importadosNovos}\nClientes atualizados: ${atualizados}\nDuplicados preservados: ${ignorados}`);
+        limparArquivoMigracao();
+        switchTab('clientes');
+        return;
+      }
+
+      // Importar Serviços
+      if (migracaoState.tipo === 'servicos') {
+        const records = migracaoState.parsedRecords || [];
+        if (records.length === 0) {
+          alert('Nenhum procedimento para importar.');
+          return;
+        }
+
+        let importadosNovos = 0;
+        let atualizados = 0;
+
+        if (!Array.isArray(state.services)) state.services = [];
+
+        records.forEach(r => {
+          const cleanName = String(r.name || '').trim().toLowerCase();
+          const existing = state.services.find(s => String(s.name || '').trim().toLowerCase() === cleanName);
+
+          if (existing) {
+            if (atualize) {
+              if (r.price) existing.price = r.price;
+              if (r.duration) existing.duration = r.duration;
+              atualizados++;
+            }
+          } else {
+            state.services.push({
+              id: 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+              name: r.name,
+              price: r.price || 50,
+              duration: r.duration || 45,
+              category: r.category || 'Geral'
+            });
+            importadosNovos++;
+          }
+        });
+
+        persistState();
+        if (typeof syncToSupabase === 'function') syncToSupabase();
+        if (typeof renderServices === 'function') renderServices();
+
+        alert(`🎉 Serviços Importados!\n\nNovos procedimentos puxados: ${importadosNovos}\nProcedimentos atualizados: ${atualizados}`);
+        limparArquivoMigracao();
+        switchTab('produtos-servicos');
+        return;
+      }
+
+      // Importar Produtos / Estoque
+      if (migracaoState.tipo === 'produtos') {
+        const records = migracaoState.parsedRecords || [];
+        if (records.length === 0) {
+          alert('Nenhum produto para importar.');
+          return;
+        }
+
+        let importadosNovos = 0;
+        let atualizados = 0;
+
+        if (!Array.isArray(state.products)) state.products = [];
+
+        records.forEach(r => {
+          const cleanName = String(r.name || '').trim().toLowerCase();
+          const existing = state.products.find(p => String(p.name || '').trim().toLowerCase() === cleanName);
+
+          if (existing) {
+            if (atualize) {
+              if (r.salePrice) existing.salePrice = r.salePrice;
+              if (r.costPrice) existing.costPrice = r.costPrice;
+              if (r.stock !== undefined) existing.stock = r.stock;
+              atualizados++;
+            }
+          } else {
+            state.products.push({
+              id: 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+              name: r.name,
+              salePrice: r.salePrice || 0,
+              costPrice: r.costPrice || 0,
+              stock: r.stock || 0,
+              category: r.category || 'Revenda'
+            });
+            importadosNovos++;
+          }
+        });
+
+        persistState();
+        if (typeof syncToSupabase === 'function') syncToSupabase();
+        if (typeof renderEstoque === 'function') renderEstoque();
+
+        alert(`🎉 Estoque Importado!\n\nNovos produtos puxados: ${importadosNovos}\nProdutos atualizados: ${atualizados}`);
+        limparArquivoMigracao();
+        switchTab('estoque');
+        return;
+      }
+    }
+
+    // Download CSV Templates
+    function downloadModeloCSV(tipo){
+      const tipoSel = tipo || migracaoState.tipo || 'clientes';
+      let csv = '';
+      let filename = 'modelo_zanettia.csv';
+
+      if (tipoSel === 'clientes') {
+        filename = 'modelo_clientes_zanettia.csv';
+        csv = 'Nome Completo;Celular;CPF;Email;Data Nascimento;Observacoes\r\n' +
+              'Maria Silva;(11) 98888-7777;123.456.789-00;maria@email.com;15/05/1992;Cliente VIP unhas de fibra\r\n' +
+              'Carla Oliveira;(21) 97777-6666;987.654.321-11;carla@email.com;20/10/1988;Prefere atendimento pela manha\r\n' +
+              'Juliana Santos;(31) 96666-5555;222.333.444-55;juliana@email.com;04/01/1995;Alergia a esmalte comum\r\n';
+      } else if (tipoSel === 'servicos') {
+        filename = 'modelo_servicos_zanettia.csv';
+        csv = 'Nome do Servico;Preco;Duracao Minutos;Categoria\r\n' +
+              'Alongamento Fibra de Vidro;150.00;120;Unhas\r\n' +
+              'Manutencao Fibra;90.00;90;Unhas\r\n' +
+              'Esmaltacao em Gel;60.00;45;Unhas\r\n' +
+              'Spa dos Pes;75.00;60;Pedicure\r\n';
+      } else if (tipoSel === 'produtos') {
+        filename = 'modelo_estoque_zanettia.csv';
+        csv = 'Nome do Produto;Preco Venda;Preco Custo;Quantidade Estoque;Categoria\r\n' +
+              'Oleo Hidratante de Cuticulas;35.00;15.00;20;Revenda\r\n' +
+              'Top Coat No Cleanse 15ml;45.00;22.00;12;Consumo\r\n' +
+              'Kit Lixas Boomerang 100/180;18.00;7.50;50;Consumo\r\n';
+      } else {
+        filename = 'modelo_dados_zanettia.csv';
+        csv = 'Nome;Telefone;Valor\r\nCliente Exemplo;11999999999;100.00\r\n';
+      }
+
+      downloadArquivoBlob(csv, filename, 'text/csv;charset=utf-8;');
+    }
+
+    // Export Tables to CSV with UTF-8 BOM for Excel
+    function exportarTabelaCSV(tipo){
+      let csv = '';
+      let filename = '';
+      const BOM = '\uFEFF';
+
+      if (tipo === 'clientes') {
+        filename = 'clientes_zanettia_' + new Date().toISOString().slice(0,10) + '.csv';
+        const headers = ['ID', 'Nome', 'Telefone', 'CPF', 'Email', 'Data Nascimento', 'Observacoes'];
+        csv = headers.join(';') + '\r\n';
+
+        const list = state.clients || [];
+        list.forEach(c => {
+          const row = [
+            c.id || '',
+            ('"' + (c.name || '').replace(/"/g, '""') + '"'),
+            ('"' + (c.phone || '').replace(/"/g, '""') + '"'),
+            ('"' + (c.cpf || '').replace(/"/g, '""') + '"'),
+            ('"' + (c.email || '').replace(/"/g, '""') + '"'),
+            ('"' + (c.birthdate || '').replace(/"/g, '""') + '"'),
+            ('"' + (c.notes || '').replace(/"/g, '""') + '"')
+          ];
+          csv += row.join(';') + '\r\n';
+        });
+      } else if (tipo === 'servicos') {
+        filename = 'servicos_zanettia_' + new Date().toISOString().slice(0,10) + '.csv';
+        const headers = ['ID', 'Nome do Servico', 'Preco (R$)', 'Duracao (min)', 'Categoria'];
+        csv = headers.join(';') + '\r\n';
+
+        const list = state.services || [];
+        list.forEach(s => {
+          const row = [
+            s.id || '',
+            ('"' + (s.name || '').replace(/"/g, '""') + '"'),
+            (s.price || 0).toFixed(2).replace('.', ','),
+            (s.duration || 45),
+            ('"' + (s.category || 'Geral').replace(/"/g, '""') + '"')
+          ];
+          csv += row.join(';') + '\r\n';
+        });
+      } else if (tipo === 'produtos') {
+        filename = 'estoque_produtos_zanettia_' + new Date().toISOString().slice(0,10) + '.csv';
+        const headers = ['ID', 'Nome do Produto', 'Preco Venda (R$)', 'Preco Custo (R$)', 'Estoque Atual', 'Categoria'];
+        csv = headers.join(';') + '\r\n';
+
+        const list = state.products || [];
+        list.forEach(p => {
+          const row = [
+            p.id || '',
+            ('"' + (p.name || '').replace(/"/g, '""') + '"'),
+            (p.salePrice || 0).toFixed(2).replace('.', ','),
+            (p.costPrice || 0).toFixed(2).replace('.', ','),
+            (p.stock || 0),
+            ('"' + (p.category || 'Revenda').replace(/"/g, '""') + '"')
+          ];
+          csv += row.join(';') + '\r\n';
+        });
+      } else if (tipo === 'agendamentos') {
+        filename = 'agendamentos_zanettia_' + new Date().toISOString().slice(0,10) + '.csv';
+        const headers = ['ID', 'Data', 'Horario', 'Cliente', 'Procedimento', 'Profissional', 'Valor (R$)', 'Status'];
+        csv = headers.join(';') + '\r\n';
+
+        const list = state.appointments || [];
+        list.forEach(a => {
+          const client = (state.clients || []).find(c => c.id === a.clientId) || { name: a.clientName || 'Cliente' };
+          const serv = (state.services || []).find(s => s.id === a.serviceId) || { name: a.serviceName || 'Serviço' };
+          const prof = (state.professionals || []).find(p => p.id === a.professionalId) || { name: a.professionalName || 'Geral' };
+
+          const row = [
+            a.id || '',
+            a.date || '',
+            a.time || '',
+            ('"' + (client.name || '').replace(/"/g, '""') + '"'),
+            ('"' + (serv.name || '').replace(/"/g, '""') + '"'),
+            ('"' + (prof.name || '').replace(/"/g, '""') + '"'),
+            (a.price || serv.price || 0).toFixed(2).replace('.', ','),
+            a.status || 'Agendado'
+          ];
+          csv += row.join(';') + '\r\n';
+        });
+      } else if (tipo === 'financeiro') {
+        filename = 'financeiro_zanettia_' + new Date().toISOString().slice(0,10) + '.csv';
+        const headers = ['ID', 'Data', 'Tipo', 'Descricao', 'Valor (R$)', 'Categoria', 'Forma Pagamento', 'Conta', 'Status'];
+        csv = headers.join(';') + '\r\n';
+
+        const list = state.financialRecords || [];
+        list.forEach(f => {
+          const row = [
+            f.id || '',
+            f.date || '',
+            f.type || 'Receita',
+            ('"' + (f.description || '').replace(/"/g, '""') + '"'),
+            (f.amount || 0).toFixed(2).replace('.', ','),
+            ('"' + (f.category || 'Geral').replace(/"/g, '""') + '"'),
+            ('"' + (f.paymentMethod || 'PIX').replace(/"/g, '""') + '"'),
+            ('"' + (f.account || 'Caixa Geral').replace(/"/g, '""') + '"'),
+            f.status || 'Confirmado'
+          ];
+          csv += row.join(';') + '\r\n';
+        });
+      }
+
+      downloadArquivoBlob(BOM + csv, filename, 'text/csv;charset=utf-8;');
+    }
+
+    function downloadArquivoBlob(content, fileName, mimeType){
+      const blob = new Blob([content], { type: mimeType });
+      if (navigator.msSaveBlob) {
+        navigator.msSaveBlob(blob, fileName);
+      } else {
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+          const url = URL.createObjectURL(blob);
+          link.setAttribute('href', url);
+          link.setAttribute('download', fileName);
+          link.style.visibility = 'hidden';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }
+      }
+    }
+
+    // Modal de Guias Rápidos
+    function exibirGuiaRapidoModal(origem){
+      switchMigracaoSubTab('caminhos');
+    }
+
 
     // ============== INIT ==============
 
