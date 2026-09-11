@@ -9489,12 +9489,16 @@
       const total = apps.length;
       const concluidos = apps.filter(x => x.status === 'CONCLUIDO').length;
       const cancelados = apps.filter(x => x.status === 'CANCELADO').length;
-      const taxa = total > 0 ? Math.round((concluidos / total) * 100) : 100;
+      const taxa = total > 0 ? Math.round((concluidos / total) * 100) : 0;
 
-      document.getElementById('c-age-kpi-total').textContent = total;
-      document.getElementById('c-age-kpi-concluidos').textContent = concluidos;
-      document.getElementById('c-age-kpi-cancelados').textContent = cancelados;
-      document.getElementById('c-age-kpi-taxa').textContent = taxa + '%';
+      const elTot = document.getElementById('c-age-kpi-total');
+      if (elTot) elTot.textContent = total;
+      const elConc = document.getElementById('c-age-kpi-concluidos');
+      if (elConc) elConc.textContent = concluidos;
+      const elCanc = document.getElementById('c-age-kpi-cancelados');
+      if (elCanc) elCanc.textContent = cancelados;
+      const elTaxa = document.getElementById('c-age-kpi-taxa');
+      if (elTaxa) elTaxa.textContent = taxa + '%';
 
       const tbody = document.getElementById('c-age-table-body');
       if(!tbody) return;
@@ -9538,10 +9542,14 @@
       });
       const topProc = Object.entries(mapProc).sort((a,b) => b[1] - a[1])[0];
 
-      document.getElementById('c-ana-kpi-fat').textContent = fmt(totalFat);
-      document.getElementById('c-ana-kpi-ticket').textContent = fmt(ticket);
-      document.getElementById('c-ana-kpi-lider').textContent = topProc ? `${topProc[0]} (${topProc[1]})` : '—';
-      document.getElementById('c-ana-kpi-pico').textContent = '14:00';
+      const elFat = document.getElementById('c-ana-kpi-fat');
+      if (elFat) elFat.textContent = fmt(totalFat);
+      const elTicket = document.getElementById('c-ana-kpi-ticket');
+      if (elTicket) elTicket.textContent = fmt(ticket);
+      const elLider = document.getElementById('c-ana-kpi-lider');
+      if (elLider) elLider.textContent = topProc ? `${topProc[0]} (${topProc[1]})` : '—';
+      const elPico = document.getElementById('c-ana-kpi-pico');
+      if (elPico) elPico.textContent = apps.length > 0 ? '14:00' : '—';
 
       const pContainer = document.getElementById('c-ana-procedimentos-list');
       if(pContainer){
@@ -9559,27 +9567,39 @@
               </div>
             </div>
           `;
-        }).join('') || '<div class="text-muted font-mono py-4">Sem dados de procedimentos.</div>';
+        }).join('') || '<div class="text-muted font-mono py-4 text-center">Sem dados de procedimentos cadastrados.</div>';
       }
 
       const hContainer = document.getElementById('c-ana-horarios-list');
       if(hContainer){
-        const horarios = [
-          { faixa: 'Manhã (08h às 12h)', qtd: 8, pct: 35 },
-          { faixa: 'Tarde (13h às 17h)', qtd: 12, pct: 50 },
-          { faixa: 'Noite (18h às 21h)', qtd: 4, pct: 15 }
-        ];
-        hContainer.innerHTML = horarios.map(h => `
-          <div class="space-y-1">
-            <div class="flex justify-between font-medium">
-              <span class="text-title font-bold">${h.faixa}</span>
-              <span class="font-mono text-indigo-500 font-bold">${h.qtd} atendimentos (${h.pct}%)</span>
+        if (apps.length === 0) {
+          hContainer.innerHTML = '<div class="text-muted font-mono py-4 text-center">Nenhum atendimento registrado para análise de horários.</div>';
+        } else {
+          let manha = 0, tarde = 0, noite = 0;
+          apps.forEach(a => {
+            const h = parseInt((a.time || '12').split(':')[0]) || 12;
+            if (h < 12) manha++;
+            else if (h < 18) tarde++;
+            else noite++;
+          });
+          const totalH = apps.length;
+          const horarios = [
+            { faixa: 'Manhã (08h às 12h)', qtd: manha, pct: Math.round((manha/totalH)*100) },
+            { faixa: 'Tarde (13h às 17h)', qtd: tarde, pct: Math.round((tarde/totalH)*100) },
+            { faixa: 'Noite (18h às 21h)', qtd: noite, pct: Math.round((noite/totalH)*100) }
+          ];
+          hContainer.innerHTML = horarios.map(h => `
+            <div class="space-y-1">
+              <div class="flex justify-between font-medium">
+                <span class="text-title font-bold">${h.faixa}</span>
+                <span class="font-mono text-indigo-500 font-bold">${h.qtd} atendimentos (${h.pct}%)</span>
+              </div>
+              <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-indigo-500 h-1.5 rounded-full" style="width: ${h.pct}%"></div>
+              </div>
             </div>
-            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-              <div class="bg-indigo-500 h-1.5 rounded-full" style="width: ${h.pct}%"></div>
-            </div>
-          </div>
-        `).join('');
+          `).join('');
+        }
       }
       lucide.createIcons();
     }
@@ -9587,20 +9607,43 @@
     // 3. AUDITORIA AGENDA
     function renderConsultaAuditoriaAgenda(){
       const apps = state.appointments || [];
-      document.getElementById('c-aud-age-total').textContent = apps.length + 3;
-      document.getElementById('c-aud-age-conclusoes').textContent = apps.filter(x => x.status === 'CONCLUIDO').length;
-      document.getElementById('c-aud-age-novos').textContent = apps.length;
-      document.getElementById('c-aud-age-cancelados').textContent = apps.filter(x => x.status === 'CANCELADO').length;
+      const concluidos = apps.filter(x => x.status === 'CONCLUIDO').length;
+      const cancelados = apps.filter(x => x.status === 'CANCELADO').length;
+
+      const elTot = document.getElementById('c-aud-age-total');
+      if (elTot) elTot.textContent = apps.length;
+      const elConc = document.getElementById('c-aud-age-conclusoes');
+      if (elConc) elConc.textContent = concluidos;
+      const elNov = document.getElementById('c-aud-age-novos');
+      if (elNov) elNov.textContent = apps.length;
+      const elCanc = document.getElementById('c-aud-age-cancelados');
+      if (elCanc) elCanc.textContent = cancelados;
 
       const tbody = document.getElementById('c-aud-age-table-body');
       if(!tbody) return;
 
-      const logs = [
-        { data: todayBR + ' 09:12', acao: 'Agendamento Confirmado', cliente: 'Camila Zanetti', serv: 'Manutenção Fibra de Vidro', prof: 'Profissional Master', valor: 110, badge: 'text-emerald-500 bg-emerald-500/20' },
-        { data: todayBR + ' 08:30', acao: 'Horário Remarcado', cliente: 'Ana Paula Silveira', serv: 'Esmaltação em Gel', prof: 'Profissional Master', valor: 75, badge: 'text-amber-500 bg-amber-500/20' },
-        { data: '08/09/2026 17:45', acao: 'Atendimento Concluído', cliente: 'Juliana Mendes', serv: 'Alongamento em Gel Moldado', prof: 'Profissional Master', valor: 180, badge: 'text-purple-500 bg-purple-500/20' },
-        { data: '07/09/2026 14:10', acao: 'Agendamento Criado', cliente: 'Camila Zanetti', serv: 'Spa dos Pés', prof: 'Profissional Master', valor: 80, badge: 'text-blue-500 bg-blue-500/20' }
-      ];
+      if (apps.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-muted font-mono">Nenhum registro de auditoria na agenda.</td></tr>';
+        return;
+      }
+
+      const logs = apps.map(a => {
+        let badge = 'text-blue-500 bg-blue-500/20';
+        let acao = 'Agendamento Criado';
+        if (a.status === 'CONFIRMADO') { acao = 'Agendamento Confirmado'; badge = 'text-emerald-500 bg-emerald-500/20'; }
+        else if (a.status === 'CONCLUIDO') { acao = 'Atendimento Concluído'; badge = 'text-purple-500 bg-purple-500/20'; }
+        else if (a.status === 'CANCELADO') { acao = 'Agendamento Cancelado'; badge = 'text-rose-500 bg-rose-500/20'; }
+        const p = (state.professionals || []).find(x => x.id === (a.profId || 'prof_leticia'));
+        return {
+          data: `${fmtDate(a.date)} ${a.time || '00:00'}`,
+          acao,
+          cliente: a.clientName || 'Cliente',
+          serv: a.serviceNames || 'Procedimento',
+          prof: p ? p.name : 'Equipe',
+          valor: a.price || 0,
+          badge
+        };
+      });
 
       tbody.innerHTML = logs.map(l => `
         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
@@ -9618,13 +9661,23 @@
     // 4. AUDITORIA DE ANAMNESE
     function renderConsultaAuditoriaAnamnese(){
       const clients = state.clients || [];
-      document.getElementById('c-aud-ana-total').textContent = clients.length;
-      document.getElementById('c-aud-ana-em-dia').textContent = clients.length;
-      document.getElementById('c-aud-ana-alunas').textContent = clients.filter(x => x.isAluna).length;
-      document.getElementById('c-aud-ana-taxa').textContent = '100%';
+      const total = clients.length;
+      const elTot = document.getElementById('c-aud-ana-total');
+      if (elTot) elTot.textContent = total;
+      const elDia = document.getElementById('c-aud-ana-em-dia');
+      if (elDia) elDia.textContent = total;
+      const elAlu = document.getElementById('c-aud-ana-alunas');
+      if (elAlu) elAlu.textContent = clients.filter(x => x.isAluna).length;
+      const elTaxa = document.getElementById('c-aud-ana-taxa');
+      if (elTaxa) elTaxa.textContent = total > 0 ? '100%' : '0%';
 
       const tbody = document.getElementById('c-aud-ana-table-body');
       if(!tbody) return;
+
+      if (total === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-muted font-mono">Nenhuma ficha de anamnese registrada.</td></tr>';
+        return;
+      }
 
       tbody.innerHTML = clients.map(c => `
         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
@@ -9632,7 +9685,7 @@
             <i data-lucide="user-check" class="w-3.5 h-3.5 text-sky-500"></i>
             <span>${c.name}</span>
           </td>
-          <td class="p-3 text-muted text-[11px]">${c.isAluna ? 'Contrato de Curso VIP & Ficha' : 'Ficha de Anamnese - Alongamento'}</td>
+          <td class="p-3 text-muted text-[11px]">${c.isAluna ? 'Contrato de Curso VIP & Ficha' : 'Ficha de Anamnese - Procedimento'}</td>
           <td class="p-3 font-mono text-[11px]">${fmtDate(c.lastVisit || todayStr)}</td>
           <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">EM DIA</span></td>
           <td class="p-3 text-center font-mono text-[10px] text-muted">Válido até 12/2026</td>
@@ -9649,16 +9702,28 @@
       const fin = state.financial || [];
       const vendas = fin.filter(f => f.type === 'RECEITA');
       const totalVol = vendas.reduce((s, x) => s + (x.value || 0), 0);
-      const totalPix = vendas.filter(x => x.method === 'PIX').reduce((s, x) => s + (x.value || 0), 0);
-      const totalCartao = vendas.filter(x => x.method === 'CARTAO' || x.method === 'DEBITO' || x.method === 'CREDITO').reduce((s, x) => s + (x.value || 0), 0);
+      const totalPix = vendas.filter(x => (x.method || '').toUpperCase().includes('PIX')).reduce((s, x) => s + (x.value || 0), 0);
+      const totalCartao = vendas.filter(x => {
+        const m = (x.method || '').toUpperCase();
+        return m.includes('CARTAO') || m.includes('CARTÃO') || m.includes('DEBITO') || m.includes('CREDITO');
+      }).reduce((s, x) => s + (x.value || 0), 0);
 
-      document.getElementById('c-aud-ven-total').textContent = vendas.length;
-      document.getElementById('c-aud-ven-volume').textContent = fmt(totalVol);
-      document.getElementById('c-aud-ven-pix').textContent = fmt(totalPix);
-      document.getElementById('c-aud-ven-cartao').textContent = fmt(totalCartao);
+      const elTot = document.getElementById('c-aud-ven-total');
+      if (elTot) elTot.textContent = vendas.length;
+      const elVol = document.getElementById('c-aud-ven-volume');
+      if (elVol) elVol.textContent = fmt(totalVol);
+      const elPix = document.getElementById('c-aud-ven-pix');
+      if (elPix) elPix.textContent = fmt(totalPix);
+      const elCard = document.getElementById('c-aud-ven-cartao');
+      if (elCard) elCard.textContent = fmt(totalCartao);
 
       const tbody = document.getElementById('c-aud-ven-table-body');
       if(!tbody) return;
+
+      if (vendas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-muted font-mono">Nenhum lançamento de venda registrado para auditoria.</td></tr>';
+        return;
+      }
 
       tbody.innerHTML = vendas.map(v => `
         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
@@ -9677,21 +9742,37 @@
     function renderConsultaComissao(){
       const apps = (state.appointments || []).filter(a => a.status === 'CONCLUIDO' || a.status === 'CONFIRMADO');
       const totalProd = apps.reduce((s, a) => s + (a.price || 0), 0);
-      const totalComissao = totalProd * 0.7; // média ponderada
+      const profs = state.professionals || [];
 
-      document.getElementById('c-com-kpi-producao').textContent = fmt(totalProd);
-      document.getElementById('c-com-kpi-repasse').textContent = fmt(totalComissao);
-      document.getElementById('c-com-kpi-master').textContent = fmt(totalProd);
-      document.getElementById('c-com-kpi-equipe').textContent = state.professionals ? state.professionals.length : 1;
+      let totalComissao = 0;
+      profs.forEach(p => {
+        const pApps = apps.filter(a => (a.profId || 'prof_leticia') === p.id);
+        const prod = pApps.reduce((acc, cur) => acc + (cur.price || 0), 0);
+        const pct = p.comissao !== undefined ? p.comissao : 50;
+        totalComissao += prod * (pct / 100);
+      });
+
+      const elProd = document.getElementById('c-com-kpi-producao');
+      if (elProd) elProd.textContent = fmt(totalProd);
+      const elRep = document.getElementById('c-com-kpi-repasse');
+      if (elRep) elRep.textContent = fmt(totalComissao);
+      const elMast = document.getElementById('c-com-kpi-master');
+      if (elMast) elMast.textContent = fmt(profs.length > 0 ? totalProd : 0);
+      const elEquipe = document.getElementById('c-com-kpi-equipe');
+      if (elEquipe) elEquipe.textContent = profs.length;
 
       const tbody = document.getElementById('c-com-table-body');
       if(!tbody) return;
 
-      const profs = state.professionals || [];
+      if (profs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-muted font-mono">Nenhum profissional cadastrado na equipe.</td></tr>';
+        return;
+      }
+
       tbody.innerHTML = profs.map(p => {
         const pApps = apps.filter(a => (a.profId || 'prof_leticia') === p.id);
         const prod = pApps.reduce((acc, cur) => acc + (cur.price || 0), 0);
-        const pct = p.comissao !== undefined ? p.comissao : 100;
+        const pct = p.comissao !== undefined ? p.comissao : 50;
         const valorCom = prod * (pct / 100);
 
         return `
@@ -9702,7 +9783,7 @@
               </div>
               <span>${p.name}</span>
             </td>
-            <td class="p-3 text-muted">${p.role || 'Nail Designer'}</td>
+            <td class="p-3 text-muted">${p.role || 'Profissional'}</td>
             <td class="p-3 text-center font-mono font-bold">${pApps.length}</td>
             <td class="p-3 text-right font-mono font-bold text-title">${fmt(prod)}</td>
             <td class="p-3 text-center font-mono font-bold text-teal-600">${pct}%</td>
@@ -9715,25 +9796,41 @@
 
     // 7. COMPARATIVO DE PERÍODOS
     function renderConsultaComparativo(){
-      const totalReceitas = (state.financial || []).filter(f => f.type === 'RECEITA').reduce((s, f) => s + f.value, 0);
-      const fatAtual = totalReceitas > 0 ? totalReceitas : 6800;
-      const fatAnt = Math.round(fatAtual * 0.82);
-      const delta = Math.round(((fatAtual - fatAnt) / fatAnt) * 100);
+      const apps = state.appointments || [];
+      const fin = state.financial || [];
+      const clients = state.clients || [];
 
-      document.getElementById('c-cmp-kpi-mes-atual').textContent = fmt(fatAtual);
-      document.getElementById('c-cmp-kpi-mes-ant').textContent = fmt(fatAnt);
-      document.getElementById('c-cmp-kpi-delta').textContent = '+' + delta + '%';
-      document.getElementById('c-cmp-kpi-clientes').textContent = '+18%';
+      const totalReceitas = fin.filter(f => f.type === 'RECEITA').reduce((s, f) => s + (f.value || 0), 0);
+      const fatAtual = totalReceitas;
+      const fatAnt = 0;
+      const qtdProc = apps.length;
+      const ticketMedio = qtdProc > 0 ? (totalReceitas / qtdProc) : 0;
+      const qtdClientes = clients.length;
+
+      const elMesAtual = document.getElementById('c-cmp-kpi-mes-atual');
+      if (elMesAtual) elMesAtual.textContent = fmt(fatAtual);
+      const elMesAnt = document.getElementById('c-cmp-kpi-mes-ant');
+      if (elMesAnt) elMesAnt.textContent = fmt(fatAnt);
+      const elDelta = document.getElementById('c-cmp-kpi-delta');
+      if (elDelta) elDelta.textContent = fatAtual > 0 ? '+100%' : '0%';
+      const elCli = document.getElementById('c-cmp-kpi-clientes');
+      if (elCli) elCli.textContent = qtdClientes > 0 ? `+${qtdClientes}` : '0%';
 
       const tbody = document.getElementById('c-cmp-table-body');
       if(!tbody) return;
 
+      if (qtdProc === 0 && totalReceitas === 0 && qtdClientes === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-muted font-mono">Nenhum dado registrado para comparação histórica. Inicie seus atendimentos para gerar os comparativos.</td></tr>';
+        lucide.createIcons();
+        return;
+      }
+
       const linhas = [
-        { ind: 'Faturamento Total Bruto', ant: fmt(fatAnt), atu: fmt(fatAtual), delta: '+' + delta + '%', cor: 'text-emerald-500' },
-        { ind: 'Quantidade de Procedimentos', ant: '42', atu: '54', delta: '+28.5%', cor: 'text-emerald-500' },
-        { ind: 'Ticket Médio de Atendimento', ant: 'R$ 95,00', atu: 'R$ 115,00', delta: '+21.0%', cor: 'text-emerald-500' },
-        { ind: 'Novas Clientes Cadastradas', ant: '8', atu: '14', delta: '+75.0%', cor: 'text-emerald-500' },
-        { ind: 'Taxa de Retorno Preventivo', ant: '78%', atu: '86%', delta: '+8.0%', cor: 'text-emerald-500' }
+        { ind: 'Faturamento Total Bruto', ant: fmt(0), atu: fmt(fatAtual), delta: fatAtual > 0 ? '+100%' : '0%', cor: 'text-emerald-500', status: fatAtual > 0 ? 'CRESCIMENTO' : 'ESTÁVEL' },
+        { ind: 'Quantidade de Procedimentos', ant: '0', atu: String(qtdProc), delta: qtdProc > 0 ? `+${qtdProc}` : '0', cor: 'text-emerald-500', status: qtdProc > 0 ? 'CRESCIMENTO' : 'ESTÁVEL' },
+        { ind: 'Ticket Médio de Atendimento', ant: 'R$ 0,00', atu: fmt(ticketMedio), delta: ticketMedio > 0 ? '+100%' : '0%', cor: 'text-emerald-500', status: ticketMedio > 0 ? 'CRESCIMENTO' : 'ESTÁVEL' },
+        { ind: 'Novas Clientes Cadastradas', ant: '0', atu: String(qtdClientes), delta: qtdClientes > 0 ? `+${qtdClientes}` : '0', cor: 'text-emerald-500', status: qtdClientes > 0 ? 'CRESCIMENTO' : 'ESTÁVEL' },
+        { ind: 'Taxa de Retorno Preventivo', ant: '0%', atu: qtdClientes > 0 ? '100%' : '0%', delta: qtdClientes > 0 ? '+100%' : '0%', cor: 'text-emerald-500', status: qtdClientes > 0 ? 'CRESCIMENTO' : 'ESTÁVEL' }
       ];
 
       tbody.innerHTML = linhas.map(l => `
@@ -9742,7 +9839,7 @@
           <td class="p-3 text-right font-mono text-muted">${l.ant}</td>
           <td class="p-3 text-right font-mono font-bold text-title">${l.atu}</td>
           <td class="p-3 text-center font-mono font-bold ${l.cor}">${l.delta}</td>
-          <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">CRESCIMENTO</span></td>
+          <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">${l.status}</span></td>
         </tr>
       `).join('');
       lucide.createIcons();
@@ -9750,23 +9847,47 @@
 
     // 8. DEMONSTRATIVO (DRE)
     function renderConsultaDemonstrativo(){
-      const totalRec = (state.financial || []).filter(f => f.type === 'RECEITA').reduce((s, f) => s + f.value, 0) || 7500;
+      const totalRec = (state.financial || []).filter(f => f.type === 'RECEITA').reduce((s, f) => s + (f.value || 0), 0);
       const cpv = Math.round(totalRec * 0.15);
       const lucroBruto = totalRec - cpv;
-      const despesas = (state.financial || []).filter(f => f.type === 'DESPESA').reduce((s, f) => s + f.value, 0) || 1800;
+      const despesas = (state.financial || []).filter(f => f.type === 'DESPESA').reduce((s, f) => s + (f.value || 0), 0);
       const resultado = lucroBruto - despesas;
-      const margem = Math.round((resultado / totalRec) * 100);
+      const margem = totalRec > 0 ? Math.round((resultado / totalRec) * 100) : 0;
 
-      document.getElementById('c-dre-kpi-bruta').textContent = fmt(totalRec);
-      document.getElementById('c-dre-kpi-custos').textContent = fmt(cpv);
-      document.getElementById('c-dre-kpi-liquido').textContent = fmt(resultado);
-      document.getElementById('c-dre-kpi-margem').textContent = margem + '%';
+      const elBruta = document.getElementById('c-dre-kpi-bruta');
+      if (elBruta) elBruta.textContent = fmt(totalRec);
+      const elCustos = document.getElementById('c-dre-kpi-custos');
+      if (elCustos) elCustos.textContent = fmt(cpv);
+      const elLiq = document.getElementById('c-dre-kpi-liquido');
+      if (elLiq) elLiq.textContent = fmt(resultado);
+      const elMargem = document.getElementById('c-dre-kpi-margem');
+      if (elMargem) elMargem.textContent = margem + '%';
 
-      document.getElementById('c-dre-val-bruta').textContent = fmt(totalRec);
-      document.getElementById('c-dre-val-cpv').textContent = '(-) ' + fmt(cpv);
-      document.getElementById('c-dre-val-lucro-bruto').textContent = fmt(lucroBruto);
-      document.getElementById('c-dre-val-despesas').textContent = '(-) ' + fmt(despesas);
-      document.getElementById('c-dre-val-resultado').textContent = fmt(resultado);
+      const tbody = document.getElementById('c-dre-table-body');
+      if(!tbody) return;
+
+      if (totalRec === 0 && despesas === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-muted font-mono">Nenhum lançamento contábil registrado no período.</td></tr>';
+        lucide.createIcons();
+        return;
+      }
+
+      const linhas = [
+        { conta: '1. RECEITA OPERACIONAL BRUTA', tipo: 'Receita', val: totalRec, cor: 'text-emerald-500 font-bold' },
+        { conta: '(-) Custos de Produtos & Insumos (CPV)', tipo: 'Dedução', val: -cpv, cor: 'text-amber-500' },
+        { conta: '(=) LUCRO BRUTO OPERACIONAL', tipo: 'Subtotal', val: lucroBruto, cor: 'text-blue-500 font-bold' },
+        { conta: '(-) Despesas Operacionais e Fixas', tipo: 'Despesa', val: -despesas, cor: 'text-rose-500' },
+        { conta: '(=) RESULTADO LÍQUIDO DO EXERCÍCIO', tipo: 'Resultado', val: resultado, cor: resultado >= 0 ? 'text-emerald-600 dark:text-emerald-400 font-extrabold text-sm' : 'text-rose-600 font-extrabold text-sm' }
+      ];
+
+      tbody.innerHTML = linhas.map(l => `
+        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+          <td class="p-3 font-bold text-title">${l.conta}</td>
+          <td class="p-3 text-muted text-[11px] font-mono">${l.tipo}</td>
+          <td class="p-3 text-right font-mono font-bold ${l.cor}">${fmt(l.val)}</td>
+          <td class="p-3 text-center font-mono text-[11px] text-muted">${totalRec > 0 ? Math.round((Math.abs(l.val)/totalRec)*100) : 0}%</td>
+        </tr>
+      `).join('');
       lucide.createIcons();
     }
 
@@ -9776,13 +9897,22 @@
       const totalPatrimonio = stock.reduce((s, x) => s + ((x.qty || 0) * (x.cost || 0)), 0);
       const abaixoMin = stock.filter(x => (x.qty || 0) <= (x.min || 0)).length;
 
-      document.getElementById('c-est-kpi-total').textContent = stock.length;
-      document.getElementById('c-est-kpi-valor').textContent = fmt(totalPatrimonio);
-      document.getElementById('c-est-kpi-min').textContent = abaixoMin;
-      document.getElementById('c-est-kpi-saude').textContent = abaixoMin > 0 ? 'Atenção' : 'Equilibrado';
+      const elTot = document.getElementById('c-est-kpi-total');
+      if (elTot) elTot.textContent = stock.length;
+      const elVal = document.getElementById('c-est-kpi-valor');
+      if (elVal) elVal.textContent = fmt(totalPatrimonio);
+      const elMin = document.getElementById('c-est-kpi-min');
+      if (elMin) elMin.textContent = abaixoMin;
+      const elSaude = document.getElementById('c-est-kpi-saude');
+      if (elSaude) elSaude.textContent = abaixoMin > 0 ? 'Atenção' : (stock.length > 0 ? 'Equilibrado' : 'Sem itens');
 
       const tbody = document.getElementById('c-est-table-body');
       if(!tbody) return;
+
+      if (stock.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-muted font-mono">Nenhum insumo ou produto cadastrado no estoque.</td></tr>';
+        return;
+      }
 
       tbody.innerHTML = stock.map(s => {
         const subtotal = (s.qty || 0) * (s.cost || 0);
@@ -9794,20 +9924,17 @@
               <span>${s.name}</span>
             </td>
             <td class="p-3 text-muted text-[11px] font-mono">${s.cat || 'Insumos'}</td>
-            <td class="p-3 text-center font-mono font-bold text-title">${s.qty}</td>
-            <td class="p-3 text-center font-mono text-[11px] text-muted">${s.min}</td>
+            <td class="p-3 text-center font-mono font-bold ${isLow ? 'text-rose-500' : 'text-title'}">${s.qty || 0} un</td>
+            <td class="p-3 text-center font-mono text-[11px] text-muted">${s.min || 0} un</td>
             <td class="p-3 text-right font-mono font-bold text-title">${fmt(s.cost || 0)}</td>
             <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(subtotal)}</td>
-            <td class="p-3 text-center">
-              ${isLow ? '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-500">REPOR</span>' : '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">OK</span>'}
-            </td>
           </tr>
         `;
       }).join('');
       lucide.createIcons();
     }
 
-    // 10. PACOTE POR CLIENTE
+    // 10. PACOTES
     function renderConsultaPacotes(){
       const list = state.pacotesCliente || [];
       const sessoesTotal = list.reduce((s, x) => s + (x.sessoesTotal || 0), 0);
@@ -9815,45 +9942,43 @@
       const sessoesRest = sessoesTotal - sessoesUsadas;
       const receitaPacotes = list.reduce((s, x) => s + (x.valor || 0), 0);
 
-      document.getElementById('c-pac-kpi-total').textContent = list.length;
-      document.getElementById('c-pac-kpi-restantes').textContent = sessoesRest;
-      document.getElementById('c-pac-kpi-utilizadas').textContent = sessoesUsadas;
-      document.getElementById('c-pac-kpi-receita').textContent = fmt(receitaPacotes);
+      const elTot = document.getElementById('c-pac-kpi-total');
+      if (elTot) elTot.textContent = list.length;
+      const elRest = document.getElementById('c-pac-kpi-restantes');
+      if (elRest) elRest.textContent = sessoesRest;
+      const elUsad = document.getElementById('c-pac-kpi-utilizadas');
+      if (elUsad) elUsad.textContent = sessoesUsadas;
+      const elRec = document.getElementById('c-pac-kpi-receita');
+      if (elRec) elRec.textContent = fmt(receitaPacotes);
 
       const tbody = document.getElementById('c-pac-table-body');
       if(!tbody) return;
 
       if(list.length === 0){
-        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-muted font-mono">Nenhum pacote contratado. Clique em "+ Novo Pacote para Cliente".</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-muted font-mono">Nenhum pacote contratado.</td></tr>';
         return;
       }
 
       tbody.innerHTML = list.map(p => {
         const saldo = (p.sessoesTotal || 0) - (p.sessoesUsadas || 0);
         const pct = Math.round(((p.sessoesUsadas || 0) / (p.sessoesTotal || 1)) * 100);
-
         return `
           <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-            <td class="p-3 font-bold text-title flex items-center gap-2">
-              <i data-lucide="layers" class="w-3.5 h-3.5 text-rose-500"></i>
-              <span>${p.clienteNome}</span>
-            </td>
-            <td class="p-3 font-medium text-title text-[11px]">${p.nome}</td>
+            <td class="p-3 font-bold text-title">${p.clienteNome}</td>
+            <td class="p-3 text-muted">${p.nome}</td>
+            <td class="p-3 text-center font-mono font-bold">${saldo} / ${p.sessoesTotal}</td>
             <td class="p-3 text-center">
               <div class="flex items-center justify-center gap-1.5">
-                <div class="w-20 bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
-                  <div class="bg-rose-500 h-2 rounded-full" style="width: ${pct}%"></div>
+                <div class="w-16 bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-indigo-500 h-1.5 rounded-full" style="width: ${pct}%"></div>
                 </div>
-                <span class="font-mono text-[10px] text-muted">${p.sessoesUsadas}/${p.sessoesTotal}</span>
+                <span class="font-mono text-[10px] text-muted">${pct}%</span>
               </div>
             </td>
-            <td class="p-3 text-center font-mono font-bold ${saldo > 0 ? 'text-emerald-500' : 'text-slate-400'}">${saldo} restante(s)</td>
+            <td class="p-3 font-mono text-[11px] text-muted">${fmtDate(p.validade)}</td>
             <td class="p-3 text-right font-mono font-bold text-title">${fmt(p.valor || 0)}</td>
-            <td class="p-3 text-center font-mono text-[11px] text-muted">${fmtDate(p.validade)}</td>
             <td class="p-3 text-right">
-              <button onclick="usarSessaoPacote('${p.id}')" class="px-2 py-1 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-lg text-[10px] font-bold" title="Baixar 1 sessão">
-                -1 Sessão
-              </button>
+              <button onclick="usarSessaoPacote('${p.id}')" class="px-2 py-1 rounded bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500 hover:text-white transition-colors text-[10px] font-bold">Abater Sessão</button>
             </td>
           </tr>
         `;
@@ -9862,21 +9987,22 @@
     }
 
     function openPacoteClienteModal(){
-      const sel = document.getElementById('pac-cliente-id');
-      if(sel){
-        sel.innerHTML = (state.clients || []).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-      }
       document.getElementById('pac-nome').value = '';
       document.getElementById('pac-sessoes').value = '4';
-      document.getElementById('pac-valor').value = '400';
+      document.getElementById('pac-valor').value = '';
+      document.getElementById('pac-validade').value = '6';
+
+      const sel = document.getElementById('pac-cliente-id');
+      if(sel){
+        sel.innerHTML = (state.clients || []).map(c => `<option value="${c.id}">${c.name}</option>`).join('') || '<option value="">Nenhum cliente cadastrado</option>';
+      }
       openModal('modal-pacote-cliente');
-      lucide.createIcons();
     }
 
     function savePacoteCliente(){
       const clienteId = document.getElementById('pac-cliente-id').value;
       const cliente = (state.clients || []).find(c => c.id === clienteId);
-      const clienteNome = cliente ? cliente.name : 'Cliente';
+      const clienteNome = cliente ? cliente.name : 'Cliente Avulsa';
       const nome = document.getElementById('pac-nome').value.trim();
       const sessoesTotal = parseInt(document.getElementById('pac-sessoes').value) || 1;
       const valor = parseFloat(document.getElementById('pac-valor').value) || 0;
@@ -9884,90 +10010,94 @@
 
       if(!nome) return alert('Por favor, informe o nome do pacote.');
 
-      const dVal = new Date();
-      dVal.setMonth(dVal.getMonth() + meses);
-      const validade = dVal.toISOString().split('T')[0];
+      const d = new Date();
+      d.setMonth(d.getMonth() + meses);
+      const validade = d.toISOString().substring(0, 10);
+
+      const novo = {
+        id: 'pac_' + Date.now(),
+        clienteId,
+        clienteNome,
+        nome,
+        sessoesTotal,
+        sessoesUsadas: 0,
+        valor,
+        validade,
+        status: 'ATIVO'
+      };
 
       if(!state.pacotesCliente) state.pacotesCliente = [];
-      state.pacotesCliente.unshift({
-        id: 'pac_' + Date.now(),
-        clienteId, clienteNome, nome, sessoesTotal, sessoesUsadas: 0, valor, validade, status: 'ATIVO'
-      });
-
+      state.pacotesCliente.unshift(novo);
       persistState();
-      closeModal('modal-pacote-cliente');
       renderConsultaPacotes();
-      alert('Pacote cadastrado com sucesso! ✅');
+      closeModal('modal-pacote-cliente');
+      alert('Pacote cadastrado com sucesso! 📦✨');
     }
 
     function usarSessaoPacote(id){
       const p = (state.pacotesCliente || []).find(x => x.id === id);
       if(!p) return;
-      if(p.sessoesUsadas >= p.sessoesTotal){
-        return alert('Todas as sessões deste pacote já foram utilizadas.');
+      if((p.sessoesUsadas || 0) >= (p.sessoesTotal || 0)){
+        return alert('Todas as sessões deste pacote já foram utilizadas!');
       }
-      if(confirm(`Registrar o uso de 1 sessão do pacote para ${p.clienteNome}?`)){
-        p.sessoesUsadas += 1;
-        persistState();
-        renderConsultaPacotes();
-        alert('Sessão debitada com sucesso! ✅');
-      }
+      p.sessoesUsadas = (p.sessoesUsadas || 0) + 1;
+      persistState();
+      renderConsultaPacotes();
+      alert(`Sessão abatida com sucesso! Restam ${p.sessoesTotal - p.sessoesUsadas} sessões.`);
     }
 
     // 11. PREVISÃO DE RETORNO
     function renderConsultaRetorno(){
       const clients = state.clients || [];
-      const today = new Date(todayStr);
-
+      const apps = state.appointments || [];
       let countIdeal = 0;
       let countAtraso = 0;
+      const items = [];
 
-      const items = clients.map(c => {
-        let dias = 25;
-        if(c.lastVisit){
-          const lv = new Date(c.lastVisit);
-          const diff = Math.round((today - lv) / (1000 * 60 * 60 * 24));
-          if(!isNaN(diff) && diff >= 0) dias = diff;
-        }
+      clients.forEach(c => {
+        if(!c.lastVisit) return;
+        const diffDays = Math.round((new Date() - new Date(c.lastVisit)) / (1000 * 60 * 60 * 24));
+        let status = 'IDEAL';
+        if(diffDays > 28) { status = 'CRITICO'; countAtraso++; }
+        else if(diffDays > 20) { status = 'ATENCAO'; countAtraso++; }
+        else { countIdeal++; }
 
-        let st = 'Ideal (20 a 28 dias)';
-        let stClass = 'text-cyan-500 bg-cyan-500/20';
-        if(dias > 28){
-          st = 'Em Atraso (+28 dias)';
-          stClass = 'text-rose-500 bg-rose-500/20 font-bold';
-          countAtraso++;
-        } else if(dias >= 20){
-          st = 'Período Recomendado';
-          stClass = 'text-emerald-500 bg-emerald-500/20 font-bold';
-          countIdeal++;
-        } else {
-          st = 'Recente (-20 dias)';
-          stClass = 'text-slate-400 bg-slate-200 dark:bg-slate-800';
-        }
-
-        return { ...c, dias, st, stClass };
+        items.push({
+          ...c,
+          diffDays,
+          statusRet: status
+        });
       });
 
-      document.getElementById('c-ret-kpi-ideal').textContent = countIdeal;
-      document.getElementById('c-ret-kpi-atraso').textContent = countAtraso;
-      document.getElementById('c-ret-kpi-agendadas').textContent = '2';
-      document.getElementById('c-ret-kpi-taxa').textContent = '91%';
+      const totalClientsWithVisit = items.length;
+      const elIdeal = document.getElementById('c-ret-kpi-ideal');
+      if (elIdeal) elIdeal.textContent = countIdeal;
+      const elAtraso = document.getElementById('c-ret-kpi-atraso');
+      if (elAtraso) elAtraso.textContent = countAtraso;
+      const elAgend = document.getElementById('c-ret-kpi-agendadas');
+      if (elAgend) elAgend.textContent = apps.length;
+      const elTaxa = document.getElementById('c-ret-kpi-taxa');
+      if (elTaxa) elTaxa.textContent = totalClientsWithVisit > 0 ? (Math.round((countIdeal / totalClientsWithVisit) * 100) + '%') : '0%';
 
       const tbody = document.getElementById('c-ret-table-body');
       if(!tbody) return;
 
+      if(items.length === 0){
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-muted font-mono">Nenhuma cliente com histórico de atendimentos registrado.</td></tr>';
+        return;
+      }
+
       tbody.innerHTML = items.map(c => `
         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-          <td class="p-3 font-bold text-title flex items-center gap-2">
-            <i data-lucide="clock" class="w-3.5 h-3.5 text-cyan-500"></i>
-            <span>${c.name}</span>
+          <td class="p-3 font-bold text-title">${c.name}</td>
+          <td class="p-3 font-mono text-[11px] text-muted">${c.phone || '—'}</td>
+          <td class="p-3 font-mono text-[11px]">${fmtDate(c.lastVisit)}</td>
+          <td class="p-3 font-mono text-center text-[11px] font-bold ${c.diffDays > 28 ? 'text-rose-500' : 'text-amber-500'}">Há ${c.diffDays} dias</td>
+          <td class="p-3 text-center">
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${c.statusRet === 'IDEAL' ? 'bg-emerald-500/20 text-emerald-500' : c.statusRet === 'ATENCAO' ? 'bg-amber-500/20 text-amber-500' : 'bg-rose-500/20 text-rose-500'}">${c.statusRet}</span>
           </td>
-          <td class="p-3 font-mono text-[11px] text-muted">${c.phone || '(54) 99123-4567'}</td>
-          <td class="p-3 font-mono text-[11px]">${fmtDate(c.lastVisit || todayStr)}</td>
-          <td class="p-3 text-center font-mono font-bold text-title">${c.dias} dias</td>
-          <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-mono ${c.stClass}">${c.st}</span></td>
           <td class="p-3 text-right">
-            <button onclick="sendRetornoMsg('${c.id}')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold flex items-center gap-1 ml-auto shadow-xs">
+            <button onclick="sendRetornoMsg('${c.id}')" class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors text-[10px] font-bold inline-flex items-center gap-1">
               <i data-lucide="message-circle" class="w-3 h-3"></i> WhatsApp
             </button>
           </td>
@@ -9978,10 +10108,10 @@
 
     function sendRetornoMsg(clientId){
       const c = (state.clients || []).find(x => x.id === clientId);
-      if(!c) return;
+      if(!c || !c.phone) return alert('Cliente sem WhatsApp cadastrado.');
       const phone = (c.phone || '').replace(/\D/g, '');
-      const text = encodeURIComponent(`Olá ${c.name}! Tudo bem? Passando para lembrar que já está na hora da sua manutenção para manter suas unhas impecáveis e protegidas! Vamos garantir seu horário desta semana? 🥰💅`);
-      window.open(`https://wa.me/55${phone}?text=${text}`, '_blank');
+      const msg = encodeURIComponent(`Olá ${c.name}! Tudo bem? ✨ Já faz um tempinho desde a sua última manutenção! Vamos agendar o seu horário desta semana?`);
+      window.open(`https://wa.me/55${phone}?text=${msg}`, '_blank');
     }
 
     // 12. ORÇAMENTOS
@@ -9991,23 +10121,25 @@
       const aprovados = list.filter(x => x.status === 'APROVADO').length;
       const taxa = list.length > 0 ? Math.round((aprovados / list.length) * 100) : 0;
 
-      document.getElementById('c-orc-kpi-total').textContent = list.length;
-      document.getElementById('c-orc-kpi-aprovados').textContent = aprovados;
-      document.getElementById('c-orc-kpi-valor').textContent = fmt(totalVal);
-      document.getElementById('c-orc-kpi-taxa').textContent = taxa + '%';
+      const elTot = document.getElementById('c-orc-kpi-total');
+      if (elTot) elTot.textContent = list.length;
+      const elAprov = document.getElementById('c-orc-kpi-aprovados');
+      if (elAprov) elAprov.textContent = aprovados;
+      const elVal = document.getElementById('c-orc-kpi-valor');
+      if (elVal) elVal.textContent = fmt(totalVal);
+      const elTaxa = document.getElementById('c-orc-kpi-taxa');
+      if (elTaxa) elTaxa.textContent = taxa + '%';
 
       const tbody = document.getElementById('c-orc-table-body');
       if(!tbody) return;
 
       if(list.length === 0){
-        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-muted font-mono">Nenhum orçamento emitido. Clique em "+ Novo Orçamento".</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-muted font-mono">Nenhum orçamento emitido.</td></tr>';
         return;
       }
 
       tbody.innerHTML = list.map(o => {
-        let stBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-500">PENDENTE</span>';
-        if(o.status === 'APROVADO') stBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-500">APROVADO</span>';
-
+        const isAp = o.status === 'APROVADO';
         return `
           <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
             <td class="p-3 font-mono font-bold text-title">${o.codigo || 'ORC-001'}</td>
@@ -10015,11 +10147,11 @@
             <td class="p-3 text-muted text-[11px] max-w-xs truncate">${o.itens}</td>
             <td class="p-3 font-mono text-[11px] text-muted">${fmtDate(o.validade)}</td>
             <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(o.valor || 0)}</td>
-            <td class="p-3 text-center">${stBadge}</td>
+            <td class="p-3 text-center">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${isAp ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}">${o.status}</span>
+            </td>
             <td class="p-3 text-right">
-              ${o.status === 'PENDENTE' ? `
-                <button onclick="aprovarOrcamento('${o.id}')" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 rounded text-[10px] font-bold">Aprovar</button>
-              ` : '<span class="text-muted text-[10px] font-mono">Convertido</span>'}
+              ${!isAp ? `<button onclick="aprovarOrcamento('${o.id}')" class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors text-[10px] font-bold">Aprovar</button>` : '<span class="text-muted text-[10px] font-mono">Concluído</span>'}
             </td>
           </tr>
         `;
@@ -10028,47 +10160,52 @@
     }
 
     function openOrcamentoModal(){
-      document.getElementById('orc-cliente-nome').value = '';
+      document.getElementById('orc-codigo').value = 'ORC-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('orc-cliente').value = '';
       document.getElementById('orc-itens').value = '';
       document.getElementById('orc-valor').value = '';
-      const d = new Date();
-      d.setDate(d.getDate() + 15);
-      document.getElementById('orc-validade').value = d.toISOString().split('T')[0];
+      document.getElementById('orc-validade').value = '15';
       openModal('modal-orcamento');
-      lucide.createIcons();
     }
 
     function saveOrcamento(){
-      const clienteNome = document.getElementById('orc-cliente-nome').value.trim();
+      const codigo = document.getElementById('orc-codigo').value;
+      const clienteNome = document.getElementById('orc-cliente').value.trim();
       const itens = document.getElementById('orc-itens').value.trim();
       const valor = parseFloat(document.getElementById('orc-valor').value) || 0;
-      const validade = document.getElementById('orc-validade').value;
+      const dias = parseInt(document.getElementById('orc-validade').value) || 15;
 
       if(!clienteNome || !itens) return alert('Por favor, informe a cliente e os itens da proposta.');
 
-      if(!state.orcamentos) state.orcamentos = [];
-      const num = state.orcamentos.length + 1;
-      state.orcamentos.unshift({
-        id: 'orc_' + Date.now(),
-        codigo: 'ORC-2026-' + (num < 10 ? '0' + num : num),
-        clienteNome, itens, valor, validade, status: 'PENDENTE'
-      });
+      const d = new Date();
+      d.setDate(d.getDate() + dias);
+      const validade = d.toISOString().substring(0, 10);
 
+      const novo = {
+        id: 'orc_' + Date.now(),
+        codigo,
+        clienteNome,
+        itens,
+        valor,
+        validade,
+        status: 'PENDENTE'
+      };
+
+      if(!state.orcamentos) state.orcamentos = [];
+      state.orcamentos.unshift(novo);
       persistState();
-      closeModal('modal-orcamento');
       renderConsultaOrcamentos();
-      alert('Orçamento gerado com sucesso! ✅');
+      closeModal('modal-orcamento');
+      alert('Orçamento gerado com sucesso! 📄✨');
     }
 
     function aprovarOrcamento(id){
       const o = (state.orcamentos || []).find(x => x.id === id);
       if(!o) return;
-      if(confirm(`Aprovar orçamento ${o.codigo} de ${o.clienteNome}?`)){
-        o.status = 'APROVADO';
-        persistState();
-        renderConsultaOrcamentos();
-        alert('Orçamento aprovado com sucesso! ✅');
-      }
+      o.status = 'APROVADO';
+      persistState();
+      renderConsultaOrcamentos();
+      alert('Orçamento aprovado com sucesso! ✅');
     }
 
     // 13. VENDAS
@@ -10078,17 +10215,33 @@
       const totalFat = vendas.reduce((s, x) => s + (x.value || 0), 0);
       const ticket = vendas.length > 0 ? totalFat / vendas.length : 0;
 
-      document.getElementById('c-ven-kpi-total').textContent = vendas.length;
-      document.getElementById('c-ven-kpi-fat').textContent = fmt(totalFat);
-      document.getElementById('c-ven-kpi-ticket').textContent = fmt(ticket);
-      document.getElementById('c-ven-kpi-top').textContent = 'Manutenção Fibra de Vidro';
+      const mapDesc = {};
+      vendas.forEach(v => {
+        const d = v.desc || 'Atendimento';
+        mapDesc[d] = (mapDesc[d] || 0) + 1;
+      });
+      const topEntry = Object.entries(mapDesc).sort((a,b) => b[1] - a[1])[0];
+
+      const elTot = document.getElementById('c-ven-kpi-total');
+      if (elTot) elTot.textContent = vendas.length;
+      const elFat = document.getElementById('c-ven-kpi-fat');
+      if (elFat) elFat.textContent = fmt(totalFat);
+      const elTick = document.getElementById('c-ven-kpi-ticket');
+      if (elTick) elTick.textContent = fmt(ticket);
+      const elTop = document.getElementById('c-ven-kpi-top');
+      if (elTop) elTop.textContent = topEntry ? topEntry[0] : '—';
 
       const tbody = document.getElementById('c-ven-table-body');
       if(!tbody) return;
 
+      if (vendas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-muted font-mono">Nenhuma venda ou receita registrada.</td></tr>';
+        return;
+      }
+
       tbody.innerHTML = vendas.map(v => `
         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-          <td class="p-3 font-mono font-bold text-muted">${fmtDate(v.date)}</td>
+          <td class="p-3 font-mono text-muted">${fmtDate(v.date)}</td>
           <td class="p-3 font-bold text-title">${v.desc || 'Atendimento'}</td>
           <td class="p-3 text-muted text-[11px]">${v.category || 'Atendimentos'}</td>
           <td class="p-3 font-mono text-[11px] text-muted">${v.method || 'PIX'}</td>
@@ -10103,30 +10256,45 @@
       const clients = state.clients || [];
       const apps = state.appointments || [];
 
-      document.getElementById('c-cli-kpi-total').textContent = clients.length;
+      const elTot = document.getElementById('c-cli-kpi-total');
+      if (elTot) elTot.textContent = clients.length;
 
-      let topClient = clients[0] ? clients[0].name : '—';
+      let topClient = '—';
+      let maxSpent = 0;
       let totalLTV = 0;
 
       const rows = clients.map(c => {
         const cApps = apps.filter(a => (a.clientName||'').toLowerCase() === (c.name||'').toLowerCase());
-        const total = cApps.reduce((s, x) => s + (x.price || 0), 0) || (c.credit ? c.credit * 10 : 220);
+        const total = cApps.reduce((s, x) => s + (x.price || 0), 0);
+        const count = cApps.length;
         totalLTV += total;
-        const count = cApps.length || 2;
-        const ticket = total / count;
-        const rating = total > 200 ? '⭐ VIP Gold' : 'Cliente Fiel';
 
-        return { ...c, total, count, ticket, rating };
-      });
+        if(total > maxSpent){
+          maxSpent = total;
+          topClient = c.name;
+        }
 
-      rows.sort((a,b) => b.total - a.total);
-      if(rows.length > 0) topClient = `${rows[0].name} (${fmt(rows[0].total)})`;
+        return {
+          name: c.name,
+          phone: c.phone,
+          count,
+          total,
+          ticket: count > 0 ? total / count : 0
+        };
+      }).sort((a,b) => b.total - a.total);
 
-      document.getElementById('c-cli-kpi-top').textContent = topClient;
-      document.getElementById('c-cli-kpi-media').textContent = fmt(clients.length > 0 ? totalLTV / clients.length : 0);
+      const elTop = document.getElementById('c-cli-kpi-top');
+      if (elTop) elTop.textContent = clients.length > 0 && maxSpent > 0 ? topClient : '—';
+      const elMed = document.getElementById('c-cli-kpi-media');
+      if (elMed) elMed.textContent = fmt(clients.length > 0 ? totalLTV / clients.length : 0);
 
       const tbody = document.getElementById('c-cli-table-body');
       if(!tbody) return;
+
+      if (clients.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-muted font-mono">Nenhuma cliente cadastrada para análise de compras.</td></tr>';
+        return;
+      }
 
       tbody.innerHTML = rows.map(r => `
         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
@@ -10135,18 +10303,14 @@
             <span>${r.name}</span>
           </td>
           <td class="p-3 font-mono text-[11px] text-muted">${r.phone || '—'}</td>
-          <td class="p-3 text-center font-mono font-bold text-title">${r.count}</td>
+          <td class="p-3 text-center font-mono font-bold">${r.count}</td>
           <td class="p-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">${fmt(r.total)}</td>
-          <td class="p-3 text-right font-mono text-muted">${fmt(r.ticket)}</td>
-          <td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-500">${r.rating}</span></td>
+          <td class="p-3 text-right font-mono text-muted text-[11px]">${fmt(r.ticket)}</td>
         </tr>
       `).join('');
       lucide.createIcons();
     }
 
-
-    
-    // ============== PERMISSÕES & GRUPOS DE ACESSO ==============
     function renderGruposAcesso(){
       const list = state.gruposAcesso || [];
 
@@ -15019,6 +15183,23 @@
         if (typeof renderCamposPersonalizados === 'function') renderCamposPersonalizados();
         if (typeof renderPacotesCliente === 'function') renderPacotesCliente();
         if (typeof renderOrcamentos === 'function') renderOrcamentos();
+
+        // Atualizar todas as telas de Consultas Gerenciais
+        if (typeof renderConsultaAgendas === 'function') renderConsultaAgendas();
+        if (typeof renderConsultaAnalise === 'function') renderConsultaAnalise();
+        if (typeof renderConsultaAuditoriaAgenda === 'function') renderConsultaAuditoriaAgenda();
+        if (typeof renderConsultaAuditoriaAnamnese === 'function') renderConsultaAuditoriaAnamnese();
+        if (typeof renderConsultaAuditoriaVendas === 'function') renderConsultaAuditoriaVendas();
+        if (typeof renderConsultaComissao === 'function') renderConsultaComissao();
+        if (typeof renderConsultaComparativo === 'function') renderConsultaComparativo();
+        if (typeof renderConsultaDemonstrativo === 'function') renderConsultaDemonstrativo();
+        if (typeof renderConsultaEstoque === 'function') renderConsultaEstoque();
+        if (typeof renderConsultaPacotes === 'function') renderConsultaPacotes();
+        if (typeof renderConsultaRetorno === 'function') renderConsultaRetorno();
+        if (typeof renderConsultaOrcamentos === 'function') renderConsultaOrcamentos();
+        if (typeof renderConsultaVendas === 'function') renderConsultaVendas();
+        if (typeof renderConsultaVendasCliente === 'function') renderConsultaVendasCliente();
+        if (typeof renderConsulta === 'function') renderConsulta();
 
         const badgeAgenda = document.getElementById('badge-agenda-count');
         if (badgeAgenda) badgeAgenda.innerText = '0 hoje';
