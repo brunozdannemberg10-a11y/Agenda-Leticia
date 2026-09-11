@@ -175,10 +175,10 @@
         <span class="hidden md:inline text-[11px] font-mono">Backup</span>
       </button>
       <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/90 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
-        <div class="w-6 h-6 rounded-full bg-rose-500 text-white font-bold text-[10px] flex items-center justify-center shrink-0">LH</div>
+        <div id="header-user-avatar" class="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0">TP</div>
         <div class="text-left hidden sm:block">
-          <div class="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1 leading-tight">Letícia Hermann <span class="led-dot text-emerald-500"></span></div>
-          <div class="text-[9px] text-slate-600 dark:text-slate-400 font-mono font-bold">Unhas e Cursos</div>
+          <div id="header-user-name" class="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1 leading-tight">Seu Estúdio <span class="led-dot text-emerald-500"></span></div>
+          <div id="header-user-role" class="text-[9px] text-slate-600 dark:text-slate-400 font-mono font-bold">Gestão & Agenda</div>
         </div>
       </div>
     </div>
@@ -965,7 +965,7 @@
                 <option value="Conta Nubank PJ">Conta Nubank PJ (Depósito)</option>
                 <option value="Banco Itaú">Banco Itaú</option>
                 <option value="Fundo Próximo Caixa">Deixar como Fundo do Próximo Caixa</option>
-                <option value="Retirada Letícia">Retirada Letícia (Pró-labore)</option>
+                <option value="Retirada Pró-labore">Retirada Pró-labore (Sócio / Proprietário)</option>
               </select>
             </div>
 
@@ -1432,7 +1432,7 @@
               <div><label class="font-bold text-title block mb-1">Nome do Salão / Profissional</label><input type="text" id="cfg-nome" class="input-box w-full border rounded-xl px-3 py-2 outline-none"></div>
               <div><label class="font-bold text-title block mb-1">WhatsApp Principal</label><input type="text" id="cfg-whatsapp" class="input-box w-full border rounded-xl px-3 py-2 font-mono outline-none"></div>
               <div><label class="font-bold text-title block mb-1">Endereço</label><input type="text" id="cfg-endereco" class="input-box w-full border rounded-xl px-3 py-2 outline-none"></div>
-              <div><label class="font-bold text-title block mb-1">Instagram</label><input type="text" id="cfg-instagram" placeholder="@leticiahermannunhas" class="input-box w-full border rounded-xl px-3 py-2 outline-none"></div>
+              <div><label class="font-bold text-title block mb-1">Instagram</label><input type="text" id="cfg-instagram" placeholder="@meuestudio.oficial" class="input-box w-full border rounded-xl px-3 py-2 outline-none"></div>
             </div>
           </div>
           <div class="glass-card rounded-2xl p-4 space-y-3">
@@ -2691,7 +2691,7 @@
             <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1" id="c-com-kpi-repasse">R$ 0</div>
           </div>
           <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
-            <span class="text-[10px] uppercase font-mono text-muted block">Letícia Hermann (Master)</span>
+            <span class="text-[10px] uppercase font-mono text-muted block">Profissional Master</span>
             <div class="text-xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1" id="c-com-kpi-master">R$ 0</div>
           </div>
           <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
@@ -3208,7 +3208,7 @@
           </div>
           <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-purple-500">
             <span class="text-[10px] uppercase font-mono text-muted block">Perfil Administrador</span>
-            <div class="text-xs font-bold text-purple-600 dark:text-purple-400 mt-1 truncate" id="perm-kpi-master">Letícia Hermann</div>
+            <div class="text-xs font-bold text-purple-600 dark:text-purple-400 mt-1 truncate" id="perm-kpi-master">Nossa Equipe</div>
           </div>
           <div class="glass-card rounded-2xl p-3 md:p-4 border-l-4 border-blue-500">
             <span class="text-[10px] uppercase font-mono text-muted block">Perfis Operacionais</span>
@@ -3247,15 +3247,15 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             <div>
               <label class="block font-bold text-muted mb-1">Nome Fantasia do Estúdio *</label>
-              <input type="text" id="cfg-emp-fantasia" value="Letícia Hermann - Unhas e Cursos" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <input type="text" id="cfg-emp-fantasia" value="Seu Estúdio • Salão & Clínica" class="input-box w-full p-2.5 rounded-xl font-bold">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">Razão Social / Nome Completo *</label>
-              <input type="text" id="cfg-emp-razao" value="Letícia Hermann Studio de Beleza Ltda" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <input type="text" id="cfg-emp-razao" value="Minha Empresa & Estúdio Ltda" class="input-box w-full p-2.5 rounded-xl font-bold">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">CNPJ / CPF / MEI</label>
-              <input type="text" id="cfg-emp-cnpj" value="38.912.345/0001-89" class="input-box w-full p-2.5 rounded-xl font-mono">
+              <input type="text" id="cfg-emp-cnpj" value="00.000.000/0001-00" class="input-box w-full p-2.5 rounded-xl font-mono">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">Inscrição Estadual / Municipal</label>
@@ -3263,23 +3263,23 @@
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">Telefone Principal / WhatsApp</label>
-              <input type="text" id="cfg-emp-telefone" value="(54) 99123-4567" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+              <input type="text" id="cfg-emp-telefone" value="(00) 00000-0000" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">E-mail Comercial</label>
-              <input type="email" id="cfg-emp-email" value="contato@leticiahermann.com.br" class="input-box w-full p-2.5 rounded-xl">
+              <input type="email" id="cfg-emp-email" value="contato@meuestudio.com.br" class="input-box w-full p-2.5 rounded-xl">
             </div>
             <div class="md:col-span-2">
               <label class="block font-bold text-muted mb-1">Endereço Completo</label>
-              <input type="text" id="cfg-emp-endereco" value="Av. Central, 1250, Sala 304 - Centro, Bento Gonçalves/RS" class="input-box w-full p-2.5 rounded-xl">
+              <input type="text" id="cfg-emp-endereco" value="Seu Endereço Comercial, 100 - Centro" class="input-box w-full p-2.5 rounded-xl">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">Instagram do Estúdio</label>
-              <input type="text" id="cfg-emp-instagram" value="@leticiahermann.nails" class="input-box w-full p-2.5 rounded-xl font-bold text-indigo-500">
+              <input type="text" id="cfg-emp-instagram" value="@meuestudio.oficial" class="input-box w-full p-2.5 rounded-xl font-bold text-indigo-500">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">Slogan / Especialidade</label>
-              <input type="text" id="cfg-emp-slogan" value="Master Nail Designer • Alongamentos em Gel & Cursos VIP" class="input-box w-full p-2.5 rounded-xl">
+              <input type="text" id="cfg-emp-slogan" value="Excelência no Atendimento & Gestão Total" class="input-box w-full p-2.5 rounded-xl">
             </div>
           </div>
         </div>
@@ -3393,7 +3393,7 @@
               </div>
               <div>
                 <label class="block font-bold text-muted mb-1">Chave PIX Principal</label>
-                <input type="text" id="cfg-geral-pix" value="leticiahermann.unhas@gmail.com" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+                <input type="text" id="cfg-geral-pix" value="contato@meuestudio.com.br" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
               </div>
               <div>
                 <label class="block font-bold text-muted mb-1">Instituição Bancária</label>
@@ -4779,7 +4779,7 @@
             </div>
 
             <div class="flex flex-col sm:flex-row items-center gap-3">
-              <input type="text" id="ajuda-link-agenda-input" readonly value="https://techopro.vercel.app/agendar/leticia-hermann-vip" class="input-box w-full text-xs font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-white dark:bg-slate-900 select-all">
+              <input type="text" id="ajuda-link-agenda-input" readonly value="https://techopro.vercel.app/agendar/meu-estudio-vip" class="input-box w-full text-xs font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-white dark:bg-slate-900 select-all">
               <button onclick="copiarLinkAgendaOnline()" class="btn-primary w-full sm:w-auto px-4 py-2.5 text-xs flex items-center justify-center gap-2 whitespace-nowrap">
                 <i data-lucide="copy" class="w-4 h-4"></i>
                 <span>Copiar Link</span>
@@ -5476,7 +5476,7 @@
       <div class="space-y-3 text-xs">
         <div>
           <label class="block font-bold text-muted mb-1">Nome da Sala / Bancada *</label>
-          <input type="text" id="sal-nome" placeholder="Ex: Estação 01 - Letícia Hermann, Cabine VIP" class="input-box w-full p-2.5 rounded-xl font-bold">
+          <input type="text" id="sal-nome" placeholder="Ex: Estação 01 - Cabine VIP" class="input-box w-full p-2.5 rounded-xl font-bold">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -6842,7 +6842,7 @@
           'Carga horária total de 16 horas divididas em 2 dias intensivos com aulas práticas',
           'Apostila técnica completa, kit inicial para treinamento e certificado de conclusão emitido',
           'Política de cancelamento ou reagendamento com aviso prévio mínimo de 7 dias úteis',
-          'Suporte vitalício para esclarecimento de dúvidas diretamente com a Master Letícia Hermann'
+          'Suporte vitalício para esclarecimento de dúvidas diretamente com a Master Nossa Equipe'
         ]
       }
     ];
@@ -6855,7 +6855,7 @@
     ];
 
     const DEFAULT_COMO_CONHECEU = [
-      { id: 'cc_1', nome: 'Instagram (@leticiahermann.nails)', categoria: 'Redes Sociais', clientes: 68, faturamento: 11250, status: 'ATIVO' },
+      { id: 'cc_1', nome: 'Instagram (@meuestudio.oficial)', categoria: 'Redes Sociais', clientes: 68, faturamento: 11250, status: 'ATIVO' },
       { id: 'cc_2', nome: 'Indicação de Amiga / Cliente', categoria: 'Indicação', clientes: 42, faturamento: 8400, status: 'ATIVO' },
       { id: 'cc_3', nome: 'Google / Pesquisa Local', categoria: 'Busca Orgânica', clientes: 19, faturamento: 3100, status: 'ATIVO' },
       { id: 'cc_4', nome: 'Passando em Frente ao Espaço', categoria: 'Ponto Físico', clientes: 12, faturamento: 1950, status: 'ATIVO' },
@@ -6908,7 +6908,7 @@
     ];
 
     const DEFAULT_SALAS = [
-      { id: 'sal_1', nome: 'Estação Master 01 - Letícia Hermann', tipo: 'CABINE_VIP', capacidade: 1, status: 'DISPONIVEL', equipamentos: 'Cabine LED Sun X, Micromotor Marathon, Coletor 80W, Ring Light', obs: 'Bancada principal de atendimento VIP' },
+      { id: 'sal_1', nome: 'Estação Master 01', tipo: 'CABINE_VIP', capacidade: 1, status: 'DISPONIVEL', equipamentos: 'Cabine LED Sun X, Micromotor Marathon, Coletor 80W, Ring Light', obs: 'Bancada principal de atendimento VIP' },
       { id: 'sal_2', nome: 'Estação 02 - Manicure / Designer Assistente', tipo: 'BANCADA', capacidade: 1, status: 'DISPONIVEL', equipamentos: 'Cabine LED Sun X, Micromotor Champion 3, Luminária Articulada', obs: 'Bancada de atendimento simultâneo' },
       { id: 'sal_3', nome: 'Espaço Spa dos Pés & Podologia Estética', tipo: 'POLTRONA_SPA', capacidade: 1, status: 'DISPONIVEL', equipamentos: 'Poltrona Reclinável Elétrica, Bacia de Hidromassagem, Carrinho Auxiliar', obs: 'Cabine reservada para relaxamento' },
       { id: 'sal_4', nome: 'Sala de Cursos VIP & Alunas', tipo: 'SALA_CURSOS', capacidade: 4, status: 'DISPONIVEL', equipamentos: '2 Bancadas Duplas com 4 Cabines, Projetor, Quadro Branco', obs: 'Espaço exclusivo para alunas do curso de formação' }
@@ -6936,7 +6936,7 @@
         cor: '#8b5cf6',
         status: 'ATIVO',
         descricao: 'Acesso 100% irrestrito a todos os módulos, fechamento de caixa, DRE e configurações.',
-        usuarios: ['Letícia Hermann (Master)'],
+        usuarios: ['Profissional Master'],
         perms: {
           agendaVer: true, agendaCriar: true, agendaBloquear: true,
           clientesVer: true, clientesEditar: true, clientesAnamnese: true,
@@ -7001,14 +7001,14 @@
     
     // ============== DEFAULTS: CONFIGURAÇÕES EXTRAS ==============
     const DEFAULT_EMPRESA_DATA = {
-      fantasia: 'Letícia Hermann - Unhas e Cursos',
-      razao: 'Letícia Hermann Studio de Beleza Ltda',
+      fantasia: 'Nossa Equipe - Unhas e Cursos',
+      razao: 'Minha Empresa & Estúdio Ltda',
       cnpj: '38.912.345/0001-89',
       ie: 'Isento / Optante Simples Nacional',
       telefone: '(54) 99123-4567',
-      email: 'contato@leticiahermann.com.br',
+      email: 'contato@meuestudio.com.br',
       endereco: 'Av. Central, 1250, Sala 304 - Centro, Bento Gonçalves/RS',
-      instagram: '@leticiahermann.nails',
+      instagram: '@meuestudio.oficial',
       slogan: 'Master Nail Designer • Alongamentos em Gel & Cursos VIP'
     };
     const DEFAULT_FORNECEDORES=[
@@ -7069,11 +7069,11 @@
       {id:'s6',name:'Nail Art / Francesinha Reversa',price:35,duration:30}
     ];
     const DEFAULT_MSGS=[
-      {id:'m1',titulo:'Remarketing - Unhas',cat:'Remarketing',texto:'Olá {nome}! ✨ Suas unhas estão lindas? Já faz um tempinho desde a última manutenção! Vamos agendar? 💅 Letícia Hermann Manicure'},
-      {id:'m2',titulo:'Lembrete - Dia Anterior',cat:'Lembrete de Horário',texto:'Oi {nome}! 💕 Passando para lembrar do seu horário amanhã com a Letícia Hermann! Te esperamos! 🌸'},
-      {id:'m3',titulo:'Lembrete - No Dia',cat:'Lembrete de Horário',texto:'Bom dia {nome}! ☀️ Seu horário é HOJE! Estou te aguardando! 💅✨ Letícia Hermann'},
-      {id:'m4',titulo:'Promoção Semanal',cat:'Promoção',texto:'Meninas! 🎉 Promoção especial esta semana! Esmaltação em Gel por apenas R$ 65,00! Corra e agende! 💅 Letícia Hermann'},
-      {id:'m5',titulo:'Aniversário',cat:'Aniversário',texto:'Feliz Aniversário {nome}! 🎂🎉 Presente especial: 15% de desconto no seu próximo procedimento! 💕 Letícia Hermann'},
+      {id:'m1',titulo:'Remarketing - Unhas',cat:'Remarketing',texto:'Olá {nome}! ✨ Suas unhas estão lindas? Já faz um tempinho desde a última manutenção! Vamos agendar? 💅 Nossa Equipe'},
+      {id:'m2',titulo:'Lembrete - Dia Anterior',cat:'Lembrete de Horário',texto:'Oi {nome}! 💕 Passando para lembrar do seu horário amanhã conosco! Te esperamos! 🌸'},
+      {id:'m3',titulo:'Lembrete - No Dia',cat:'Lembrete de Horário',texto:'Bom dia {nome}! ☀️ Seu horário é HOJE! Estamos te aguardando! ✨ Nossa Equipe'},
+      {id:'m4',titulo:'Promoção Semanal',cat:'Promoção',texto:'Meninas! 🎉 Promoção especial esta semana! Corra e garanta o seu horário! ✨ Nossa Equipe'},
+      {id:'m5',titulo:'Aniversário',cat:'Aniversário',texto:'Feliz Aniversário {nome}! 🎂🎉 Presente especial: 15% de desconto no seu próximo procedimento! 💕 Nossa Equipe'},
       {id:'m6',titulo:'Pós-Atendimento',cat:'Pós-atendimento',texto:'Oi {nome}! Espero que esteja amando suas unhas novas! 💅✨ Se precisar de algo, me chame! Obrigada pela confiança! 💕'}
     ];
     const DEFAULT_CURSOS=[
@@ -7089,7 +7089,7 @@
       theme:localStorage.getItem('zanettia_theme')||'light',
       services:JSON.parse(localStorage.getItem('zp_services'))||DEFAULT_SERVICES,
       professionals:JSON.parse(localStorage.getItem('zp_professionals'))||[
-        {id:'prof_leticia',name:'Letícia Hermann',role:'Proprietária & Master Nail Designer',phone:'(54) 99123-4567',comissao:100,color:'#10b981',active:true,obs:'Fundadora e Master Nail Designer'}
+        {id:'prof_leticia',name:'Profissional Master',role:'Proprietária & Especialista',phone:'(00) 00000-0000',comissao:100,color:'#10b981',active:true,obs:'Conta Master'}
       ],
       selectedProfFilter:'ALL',
       currentConsultaSubTab:'comissao',
@@ -7147,7 +7147,7 @@
       cursos:JSON.parse(localStorage.getItem('zp_cursos'))||DEFAULT_CURSOS,
       alunas:JSON.parse(localStorage.getItem('zp_alunas'))||[],
       messages:JSON.parse(localStorage.getItem('zp_messages'))||DEFAULT_MSGS,
-      config:JSON.parse(localStorage.getItem('zp_config'))||{nome:'Letícia Hermann Manicure',whatsapp:'(54) 99100-0000',endereco:'',instagram:'@leticiahermannunhas',pix:'54991000000',banco:'Nubank',meta:8000,horaAbre:'08:00',horaFecha:'19:00',intervalo:30}
+      config:JSON.parse(localStorage.getItem('zp_config'))||{nome:'Seu Estúdio',whatsapp:'(00) 00000-0000',endereco:'',instagram:'@meuestudio.oficial',pix:'contato@meuestudio.com.br',banco:'Banco Principal',meta:8000,horaAbre:'08:00',horaFecha:'19:00',intervalo:30}
     };
 
     // ============== SUPABASE INTEGRATION ==============
@@ -8597,13 +8597,13 @@
 
       body.innerHTML = `
         <div class="text-center pb-3 border-b border-slate-200 dark:border-slate-700">
-          <h2 class="text-sm font-black font-mono tracking-wide text-title uppercase">Techo PRO • Letícia Hermann Unhas & Cursos</h2>
+          <h2 class="text-sm font-black font-mono tracking-wide text-title uppercase">Techo PRO • Gestão & Ficha de Anamnese</h2>
           <span class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">${tipoHeader}</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-[11px] p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
           <div><strong class="text-title">Cliente / Aluna:</strong> ___________________________</div>
           <div><strong class="text-title">Data:</strong> ${todayBR}</div>
-          <div><strong class="text-title">Profissional Responsável:</strong> Letícia Hermann</div>
+          <div><strong class="text-title">Profissional Responsável:</strong> ${(state.professionals && state.professionals[0]?.name) || "Profissional Master"}</div>
           <div><strong class="text-title">Status:</strong> ${m.status}</div>
         </div>
         <div class="space-y-2 pt-1">
@@ -8624,7 +8624,7 @@
           </div>
           <div>
             <div class="border-b border-slate-400 dark:border-slate-600 mb-1 w-48 mx-auto"></div>
-            <span class="text-muted">Letícia Hermann (Master Designer)</span>
+            <span class="text-muted">${(state.professionals && state.professionals[0]?.name) || "Profissional Master"}</span>
           </div>
         </div>
       `;
@@ -9594,10 +9594,10 @@
       if(!tbody) return;
 
       const logs = [
-        { data: todayBR + ' 09:12', acao: 'Agendamento Confirmado', cliente: 'Camila Zanetti', serv: 'Manutenção Fibra de Vidro', prof: 'Letícia Hermann', valor: 110, badge: 'text-emerald-500 bg-emerald-500/20' },
-        { data: todayBR + ' 08:30', acao: 'Horário Remarcado', cliente: 'Ana Paula Silveira', serv: 'Esmaltação em Gel', prof: 'Letícia Hermann', valor: 75, badge: 'text-amber-500 bg-amber-500/20' },
-        { data: '08/09/2026 17:45', acao: 'Atendimento Concluído', cliente: 'Juliana Mendes', serv: 'Alongamento em Gel Moldado', prof: 'Letícia Hermann', valor: 180, badge: 'text-purple-500 bg-purple-500/20' },
-        { data: '07/09/2026 14:10', acao: 'Agendamento Criado', cliente: 'Camila Zanetti', serv: 'Spa dos Pés', prof: 'Letícia Hermann', valor: 80, badge: 'text-blue-500 bg-blue-500/20' }
+        { data: todayBR + ' 09:12', acao: 'Agendamento Confirmado', cliente: 'Camila Zanetti', serv: 'Manutenção Fibra de Vidro', prof: 'Profissional Master', valor: 110, badge: 'text-emerald-500 bg-emerald-500/20' },
+        { data: todayBR + ' 08:30', acao: 'Horário Remarcado', cliente: 'Ana Paula Silveira', serv: 'Esmaltação em Gel', prof: 'Profissional Master', valor: 75, badge: 'text-amber-500 bg-amber-500/20' },
+        { data: '08/09/2026 17:45', acao: 'Atendimento Concluído', cliente: 'Juliana Mendes', serv: 'Alongamento em Gel Moldado', prof: 'Profissional Master', valor: 180, badge: 'text-purple-500 bg-purple-500/20' },
+        { data: '07/09/2026 14:10', acao: 'Agendamento Criado', cliente: 'Camila Zanetti', serv: 'Spa dos Pés', prof: 'Profissional Master', valor: 80, badge: 'text-blue-500 bg-blue-500/20' }
       ];
 
       tbody.innerHTML = logs.map(l => `
@@ -10149,7 +10149,7 @@
       const list = state.gruposAcesso || [];
 
       document.getElementById('perm-kpi-total').textContent = list.length;
-      document.getElementById('perm-kpi-master').textContent = 'Letícia Hermann';
+      document.getElementById('perm-kpi-master').textContent = (state.professionals && state.professionals[0]?.name) || 'Profissional Master';
       document.getElementById('perm-kpi-operacionais').textContent = list.filter(x => x.nivel !== 'ADMIN').length;
       document.getElementById('perm-kpi-seguranca').textContent = 'Ativo (100%)';
 
@@ -10372,6 +10372,28 @@
     // ============== CONFIGURAÇÕES: 9 SUB-MÓDULOS ==============
 
     // 1. DADOS DA EMPRESA
+    
+    function updateHeaderUserProfile(){
+      const emp = state.empresaData || DEFAULT_EMPRESA_DATA || {};
+      const nomeFantasia = emp.fantasia || (state.config && state.config.nome) || 'Seu Estúdio';
+      const slogan = emp.slogan || 'Gestão & Agenda';
+
+      const elName = document.getElementById('header-user-name');
+      if(elName) {
+        elName.innerHTML = `${nomeFantasia} <span class="led-dot text-emerald-500"></span>`;
+      }
+      const elRole = document.getElementById('header-user-role');
+      if(elRole) {
+        elRole.innerText = slogan.length > 24 ? slogan.slice(0, 21) + '...' : slogan;
+      }
+      const elAvatar = document.getElementById('header-user-avatar');
+      if(elAvatar) {
+        const parts = nomeFantasia.trim().split(/\s+/);
+        const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : nomeFantasia.slice(0, 2).toUpperCase();
+        elAvatar.innerText = initials || 'TP';
+      }
+    }
+
     function renderConfigDadosEmpresa(){
       const d = state.empresaData || DEFAULT_EMPRESA_DATA;
       if(document.getElementById('cfg-emp-fantasia')) document.getElementById('cfg-emp-fantasia').value = d.fantasia || '';
@@ -10383,6 +10405,7 @@
       if(document.getElementById('cfg-emp-endereco')) document.getElementById('cfg-emp-endereco').value = d.endereco || '';
       if(document.getElementById('cfg-emp-instagram')) document.getElementById('cfg-emp-instagram').value = d.instagram || '';
       if(document.getElementById('cfg-emp-slogan')) document.getElementById('cfg-emp-slogan').value = d.slogan || '';
+      updateHeaderUserProfile();
       lucide.createIcons();
     }
 
@@ -10399,6 +10422,7 @@
         slogan: document.getElementById('cfg-emp-slogan').value.trim()
       };
       persistState();
+      updateHeaderUserProfile();
       alert('Dados da empresa salvos com sucesso! ✅');
     }
 
@@ -10414,7 +10438,7 @@
       if(document.getElementById('cfg-geral-hora-fecha')) document.getElementById('cfg-geral-hora-fecha').value = c.horaFecha || '19:00';
       if(document.getElementById('cfg-geral-intervalo')) document.getElementById('cfg-geral-intervalo').value = c.intervalo || '30';
       if(document.getElementById('cfg-geral-meta')) document.getElementById('cfg-geral-meta').value = c.meta || 8000;
-      if(document.getElementById('cfg-geral-pix')) document.getElementById('cfg-geral-pix').value = c.pix || 'leticiahermann.unhas@gmail.com';
+      if(document.getElementById('cfg-geral-pix')) document.getElementById('cfg-geral-pix').value = c.pix || 'contato@meuestudio.com.br';
       if(document.getElementById('cfg-geral-banco')) document.getElementById('cfg-geral-banco').value = c.banco || 'Banco Inter / Nubank PJ';
       lucide.createIcons();
     }
@@ -11057,7 +11081,7 @@
               <div class="flex-1 py-2.5 px-4 text-xs font-bold text-title flex items-center justify-between">
                 <span class="flex items-center gap-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm"></span>
-                  <span>Letícia Hermann — Atendimentos & Cursos</span>
+                  <span>Profissional Master — Atendimentos</span>
                 </span>
                 <span class="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-lg border border-emerald-500/20">
                   ${dayApps.length} agendamento(s)
@@ -11382,7 +11406,7 @@
       if(apps.length===0){tbody.innerHTML='<tr><td colspan="6" class="py-8 text-center text-muted">Nenhum agendamento futuro.</td></tr>';return;}
       tbody.innerHTML=apps.map(a=>{
         const prof=state.professionals?.find(p => p.id === (a.profId || 'prof_leticia')) || state.professionals?.[0];
-        const profName = prof ? prof.name.split(' ')[0] : 'Letícia';
+        const profName = prof ? prof.name.split(' ')[0] : 'Master';
         return `
         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800">
           <td class="py-2.5 text-muted">${fmtDate(a.date)} ${a.time}</td>
@@ -11859,7 +11883,7 @@
     function zapPrevisaoRetorno(phone, name, dias){
       const cleanPhone = (phone || '').replace(/\D/g, '');
       if(!cleanPhone) return alert('Cliente não possui telefone cadastrado.');
-      const msg = encodeURIComponent(`Olá ${name}! Tudo bem? ✨ Passando para lembrar que já faz ${dias} dias desde o seu último procedimento de unhas no estúdio da Letícia Hermann. Que tal já garantirmos o seu horário de manutenção para manter suas unhas perfeitas? 🥰💅`);
+      const msg = encodeURIComponent(`Olá ${name}! Tudo bem? ✨ Passando para lembrar que já faz ${dias} dias desde o seu último procedimento de unhas no nosso estúdio. Que tal já garantirmos o seu horário de manutenção para manter suas unhas perfeitas? 🥰💅`);
       window.open(`https://wa.me/55${cleanPhone}?text=${msg}`, '_blank');
     }
 
@@ -11923,7 +11947,7 @@
     }
     function deleteClient(id){if(confirm('Excluir esta cliente?')){state.clients=state.clients.filter(x=>x.id!==id);persistState();renderClients();}}
     function calcReturnDate(dateStr,days){const d=new Date(dateStr+'T00:00:00');d.setDate(d.getDate()+days);return d.toISOString().split('T')[0];}
-    function zapReminder(phone,name){window.open(`https://api.whatsapp.com/send?phone=55${phone.replace(/\D/g,'')}&text=${encodeURIComponent(`Olá ${name}! ✨ Passando para confirmar seu horário com a Letícia Hermann Manicure. Podemos confirmar? 💅`)}`,'_blank');}
+    function zapReminder(phone,name){window.open(`https://api.whatsapp.com/send?phone=55${phone.replace(/\D/g,'')}&text=${encodeURIComponent(`Olá ${name}! ✨ Passando para confirmar seu horário no nosso estúdio. Podemos confirmar? 💅`)}`,'_blank');}
 
     // ============== PDV / CAIXA ==============
     function renderPDV(){
@@ -13773,7 +13797,7 @@
               date: todayStr,
               type: 'RECEITA',
               category: 'Atendimentos',
-              desc: 'Extrato: Recebimento PIX QR Code Letícia',
+              desc: 'Extrato: Recebimento PIX QR Code',
               method: 'PIX',
               value: 160.00
             });
@@ -14719,6 +14743,19 @@
         // 2. Zera clientes
         state.clients = [];
 
+        // Zera dados do estúdio para padrão neutro
+        state.empresaData = JSON.parse(JSON.stringify(DEFAULT_EMPRESA_DATA));
+        if (state.config) {
+          state.config.nome = 'Seu Estúdio';
+          state.config.whatsapp = '(00) 00000-0000';
+          state.config.instagram = '@meuestudio.oficial';
+        }
+        if (state.professionals && state.professionals.length > 0) {
+          state.professionals[0].name = 'Profissional Master';
+          state.professionals[0].role = 'Proprietária & Especialista';
+          state.professionals[0].phone = '(00) 00000-0000';
+        }
+
         // 3. Zera lançamentos financeiros (receitas, despesas, extrato)
         state.financial = [];
 
@@ -14774,6 +14811,9 @@
         if (typeof renderMeusCaixas === 'function') renderMeusCaixas();
         if (typeof renderDRE === 'function') renderDRE();
         if (typeof renderCursos === 'function') renderCursos();
+        if (typeof renderConfigDadosEmpresa === 'function') renderConfigDadosEmpresa();
+        if (typeof renderProfessionals === 'function') renderProfessionals();
+        updateHeaderUserProfile();
 
         const badgeAgenda = document.getElementById('badge-agenda-count');
         if (badgeAgenda) badgeAgenda.innerText = '0 hoje';
@@ -14800,6 +14840,17 @@
         // Limpa tudo da Opção 1
         state.appointments = [];
         state.clients = [];
+        state.empresaData = JSON.parse(JSON.stringify(DEFAULT_EMPRESA_DATA));
+        if (state.config) {
+          state.config.nome = 'Seu Estúdio';
+          state.config.whatsapp = '(00) 00000-0000';
+          state.config.instagram = '@meuestudio.oficial';
+        }
+        if (state.professionals && state.professionals.length > 0) {
+          state.professionals[0].name = 'Profissional Master';
+          state.professionals[0].role = 'Proprietária & Especialista';
+          state.professionals[0].phone = '(00) 00000-0000';
+        }
         state.financial = [];
         state.caixa = {
           isOpen: true,
@@ -15341,7 +15392,7 @@
           <Cnpj>12.345.678/0001-90</Cnpj>
           <InscricaoMunicipal>${state.nfse.config.inscricaoMunicipal || '987654-3'}</InscricaoMunicipal>
         </IdentificacaoPrestador>
-        <RazaoSocial>LETICIA HERMANN STUDIO VIP DE BELEZA LTDA</RazaoSocial>
+        <RazaoSocial>${(state.empresaData && state.empresaData.razao) || 'MINHA EMPRESA LTDA'}</RazaoSocial>
       </PrestadorServico>
       <TomadorServico>
         <IdentificacaoTomador>
@@ -15392,7 +15443,7 @@
           <!-- Dados do Prestador -->
           <div class="border border-slate-900 p-3 rounded space-y-1">
             <span class="font-bold uppercase text-[10px] text-slate-500 block">PRESTADOR DE SERVIÇOS</span>
-            <p class="font-black text-sm">LETICIA HERMANN STUDIO VIP DE BELEZA LTDA</p>
+            <p class="font-black text-sm">${(state.empresaData && state.empresaData.razao) || 'MINHA EMPRESA LTDA'}</p>
             <p class="text-[11px] font-mono">CNPJ: 12.345.678/0001-90 • Inscrição Municipal: ${state.nfse.config.inscricaoMunicipal || '987654-3'}</p>
             <p class="text-[11px]">Av. Principal dos Profissionais, 1000 • Sala 04 • Centro</p>
             <p class="text-[10px] text-slate-600 font-semibold">Regime: ${state.nfse.config.regimeTributario || 'Simples Nacional'} • Natureza: Tributação no Município</p>
@@ -15653,7 +15704,7 @@
     function renderAjudaAgendaOnline(){
       const linkEl = document.getElementById('ajuda-link-agenda-input');
       if (linkEl) {
-        linkEl.value = 'https://techopro.vercel.app/agendar/leticia-hermann-vip';
+        linkEl.value = 'https://techopro.vercel.app/agendar/meu-estudio-vip';
       }
       if (window.lucide) lucide.createIcons();
     }
