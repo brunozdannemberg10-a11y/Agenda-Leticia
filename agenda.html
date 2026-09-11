@@ -4,6 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Techo PRO • Sistema de Gestão & Agenda Inteligente</title>
+  <script>
+    (function(){
+      try {
+        var saved = localStorage.getItem('zp_layout_config');
+        if (saved) {
+          var cfg = JSON.parse(saved);
+          if (cfg.preset) document.documentElement.setAttribute('data-theme', cfg.preset);
+          if (cfg.primary) {
+            document.documentElement.style.setProperty('--primary-color', cfg.primary);
+            document.documentElement.style.setProperty('--primary-hover', cfg.hover || cfg.primary);
+            document.documentElement.style.setProperty('--primary-light', cfg.primary + '22');
+            document.documentElement.style.setProperty('--primary-glow', cfg.primary + '45');
+          }
+          if (cfg.radius) document.documentElement.style.setProperty('--app-radius', cfg.radius);
+          if (cfg.fontBase) {
+            var fb = cfg.fontBase.replace(/['"]/g, '');
+            document.documentElement.style.setProperty('--font-base', '"' + fb + '", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif');
+          }
+          if (cfg.fontHeading) {
+            var fh = cfg.fontHeading.replace(/['"]/g, '');
+            document.documentElement.style.setProperty('--font-heading', '"' + fh + '", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif');
+          }
+        }
+      } catch(e){}
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
@@ -16,32 +43,69 @@
     tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['Inter','-apple-system','BlinkMacSystemFont','sans-serif'],mono:['JetBrains Mono','monospace']}}}}
   </script>
   <style>
+
+    /* ==========================================================================
+       SISTEMA DE IDENTIDADE VISUAL & TEMAS GERAIS (TECHO PRO)
+       ========================================================================== */
+
+    /* 1. VARIÁVEIS BASE & DESIGN TOKENS */
     :root {
       --primary-color: #059669;
       --primary-hover: #047857;
       --primary-light: rgba(5, 150, 105, 0.12);
       --primary-glow: rgba(5, 150, 105, 0.35);
-      --font-base: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-heading: 'Inter', sans-serif;
+      --font-base: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --app-radius: 16px;
     }
+
+    /* 2. PROTEÇÃO ABSOLUTA DE MONOSPACE & ÍCONES (PREVINE BUGS DE LAYOUT) */
+    .font-mono, 
+    [class*="font-mono"],
+    .font-mono *,
+    table td.font-mono,
+    table th.font-mono,
+    .timeline-hour,
+    .timeline-hours-col,
+    .timeline-hour-cell,
+    .appt-time,
+    .badge-mono,
+    code, pre, kbd, samp {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+      font-feature-settings: "tnum" 1, "zero" 1;
+    }
+
+    i[data-lucide], svg {
+      font-family: initial !important;
+    }
+
+    /* Aplicação segura das fontes da aplicação */
     body {
-      font-family: var(--font-base) !important;
+      font-family: var(--font-base);
+      letter-spacing: -0.011em;
+    }
+    input, textarea, select, button {
+      font-family: var(--font-base);
     }
     h1, h2, h3, .font-heading {
-      font-family: var(--font-heading) !important;
+      font-family: var(--font-heading);
+      letter-spacing: -0.02em;
     }
+
+    /* Componentes Universais de Destaque */
     .btn-primary, button.btn-primary, a.btn-primary {
-      background-color: var(--primary-color) !important;
+      background: var(--primary-color) !important;
       color: #ffffff !important;
       box-shadow: 0 4px 14px var(--primary-glow) !important;
       border-radius: var(--app-radius) !important;
+      transition: all 0.2s ease !important;
     }
     .btn-primary:hover, button.btn-primary:hover, a.btn-primary:hover {
-      background-color: var(--primary-hover) !important;
+      background: var(--primary-hover) !important;
+      transform: translateY(-1px);
     }
     .sidebar-menu-btn.active {
-      background-color: var(--primary-color) !important;
+      background: var(--primary-color) !important;
       color: #ffffff !important;
       box-shadow: 0 4px 14px var(--primary-glow) !important;
     }
@@ -53,6 +117,522 @@
     }
     .theme-primary-border {
       border-color: var(--primary-color) !important;
+    }
+
+    /* Mini Calendário da Agenda com Tema */
+    .calendar-day-selected {
+      background-color: var(--primary-color) !important;
+      border-color: var(--primary-color) !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 8px var(--primary-glow) !important;
+    }
+    .calendar-day-today {
+      background-color: var(--primary-light) !important;
+      border-color: var(--primary-color) !important;
+      color: var(--primary-color) !important;
+      font-weight: 800 !important;
+    }
+
+    /* ==========================================================================
+       TEMA 1: TECHO EMERALD (PADRÃO MODERN TECH)
+       Cores: Verde Esmeralda (#059669), Slate Tecnológico & Menta
+       ========================================================================== */
+    html[data-theme="emerald"] {
+      --primary-color: #059669;
+      --primary-hover: #047857;
+      --primary-light: rgba(5, 150, 105, 0.12);
+      --primary-glow: rgba(5, 150, 105, 0.35);
+      --font-base: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --app-radius: 16px;
+    }
+
+    /* Emerald no Modo Escuro */
+    html[data-theme="emerald"].dark body {
+      background-color: #0b0f19 !important;
+      color: #f8fafc !important;
+    }
+    html[data-theme="emerald"].dark header {
+      background-color: #111827 !important;
+      border-bottom-color: #1f2937 !important;
+    }
+    html[data-theme="emerald"].dark .app-sidebar-bg {
+      background-color: #0f172a !important;
+      border-right-color: #1e293b !important;
+    }
+    html[data-theme="emerald"].dark .glass-card {
+      background: #1e293b !important;
+      border: 1px solid #334155 !important;
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5) !important;
+    }
+    html[data-theme="emerald"].dark .sidebar-menu-btn.active {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+      box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35) !important;
+      color: #ffffff !important;
+    }
+    html[data-theme="emerald"].dark .sidebar-menu-btn:hover:not(.active) {
+      background-color: rgba(5, 150, 105, 0.12) !important;
+      color: #34d399 !important;
+    }
+    html[data-theme="emerald"].dark .input-box {
+      background-color: #0f172a !important;
+      border-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+
+    /* Emerald no Modo Claro */
+    html[data-theme="emerald"].light body {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    html[data-theme="emerald"].light header {
+      background-color: #ffffff !important;
+      border-bottom-color: #e2e8f0 !important;
+    }
+    html[data-theme="emerald"].light .app-sidebar-bg {
+      background-color: #ffffff !important;
+      border-right-color: #e2e8f0 !important;
+    }
+    html[data-theme="emerald"].light .glass-card {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+    }
+    html[data-theme="emerald"].light .sidebar-menu-btn.active {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+      box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35) !important;
+      color: #ffffff !important;
+    }
+    html[data-theme="emerald"].light .sidebar-menu-btn:hover:not(.active) {
+      background-color: rgba(5, 150, 105, 0.10) !important;
+      color: #065f46 !important;
+    }
+
+    /* Emerald: TRANSFORMAÇÃO COMPLETA DA AGENDA */
+    html[data-theme="emerald"] .timeline-header-box {
+      background-color: rgba(5, 150, 105, 0.06) !important;
+      border-bottom-color: rgba(5, 150, 105, 0.18) !important;
+    }
+    html[data-theme="emerald"] .timeline-indicator-dot {
+      background-color: #059669 !important;
+      box-shadow: 0 0 10px rgba(5, 150, 105, 0.6) !important;
+    }
+    html[data-theme="emerald"] .timeline-count-badge {
+      background-color: rgba(5, 150, 105, 0.12) !important;
+      color: #059669 !important;
+      border-color: rgba(5, 150, 105, 0.30) !important;
+    }
+    html[data-theme="emerald"].dark .timeline-hours-col {
+      background-color: #0f172a !important;
+      border-right-color: #1e293b !important;
+    }
+    html[data-theme="emerald"].dark .timeline-hour-cell {
+      border-bottom-color: #1e293b !important;
+      color: #64748b !important;
+    }
+    html[data-theme="emerald"].light .timeline-hours-col {
+      background-color: #f8fafc !important;
+      border-right-color: #e2e8f0 !important;
+    }
+    html[data-theme="emerald"].light .timeline-hour-cell {
+      border-bottom-color: #f1f5f9 !important;
+      color: #64748b !important;
+    }
+    html[data-theme="emerald"] .timeline-slot-cell:hover {
+      background-color: rgba(5, 150, 105, 0.08) !important;
+    }
+
+    /* Emerald: Cards de Agendamento da Agenda (.appt-block) */
+    html[data-theme="emerald"] .appt-block.status-AGENDADO {
+      background: #e0f2fe !important;
+      border-color: #0284c7 !important;
+      color: #0369a1 !important;
+    }
+    html[data-theme="emerald"].dark .appt-block.status-AGENDADO {
+      background: #0c4a6e !important;
+      border-color: #38bdf8 !important;
+      color: #e0f2fe !important;
+    }
+
+    html[data-theme="emerald"] .appt-block.status-CONFIRMADO {
+      background: #ccfbf1 !important;
+      border-color: #0d9488 !important;
+      color: #0f766e !important;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.20) !important;
+    }
+    html[data-theme="emerald"].dark .appt-block.status-CONFIRMADO {
+      background: #134e4a !important;
+      border-color: #2dd4bf !important;
+      color: #ccfbf1 !important;
+      box-shadow: 0 4px 16px rgba(13, 148, 136, 0.30) !important;
+    }
+
+    html[data-theme="emerald"] .appt-block.status-EM_ATENDIMENTO {
+      background: #f3e8ff !important;
+      border-color: #9333ea !important;
+      color: #7e22ce !important;
+    }
+    html[data-theme="emerald"].dark .appt-block.status-EM_ATENDIMENTO {
+      background: #581c87 !important;
+      border-color: #c084fc !important;
+      color: #f3e8ff !important;
+    }
+
+    html[data-theme="emerald"] .appt-block.status-CONCLUIDO {
+      background: #dcfce7 !important;
+      border-color: #16a34a !important;
+      color: #15803d !important;
+    }
+    html[data-theme="emerald"].dark .appt-block.status-CONCLUIDO {
+      background: #14532d !important;
+      border-color: #4ade80 !important;
+      color: #dcfce7 !important;
+    }
+
+    html[data-theme="emerald"] .appt-block.status-FALTA {
+      background: #fee2e2 !important;
+      border-color: #dc2626 !important;
+      color: #b91c1c !important;
+    }
+    html[data-theme="emerald"].dark .appt-block.status-FALTA {
+      background: #7f1d1d !important;
+      border-color: #f87171 !important;
+      color: #fee2e2 !important;
+    }
+
+    /* ==========================================================================
+       TEMA 2: TITANIUM & BOURBON (PÚBLICO MASCULINO / BARBER / ESTÚDIO)
+       Cores: Âmbar Bourbon Envelhecido (#d97706), Tabaco, Grafite & Bronze
+       ========================================================================== */
+    html[data-theme="bourbon"] {
+      --primary-color: #d97706;
+      --primary-hover: #b45309;
+      --primary-light: rgba(217, 119, 6, 0.15);
+      --primary-glow: rgba(217, 119, 6, 0.40);
+      --font-base: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-heading: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --app-radius: 12px;
+    }
+
+    /* Bourbon no Modo Escuro */
+    html[data-theme="bourbon"].dark body {
+      background-color: #0d0f14 !important;
+      color: #f3f4f6 !important;
+    }
+    html[data-theme="bourbon"].dark header {
+      background-color: #131722 !important;
+      border-bottom-color: #2b261f !important;
+    }
+    html[data-theme="bourbon"].dark .app-sidebar-bg {
+      background-color: #10131c !important;
+      border-right-color: #2b261f !important;
+    }
+    html[data-theme="bourbon"].dark .glass-card {
+      background: #161b26 !important;
+      border: 1px solid #2e2820 !important;
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.65) !important;
+    }
+    html[data-theme="bourbon"].dark .sidebar-menu-btn.active {
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+      box-shadow: 0 4px 18px rgba(217, 119, 6, 0.45) !important;
+      color: #ffffff !important;
+    }
+    html[data-theme="bourbon"].dark .sidebar-menu-btn:hover:not(.active) {
+      background-color: rgba(217, 119, 6, 0.12) !important;
+      color: #fbbf24 !important;
+    }
+    html[data-theme="bourbon"].dark .input-box {
+      background-color: #0f121a !important;
+      border-color: #332d24 !important;
+      color: #f3f4f6 !important;
+    }
+
+    /* Bourbon no Modo Claro */
+    html[data-theme="bourbon"].light body {
+      background-color: #faf7f2 !important;
+      color: #1c1917 !important;
+    }
+    html[data-theme="bourbon"].light header {
+      background-color: #ffffff !important;
+      border-bottom-color: #e7ded4 !important;
+    }
+    html[data-theme="bourbon"].light .app-sidebar-bg {
+      background-color: #f7f3ec !important;
+      border-right-color: #e2d7cb !important;
+    }
+    html[data-theme="bourbon"].light .glass-card {
+      background: #ffffff !important;
+      border: 1px solid #e8dfd4 !important;
+      box-shadow: 0 4px 20px rgba(180, 83, 9, 0.06) !important;
+    }
+    html[data-theme="bourbon"].light .sidebar-menu-btn.active {
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35) !important;
+      color: #ffffff !important;
+    }
+    html[data-theme="bourbon"].light .sidebar-menu-btn:hover:not(.active) {
+      background-color: rgba(217, 119, 6, 0.10) !important;
+      color: #92400e !important;
+    }
+
+    /* Bourbon: TRANSFORMAÇÃO COMPLETA DA AGENDA */
+    html[data-theme="bourbon"] .timeline-header-box {
+      background-color: rgba(217, 119, 6, 0.08) !important;
+      border-bottom-color: rgba(217, 119, 6, 0.20) !important;
+    }
+    html[data-theme="bourbon"] .timeline-indicator-dot {
+      background-color: #d97706 !important;
+      box-shadow: 0 0 10px rgba(217, 119, 6, 0.6) !important;
+    }
+    html[data-theme="bourbon"] .timeline-count-badge {
+      background-color: rgba(217, 119, 6, 0.15) !important;
+      color: #d97706 !important;
+      border-color: rgba(217, 119, 6, 0.35) !important;
+    }
+    html[data-theme="bourbon"].dark .timeline-hours-col {
+      background-color: #10131d !important;
+      border-right-color: #2b261f !important;
+    }
+    html[data-theme="bourbon"].dark .timeline-hour-cell {
+      border-bottom-color: #222634 !important;
+      color: #d97706 !important;
+    }
+    html[data-theme="bourbon"].light .timeline-hours-col {
+      background-color: #f7f3ec !important;
+      border-right-color: #e2d7cb !important;
+    }
+    html[data-theme="bourbon"].light .timeline-hour-cell {
+      border-bottom-color: #eee5da !important;
+      color: #b45309 !important;
+    }
+    html[data-theme="bourbon"] .timeline-slot-cell:hover {
+      background-color: rgba(217, 119, 6, 0.10) !important;
+    }
+
+    /* Bourbon: Cards de Agendamento da Agenda (.appt-block) */
+    html[data-theme="bourbon"] .appt-block.status-AGENDADO {
+      background: #f1f5f9 !important;
+      border-color: #64748b !important;
+      color: #1e293b !important;
+    }
+    html[data-theme="bourbon"].dark .appt-block.status-AGENDADO {
+      background: #1e293b !important;
+      border-color: #64748b !important;
+      color: #f1f5f9 !important;
+    }
+
+    html[data-theme="bourbon"] .appt-block.status-CONFIRMADO {
+      background: #fef3c7 !important;
+      border-color: #d97706 !important;
+      color: #78350f !important;
+      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25) !important;
+    }
+    html[data-theme="bourbon"].dark .appt-block.status-CONFIRMADO {
+      background: #2b1c0b !important;
+      border-color: #d97706 !important;
+      color: #fef3c7 !important;
+      box-shadow: 0 4px 16px rgba(217, 119, 6, 0.35) !important;
+    }
+
+    html[data-theme="bourbon"] .appt-block.status-EM_ATENDIMENTO {
+      background: #ffedd5 !important;
+      border-color: #ea580c !important;
+      color: #7c2d12 !important;
+    }
+    html[data-theme="bourbon"].dark .appt-block.status-EM_ATENDIMENTO {
+      background: #311808 !important;
+      border-color: #ea580c !important;
+      color: #ffedd5 !important;
+    }
+
+    html[data-theme="bourbon"] .appt-block.status-CONCLUIDO {
+      background: #d1fae5 !important;
+      border-color: #059669 !important;
+      color: #064e3b !important;
+    }
+    html[data-theme="bourbon"].dark .appt-block.status-CONCLUIDO {
+      background: #0b2419 !important;
+      border-color: #059669 !important;
+      color: #d1fae5 !important;
+    }
+
+    html[data-theme="bourbon"] .appt-block.status-FALTA {
+      background: #fee2e2 !important;
+      border-color: #dc2626 !important;
+      color: #7f1d1d !important;
+    }
+    html[data-theme="bourbon"].dark .appt-block.status-FALTA {
+      background: #380b0b !important;
+      border-color: #dc2626 !important;
+      color: #fee2e2 !important;
+    }
+
+
+    /* ==========================================================================
+       TEMA 3: ROSE GOLD & VELVET (PÚBLICO FEMININO / BEAUTY & GLAMOUR)
+       Cores: Framboesa / Rose Gold Glamour (#e11d48), Blush, Nude & Champagne
+       ========================================================================== */
+    html[data-theme="rosegold"] {
+      --primary-color: #e11d48;
+      --primary-hover: #be123c;
+      --primary-light: rgba(225, 29, 72, 0.14);
+      --primary-glow: rgba(225, 29, 72, 0.40);
+      --font-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --app-radius: 20px;
+    }
+
+    /* Rose Gold no Modo Escuro */
+    html[data-theme="rosegold"].dark body {
+      background-color: #0e0a12 !important;
+      color: #fdf2f8 !important;
+    }
+    html[data-theme="rosegold"].dark header {
+      background-color: #170f1c !important;
+      border-bottom-color: #351a34 !important;
+    }
+    html[data-theme="rosegold"].dark .app-sidebar-bg {
+      background-color: #130c18 !important;
+      border-right-color: #351a34 !important;
+    }
+    html[data-theme="rosegold"].dark .glass-card {
+      background: #1b1222 !important;
+      border: 1px solid #381b36 !important;
+      box-shadow: 0 10px 30px -10px rgba(225, 29, 72, 0.20) !important;
+    }
+    html[data-theme="rosegold"].dark .sidebar-menu-btn.active {
+      background: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%) !important;
+      box-shadow: 0 4px 18px rgba(225, 29, 72, 0.50) !important;
+      color: #ffffff !important;
+    }
+    html[data-theme="rosegold"].dark .sidebar-menu-btn:hover:not(.active) {
+      background-color: rgba(225, 29, 72, 0.14) !important;
+      color: #fb7185 !important;
+    }
+    html[data-theme="rosegold"].dark .input-box {
+      background-color: #110915 !important;
+      border-color: #3d1b39 !important;
+      color: #fdf2f8 !important;
+    }
+
+    /* Rose Gold no Modo Claro */
+    html[data-theme="rosegold"].light body {
+      background-color: #fff8fa !important;
+      color: #1e1017 !important;
+    }
+    html[data-theme="rosegold"].light header {
+      background-color: #ffffff !important;
+      border-bottom-color: #fce7f3 !important;
+    }
+    html[data-theme="rosegold"].light .app-sidebar-bg {
+      background-color: #fdf2f7 !important;
+      border-right-color: #fbcfe8 !important;
+    }
+    html[data-theme="rosegold"].light .glass-card {
+      background: #ffffff !important;
+      border: 1px solid #fce7f3 !important;
+      box-shadow: 0 4px 20px rgba(225, 29, 72, 0.07) !important;
+    }
+    html[data-theme="rosegold"].light .sidebar-menu-btn.active {
+      background: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%) !important;
+      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35) !important;
+      color: #ffffff !important;
+    }
+    html[data-theme="rosegold"].light .sidebar-menu-btn:hover:not(.active) {
+      background-color: rgba(225, 29, 72, 0.10) !important;
+      color: #be123c !important;
+    }
+
+    /* Rose Gold: TRANSFORMAÇÃO COMPLETA DA AGENDA */
+    html[data-theme="rosegold"] .timeline-header-box {
+      background-color: rgba(225, 29, 72, 0.08) !important;
+      border-bottom-color: rgba(225, 29, 72, 0.20) !important;
+    }
+    html[data-theme="rosegold"] .timeline-indicator-dot {
+      background-color: #f43f5e !important;
+      box-shadow: 0 0 10px rgba(244, 63, 94, 0.7) !important;
+    }
+    html[data-theme="rosegold"] .timeline-count-badge {
+      background-color: rgba(225, 29, 72, 0.15) !important;
+      color: #e11d48 !important;
+      border-color: rgba(225, 29, 72, 0.35) !important;
+    }
+    html[data-theme="rosegold"].dark .timeline-hours-col {
+      background-color: #140d18 !important;
+      border-right-color: #351a34 !important;
+    }
+    html[data-theme="rosegold"].dark .timeline-hour-cell {
+      border-bottom-color: #27142b !important;
+      color: #fb7185 !important;
+    }
+    html[data-theme="rosegold"].light .timeline-hours-col {
+      background-color: #fdf2f7 !important;
+      border-right-color: #fce7f3 !important;
+    }
+    html[data-theme="rosegold"].light .timeline-hour-cell {
+      border-bottom-color: #fdf0f5 !important;
+      color: #e11d48 !important;
+    }
+    html[data-theme="rosegold"] .timeline-slot-cell:hover {
+      background-color: rgba(225, 29, 72, 0.08) !important;
+    }
+
+    /* Rose Gold: Cards de Agendamento da Agenda (.appt-block) */
+    html[data-theme="rosegold"] .appt-block.status-AGENDADO {
+      background: #f3e8ff !important;
+      border-color: #a855f7 !important;
+      color: #6b21a8 !important;
+    }
+    html[data-theme="rosegold"].dark .appt-block.status-AGENDADO {
+      background: #281238 !important;
+      border-color: #c084fc !important;
+      color: #f3e8ff !important;
+    }
+
+    html[data-theme="rosegold"] .appt-block.status-CONFIRMADO {
+      background: #ffe4e6 !important;
+      border-color: #e11d48 !important;
+      color: #9f1239 !important;
+      box-shadow: 0 4px 16px rgba(225, 29, 72, 0.25) !important;
+    }
+    html[data-theme="rosegold"].dark .appt-block.status-CONFIRMADO {
+      background: #310d1c !important;
+      border-color: #f43f5e !important;
+      color: #ffe4e6 !important;
+      box-shadow: 0 4px 18px rgba(244, 63, 94, 0.35) !important;
+    }
+
+    html[data-theme="rosegold"] .appt-block.status-EM_ATENDIMENTO {
+      background: #fff1f2 !important;
+      border-color: #fb7185 !important;
+      color: #881337 !important;
+    }
+    html[data-theme="rosegold"].dark .appt-block.status-EM_ATENDIMENTO {
+      background: #361118 !important;
+      border-color: #fb7185 !important;
+      color: #fff1f2 !important;
+    }
+
+    html[data-theme="rosegold"] .appt-block.status-CONCLUIDO {
+      background: #ecfdf5 !important;
+      border-color: #10b981 !important;
+      color: #065f46 !important;
+    }
+    html[data-theme="rosegold"].dark .appt-block.status-CONCLUIDO {
+      background: #08241b !important;
+      border-color: #34d399 !important;
+      color: #ecfdf5 !important;
+    }
+
+    html[data-theme="rosegold"] .appt-block.status-FALTA {
+      background: #ffe4e6 !important;
+      border-color: #e11d48 !important;
+      color: #881337 !important;
+    }
+    html[data-theme="rosegold"].dark .appt-block.status-FALTA {
+      background: #380816 !important;
+      border-color: #f43f5e !important;
+      color: #ffe4e6 !important;
     }
 
     *{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
@@ -603,7 +1183,7 @@
                 <input type="text" id="quick-appt-obs" placeholder="Observação..." class="input-box w-full border rounded-xl px-2.5 py-1.5 text-xs outline-none">
 
                 <!-- Botão Salvar Agendamento -->
-                <button onclick="saveQuickAppointment()" class="touch-btn w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-md uppercase tracking-wider">
+                <button onclick="saveQuickAppointment()" class="touch-btn w-full py-2.5 btn-primary text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-md uppercase tracking-wider">
                   <i data-lucide="check" class="w-4 h-4"></i>
                   <span>SALVAR AGENDAMENTO</span>
                 </button>
@@ -7559,19 +8139,31 @@
       console.warn('Could not read zp_layout_config:', e);
     }
 
-    function applyCustomLayoutTheme(cfg) {
+        function applyCustomLayoutTheme(cfg) {
       const c = cfg || currentLayoutConfig;
       const root = document.documentElement;
-      if (!root || !root.style) return;
+      if (!root) return;
+
+      const themeKey = c.preset || 'emerald';
+      root.setAttribute('data-theme', themeKey);
 
       if (typeof root.style.setProperty === 'function') {
         root.style.setProperty('--primary-color', c.primary);
         root.style.setProperty('--primary-hover', c.hover || c.primary);
-        root.style.setProperty('--primary-light', `${c.primary}20`);
-        root.style.setProperty('--primary-glow', `${c.primary}40`);
-        root.style.setProperty('--font-base', `'${c.fontBase}', -apple-system, sans-serif`);
-        root.style.setProperty('--font-heading', `'${c.fontHeading || c.fontBase}', sans-serif`);
+        root.style.setProperty('--primary-light', `${c.primary}22`);
+        root.style.setProperty('--primary-glow', `${c.primary}45`);
         root.style.setProperty('--app-radius', c.radius || '16px');
+
+        const baseFont = (c.fontBase || 'Inter').replace(/['"]/g, '');
+        const headingFont = (c.fontHeading || c.fontBase || 'Inter').replace(/['"]/g, '');
+
+        root.style.setProperty('--font-base', `"${baseFont}", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`);
+        root.style.setProperty('--font-heading', `"${headingFont}", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`);
+      }
+
+      // Re-render active agenda or calendar if displayed
+      if (typeof renderAgenda === 'function' && state && state.currentTab === 'agenda') {
+        try { renderAgenda(); } catch(e){}
       }
 
       updateLivePreview();
@@ -7605,8 +8197,14 @@
 
     function updateThemeFont(fontName) {
       currentLayoutConfig.preset = 'custom';
-      currentLayoutConfig.fontBase = fontName;
-      currentLayoutConfig.fontHeading = fontName === 'Playfair Display' ? 'Playfair Display' : fontName;
+      if (fontName === 'Playfair Display') {
+        // Playfair Display is an editorial serif font: applied to headings while keeping body text crisp and readable
+        currentLayoutConfig.fontHeading = 'Playfair Display';
+        currentLayoutConfig.fontBase = 'Plus Jakarta Sans';
+      } else {
+        currentLayoutConfig.fontBase = fontName;
+        currentLayoutConfig.fontHeading = fontName;
+      }
       applyCustomLayoutTheme(currentLayoutConfig);
       renderConfigLayout();
     }
@@ -7651,18 +8249,25 @@
       const picker = document.getElementById('theme-color-picker');
       if (picker) picker.value = currentLayoutConfig.primary;
 
-      // Update preset cards active borders
+      // Update preset cards active borders with matching theme colors
+      const themeBorders = {
+        emerald: 'border-emerald-500',
+        bourbon: 'border-amber-500',
+        rosegold: 'border-rose-500'
+      };
+
       ['emerald', 'bourbon', 'rosegold'].forEach(pKey => {
         const card = document.getElementById('card-theme-' + pKey);
         const badge = document.getElementById('badge-active-' + pKey);
         const isCur = currentLayoutConfig.preset === pKey;
+        const bClass = themeBorders[pKey] || 'border-emerald-500';
         if (card) {
+          card.classList.remove('border-2', 'border-emerald-500', 'border-amber-500', 'border-rose-500', 'shadow-md');
           if (isCur) {
-            card.classList.add('border-2', 'border-emerald-500', 'shadow-md');
-            card.classList.remove('border-border');
+            card.classList.add('border-2', bClass, 'shadow-md');
+            card.classList.remove('border-slate-200', 'dark:border-slate-800');
           } else {
-            card.classList.remove('border-2', 'border-emerald-500', 'shadow-md');
-            card.classList.add('border-border');
+            card.classList.add('border-slate-200', 'dark:border-slate-800');
           }
         }
         if (badge) {
@@ -11821,14 +12426,14 @@
         <div class="timeline-container-scroll">
           <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 min-w-[500px] overflow-hidden shadow-xs">
             <!-- Header -->
-            <div class="flex items-center border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
+            <div class="flex items-center border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 timeline-header-box">
               <div class="w-16 py-2.5 text-center font-mono text-[10px] font-bold text-muted border-r border-slate-200 dark:border-slate-700">HORA</div>
               <div class="flex-1 py-2.5 px-4 text-xs font-bold text-title flex items-center justify-between">
                 <span class="flex items-center gap-2">
-                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm timeline-indicator-dot"></span>
                   <span>Profissional Master — Atendimentos</span>
                 </span>
-                <span class="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+                <span class="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-lg border border-emerald-500/20 timeline-count-badge">
                   ${dayApps.length} agendamento(s)
                 </span>
               </div>
@@ -11837,13 +12442,13 @@
             <!-- Body: Left Column Hours + Right Column Schedule -->
             <div class="flex relative">
               <!-- Left: Hours Column -->
-              <div class="w-16 shrink-0 flex flex-col border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 font-mono text-xs">
+              <div class="w-16 shrink-0 flex flex-col border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 font-mono text-xs timeline-hours-col">
       `;
 
       for(let h=START_HOUR; h<END_HOUR; h++){
         const hStr = h.toString().padStart(2,'0') + ':00';
         gridHtml += `
-          <div class="h-[54px] border-b border-slate-200 dark:border-slate-800 flex items-start justify-center pt-2 font-bold text-slate-400 dark:text-slate-500">
+          <div class="h-[54px] border-b border-slate-200 dark:border-slate-800 flex items-start justify-center pt-2 font-bold text-slate-400 dark:text-slate-500 timeline-hour-cell font-mono">
             ${hStr}
           </div>
         `;
@@ -11860,7 +12465,7 @@
       for(let h=START_HOUR; h<END_HOUR; h++){
         const hStr = h.toString().padStart(2,'0') + ':00';
         gridHtml += `
-          <div class="h-[54px] border-b border-slate-100 dark:border-slate-800/80 hover:bg-emerald-50/30 dark:hover:bg-emerald-950/10 cursor-pointer transition-colors" 
+          <div class="h-[54px] border-b border-slate-100 dark:border-slate-800/80 hover:bg-emerald-50/30 dark:hover:bg-emerald-950/10 cursor-pointer transition-colors timeline-slot-cell" 
                onclick="openNewAppointmentModal('${state.selectedDate}','${hStr}')"
                title="Clique para agendar às ${hStr}">
           </div>
