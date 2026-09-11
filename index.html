@@ -1492,7 +1492,7 @@
                 <label class="font-bold text-title block mb-1">Importar Backup JSON</label>
                 <input type="file" id="cfg-import-file" accept=".json" onchange="importDataBackup(event)" class="input-box w-full border rounded-xl px-3 py-2 outline-none text-xs">
               </div>
-              <button onclick="if(confirm('ATENÇÃO: Isso vai apagar TODOS os dados do sistema. Deseja continuar?')){localStorage.clear();location.reload()}" class="touch-btn w-full py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold flex items-center justify-center gap-2"><i data-lucide="trash-2" class="w-4 h-4"></i> Limpar Todos os Dados</button>
+              <button onclick="executarLimpezaPainel('total')" class="touch-btn w-full py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold flex items-center justify-center gap-2"><i data-lucide="trash-2" class="w-4 h-4"></i> Reset Geral do Sistema (Zerar Tudo)</button>
             </div>
           </div>
         </div>
@@ -3247,39 +3247,39 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             <div>
               <label class="block font-bold text-muted mb-1">Nome Fantasia do Estúdio *</label>
-              <input type="text" id="cfg-emp-fantasia" value="Seu Estúdio • Salão & Clínica" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <input type="text" id="cfg-emp-fantasia" placeholder="Nome Fantasia do seu espaço ou estúdio" class="input-box w-full p-2.5 rounded-xl font-bold">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">Razão Social / Nome Completo *</label>
-              <input type="text" id="cfg-emp-razao" value="Minha Empresa & Estúdio Ltda" class="input-box w-full p-2.5 rounded-xl font-bold">
+              <input type="text" id="cfg-emp-razao" placeholder="Razão Social ou Nome Completo do Proprietário" class="input-box w-full p-2.5 rounded-xl font-bold">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">CNPJ / CPF / MEI</label>
-              <input type="text" id="cfg-emp-cnpj" value="00.000.000/0001-00" class="input-box w-full p-2.5 rounded-xl font-mono">
+              <input type="text" id="cfg-emp-cnpj" placeholder="00.000.000/0001-00 ou CPF" class="input-box w-full p-2.5 rounded-xl font-mono">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">Inscrição Estadual / Municipal</label>
-              <input type="text" id="cfg-emp-ie" value="Isento / Optante Simples Nacional" class="input-box w-full p-2.5 rounded-xl font-mono">
+              <input type="text" id="cfg-emp-ie" placeholder="Isento ou Inscrição Estadual / Municipal" class="input-box w-full p-2.5 rounded-xl font-mono">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">Telefone Principal / WhatsApp</label>
-              <input type="text" id="cfg-emp-telefone" value="(00) 00000-0000" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
+              <input type="text" id="cfg-emp-telefone" placeholder="(00) 00000-0000" class="input-box w-full p-2.5 rounded-xl font-mono font-bold">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">E-mail Comercial</label>
-              <input type="email" id="cfg-emp-email" value="contato@meuestudio.com.br" class="input-box w-full p-2.5 rounded-xl">
+              <input type="email" id="cfg-emp-email" placeholder="contato@seunegocio.com.br" class="input-box w-full p-2.5 rounded-xl">
             </div>
             <div class="md:col-span-2">
               <label class="block font-bold text-muted mb-1">Endereço Completo</label>
-              <input type="text" id="cfg-emp-endereco" value="Seu Endereço Comercial, 100 - Centro" class="input-box w-full p-2.5 rounded-xl">
+              <input type="text" id="cfg-emp-endereco" placeholder="Rua, número, bairro, cidade - UF" class="input-box w-full p-2.5 rounded-xl">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">Instagram do Estúdio</label>
-              <input type="text" id="cfg-emp-instagram" value="@meuestudio.oficial" class="input-box w-full p-2.5 rounded-xl font-bold text-indigo-500">
+              <input type="text" id="cfg-emp-instagram" placeholder="@seunegocio" class="input-box w-full p-2.5 rounded-xl font-bold text-indigo-500">
             </div>
             <div>
               <label class="block font-bold text-muted mb-1">Slogan / Especialidade</label>
-              <input type="text" id="cfg-emp-slogan" value="Excelência no Atendimento & Gestão Total" class="input-box w-full p-2.5 rounded-xl">
+              <input type="text" id="cfg-emp-slogan" placeholder="Especialidade ou slogan do seu espaço" class="input-box w-full p-2.5 rounded-xl">
             </div>
           </div>
         </div>
@@ -7001,15 +7001,15 @@
     
     // ============== DEFAULTS: CONFIGURAÇÕES EXTRAS ==============
     const DEFAULT_EMPRESA_DATA = {
-      fantasia: 'Nossa Equipe - Unhas e Cursos',
-      razao: 'Minha Empresa & Estúdio Ltda',
-      cnpj: '38.912.345/0001-89',
-      ie: 'Isento / Optante Simples Nacional',
-      telefone: '(54) 99123-4567',
-      email: 'contato@meuestudio.com.br',
-      endereco: 'Av. Central, 1250, Sala 304 - Centro, Bento Gonçalves/RS',
-      instagram: '@meuestudio.oficial',
-      slogan: 'Master Nail Designer • Alongamentos em Gel & Cursos VIP'
+      fantasia: '',
+      razao: '',
+      cnpj: '',
+      ie: '',
+      telefone: '',
+      email: '',
+      endereco: '',
+      instagram: '',
+      slogan: ''
     };
     const DEFAULT_FORNECEDORES=[
       {id:'forn_1',nome:'Vòlia Cosméticos Brasil',cnpj:'28.123.456/0001-90',phone:'(11) 98765-4321',email:'contato@voliacosmeticos.com.br',cidade:'São Paulo/SP',rep:'Mariana Silva',obs:'Fornecedor principal de géis construtores e preparadores'},
@@ -7048,9 +7048,9 @@
       {id:'cat_desp_outras',name:'Outras Despesas',type:'DESPESA',color:'#64748b',icon:'tag'}
     ];
     const DEFAULT_ACCOUNTS=[
-      {id:'acc_loja',name:'Caixa Gaveta (Físico)',type:'CAIXA_FISICO',initialBalance:100,currentBalance:210,bank:'Espécie',color:'#10b981',isDefault:true,active:true},
-      {id:'acc_nubank',name:'Conta Principal (Nubank PJ)',type:'BANCO',initialBalance:1500,currentBalance:2450,bank:'Nubank',color:'#8b5cf6',isDefault:false,active:true},
-      {id:'acc_mercadopago',name:'Mercado Pago (Maquininha)',type:'CARTEIRA',initialBalance:300,currentBalance:780,bank:'Mercado Pago',color:'#0ea5e9',isDefault:false,active:true}
+      {id:'acc_loja',name:'Caixa Gaveta (Físico)',type:'CAIXA_FISICO',initialBalance:0,currentBalance:0,bank:'Espécie',color:'#10b981',isDefault:true,active:true},
+      {id:'acc_principal',name:'Conta Bancária Principal',type:'BANCO',initialBalance:0,currentBalance:0,bank:'Banco',color:'#8b5cf6',isDefault:false,active:true},
+      {id:'acc_maquininha',name:'Maquininha de Cartão',type:'CARTEIRA',initialBalance:0,currentBalance:0,bank:'Maquininha',color:'#0ea5e9',isDefault:false,active:true}
     ];
     const DEFAULT_PAYMENT_METHODS=[
       {id:'pm_dinheiro',name:'Dinheiro em Espécie',type:'DINHEIRO',feePercent:0,daysToReceive:0,defaultAccountId:'acc_loja',active:true},
@@ -7083,55 +7083,57 @@
     ];
     // todayStr & todayBR already declared at top
 
+    const isPainelResetado = localStorage.getItem('zp_painel_resetado') === 'true';
+
     let state={
       currentTab:'dashboard',agendaView:'day',selectedDate:todayStr,
       currentMonth:new Date().getMonth(),currentYear:new Date().getFullYear(),
       theme:localStorage.getItem('zanettia_theme')||'light',
-      services:JSON.parse(localStorage.getItem('zp_services'))||DEFAULT_SERVICES,
-      professionals:JSON.parse(localStorage.getItem('zp_professionals'))||[
+      services: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_services')) || []) : (JSON.parse(localStorage.getItem('zp_services')) || DEFAULT_SERVICES),
+      professionals: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_professionals')) || []) : (JSON.parse(localStorage.getItem('zp_professionals')) || [
         {id:'prof_leticia',name:'Profissional Master',role:'Proprietária & Especialista',phone:'(00) 00000-0000',comissao:100,color:'#10b981',active:true,obs:'Conta Master'}
-      ],
+      ]),
       selectedProfFilter:'ALL',
       currentConsultaSubTab:'comissao',
-      clients:JSON.parse(localStorage.getItem('zp_clients'))||[
+      clients: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_clients')) || []) : (JSON.parse(localStorage.getItem('zp_clients')) || [
         {id:'c1',name:'Camila Zanetti',phone:'(54) 99123-4567',email:'camila@email.com',birth:'1996-09-15',cpf:'',lastVisit:'2026-08-15',returnDue:'2026-09-04',credit:20,isVip:true,isAluna:false,notes:'Prefere formato amendoado'},
         {id:'c2',name:'Ana Paula Silveira',phone:'(54) 98876-5432',email:'anapaula@email.com',birth:'1998-09-22',cpf:'',lastVisit:'2026-08-18',returnDue:'2026-09-07',credit:0,isVip:true,isAluna:true,notes:'Aluna do curso de fibra'},
         {id:'c3',name:'Juliana Mendes',phone:'(54) 99911-2233',email:'juliana@email.com',birth:'1992-04-10',cpf:'',lastVisit:'2026-08-10',returnDue:'2026-08-30',credit:0,isVip:false,isAluna:false,notes:''}
-      ],
-      stock:JSON.parse(localStorage.getItem('zp_stock'))||[
+      ]),
+      stock: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_stock')) || []) : (JSON.parse(localStorage.getItem('zp_stock')) || [
         {id:'st1',name:'Gel Construtor Vòlia Classic Nude 24g',cat:'Géis',qty:3,min:2,cost:68},
         {id:'st2',name:'Top Coat Selante Sem Goma',cat:'Finalizadores',qty:1,min:2,cost:35},
         {id:'st3',name:'Lixa Banana 150/180',cat:'Lixas',qty:5,min:10,cost:3},
         {id:'st4',name:'Primer Ácido 15ml',cat:'Preparadores',qty:2,min:1,cost:22},
         {id:'st5',name:'Fibra de Vidro Rolo 50m',cat:'Fibras',qty:1,min:2,cost:45}
-      ],
-      appointments:JSON.parse(localStorage.getItem('zp_appointments'))||[
+      ]),
+      appointments: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_appointments')) || []) : (JSON.parse(localStorage.getItem('zp_appointments')) || [
         {id:'app_1',clientName:'Camila Zanetti',clientPhone:'(54) 99123-4567',serviceNames:'Manutenção Fibra de Vidro',date:todayStr,time:'09:00',duration:120,price:110,status:'CONFIRMADO',obs:''},
         {id:'app_2',clientName:'Ana Paula Silveira',clientPhone:'(54) 98876-5432',serviceNames:'Esmaltação em Gel',date:todayStr,time:'14:00',duration:60,price:75,status:'AGENDADO',obs:''}
-      ],
-      financial:JSON.parse(localStorage.getItem('zp_financial'))||[
+      ]),
+      financial: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_financial')) || []) : (JSON.parse(localStorage.getItem('zp_financial')) || [
         {id:'f1',date:todayStr,type:'RECEITA',category:'Atendimentos',desc:'Fundo Inicial de Troco',method:'DINHEIRO',value:100},
         {id:'f2',date:todayStr,type:'RECEITA',category:'Atendimentos',desc:'Camila Zanetti - Manutenção Fibra',method:'PIX',value:110}
-      ],
+      ]),
       financialFilter:'ALL',
       categories:JSON.parse(localStorage.getItem('zp_categories'))||DEFAULT_CATEGORIES,
       accounts:JSON.parse(localStorage.getItem('zp_accounts'))||DEFAULT_ACCOUNTS,
       paymentMethods:JSON.parse(localStorage.getItem('zp_payment_methods'))||DEFAULT_PAYMENT_METHODS,
       caixaMovs:JSON.parse(localStorage.getItem('zp_caixa_movs'))||[],
-      fornecedores:JSON.parse(localStorage.getItem('zp_fornecedores'))||DEFAULT_FORNECEDORES,
-      compras:JSON.parse(localStorage.getItem('zp_compras'))||DEFAULT_COMPRAS,
+      fornecedores: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_fornecedores')) || []) : (JSON.parse(localStorage.getItem('zp_fornecedores')) || DEFAULT_FORNECEDORES),
+      compras: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_compras')) || []) : (JSON.parse(localStorage.getItem('zp_compras')) || DEFAULT_COMPRAS),
       empresaData:JSON.parse(localStorage.getItem('zp_empresa_data'))||DEFAULT_EMPRESA_DATA,
       gruposAcesso:JSON.parse(localStorage.getItem('zp_grupos_acesso'))||DEFAULT_GRUPOS_ACESSO,
-      pacotesCliente:JSON.parse(localStorage.getItem('zp_pacotes_cliente'))||DEFAULT_PACOTES_CLIENTE,
-      orcamentos:JSON.parse(localStorage.getItem('zp_orcamentos'))||DEFAULT_ORCAMENTOS,
-      anamneseTemplates:JSON.parse(localStorage.getItem('zp_anamnese_templates'))||DEFAULT_ANAMNESE_TEMPLATES,
-      camposPersonalizados:JSON.parse(localStorage.getItem('zp_campos_personalizados'))||DEFAULT_CAMPOS_PERSONALIZADOS,
-      comoConheceu:JSON.parse(localStorage.getItem('zp_como_conheceu'))||DEFAULT_COMO_CONHECEU,
-      equipamentos:JSON.parse(localStorage.getItem('zp_equipamentos'))||DEFAULT_EQUIPAMENTOS,
-      feriados:JSON.parse(localStorage.getItem('zp_feriados'))||DEFAULT_FERIADOS,
-      gruposServicos:JSON.parse(localStorage.getItem('zp_grupos_servicos'))||DEFAULT_GRUPOS_SERVICOS,
-      marcas:JSON.parse(localStorage.getItem('zp_marcas'))||DEFAULT_MARCAS,
-      salas:JSON.parse(localStorage.getItem('zp_salas'))||DEFAULT_SALAS,
+      pacotesCliente: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_pacotes_cliente')) || []) : (JSON.parse(localStorage.getItem('zp_pacotes_cliente')) || DEFAULT_PACOTES_CLIENTE),
+      orcamentos: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_orcamentos')) || []) : (JSON.parse(localStorage.getItem('zp_orcamentos')) || DEFAULT_ORCAMENTOS),
+      anamneseTemplates: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_anamnese_templates')) || []) : (JSON.parse(localStorage.getItem('zp_anamnese_templates')) || DEFAULT_ANAMNESE_TEMPLATES),
+      camposPersonalizados: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_campos_personalizados')) || []) : (JSON.parse(localStorage.getItem('zp_campos_personalizados')) || DEFAULT_CAMPOS_PERSONALIZADOS),
+      comoConheceu: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_como_conheceu')) || []) : (JSON.parse(localStorage.getItem('zp_como_conheceu')) || DEFAULT_COMO_CONHECEU),
+      equipamentos: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_equipamentos')) || []) : (JSON.parse(localStorage.getItem('zp_equipamentos')) || DEFAULT_EQUIPAMENTOS),
+      feriados: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_feriados')) || []) : (JSON.parse(localStorage.getItem('zp_feriados')) || DEFAULT_FERIADOS),
+      gruposServicos: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_grupos_servicos')) || []) : (JSON.parse(localStorage.getItem('zp_grupos_servicos')) || DEFAULT_GRUPOS_SERVICOS),
+      marcas: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_marcas')) || []) : (JSON.parse(localStorage.getItem('zp_marcas')) || DEFAULT_MARCAS),
+      salas: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_salas')) || []) : (JSON.parse(localStorage.getItem('zp_salas')) || DEFAULT_SALAS),
       comprasFilterFornecedor:'ALL',
       comprasFilterMes:new Date().getMonth(),
       comprasFilterAno:new Date().getFullYear(),
@@ -7144,7 +7146,7 @@
       caixasFechados:JSON.parse(localStorage.getItem('zp_caixas_fechados'))||[],
       pdvSale:{clientName:'',clientPhone:'',items:[],total:0},
       modalFinType:'RECEITA',
-      cursos:JSON.parse(localStorage.getItem('zp_cursos'))||DEFAULT_CURSOS,
+      cursos: isPainelResetado ? (JSON.parse(localStorage.getItem('zp_cursos')) || []) : (JSON.parse(localStorage.getItem('zp_cursos')) || DEFAULT_CURSOS),
       alunas:JSON.parse(localStorage.getItem('zp_alunas'))||[],
       messages:JSON.parse(localStorage.getItem('zp_messages'))||DEFAULT_MSGS,
       config:JSON.parse(localStorage.getItem('zp_config'))||{nome:'Seu Estúdio',whatsapp:'(00) 00000-0000',endereco:'',instagram:'@meuestudio.oficial',pix:'contato@meuestudio.com.br',banco:'Banco Principal',meta:8000,horaAbre:'08:00',horaFecha:'19:00',intervalo:30}
@@ -10374,9 +10376,9 @@
     // 1. DADOS DA EMPRESA
     
     function updateHeaderUserProfile(){
-      const emp = state.empresaData || DEFAULT_EMPRESA_DATA || {};
-      const nomeFantasia = emp.fantasia || (state.config && state.config.nome) || 'Seu Estúdio';
-      const slogan = emp.slogan || 'Gestão & Agenda';
+      const emp = state.empresaData || {};
+      const nomeFantasia = (emp.fantasia || '').trim() || (state.config && (state.config.nome || '').trim()) || 'Techo PRO';
+      const slogan = (emp.slogan || '').trim() || 'Sistema de Gestão';
 
       const elName = document.getElementById('header-user-name');
       if(elName) {
@@ -10388,9 +10390,12 @@
       }
       const elAvatar = document.getElementById('header-user-avatar');
       if(elAvatar) {
-        const parts = nomeFantasia.trim().split(/\s+/);
-        const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : nomeFantasia.slice(0, 2).toUpperCase();
-        elAvatar.innerText = initials || 'TP';
+        const clean = nomeFantasia.replace(/[^a-zA-Z0-9 ]/g, '').trim();
+        const parts = clean.split(/\s+/).filter(Boolean);
+        let initials = 'TP';
+        if(parts.length > 1) initials = (parts[0][0] + parts[1][0]).toUpperCase();
+        else if(parts.length === 1 && parts[0].length >= 2) initials = parts[0].slice(0, 2).toUpperCase();
+        elAvatar.innerText = initials;
       }
     }
 
@@ -11585,7 +11590,9 @@
           state.professionals.map(p => `<option value="${p.id}" ${p.id===currentVal?'selected':''}>👤 ${p.name}</option>`).join('');
       }
 
-      const profOptions = state.professionals.map(p => `<option value="${p.id}">${p.name} (${p.role || 'Profissional'})</option>`).join('');
+      const profOptions = (state.professionals && state.professionals.length > 0)
+        ? state.professionals.map(p => `<option value="${p.id}">${p.name} (${p.role || 'Profissional'})</option>`).join('')
+        : '<option value="">Nenhum profissional cadastrado</option>';
 
       const quickSel = document.getElementById('quick-appt-prof');
       if(quickSel && quickSel.children.length <= 1){
@@ -11609,7 +11616,7 @@
       const grid = document.getElementById('professionals-grid');
       if(!grid) return;
 
-      const totalProf = state.professionals.length;
+      const totalProf = (state.professionals && state.professionals.length) || 0;
       const thisMonth = new Date().toISOString().substring(0, 7);
       
       let totalAtendimentos = 0;
@@ -11620,7 +11627,7 @@
         if(a.date && a.date.startsWith(thisMonth) && a.status === 'CONCLUIDO'){
           totalAtendimentos++;
           totalFat += (a.price || 0);
-          const p = state.professionals.find(x => x.id === (a.profId || 'prof_leticia')) || state.professionals[0];
+          const p = (state.professionals || []).find(x => x.id === (a.profId || 'prof_leticia')) || (state.professionals && state.professionals[0]);
           const pct = p ? (p.comissao || 0) : 0;
           totalComissoes += (a.price || 0) * (pct / 100);
         }
@@ -11630,6 +11637,23 @@
       document.getElementById('kpi-prof-atendimentos').innerText = totalAtendimentos;
       document.getElementById('kpi-prof-faturamento').innerText = fmt(totalFat);
       document.getElementById('kpi-prof-comissoes').innerText = fmt(totalComissoes);
+
+      if(!state.professionals || state.professionals.length === 0){
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center bg-card rounded-2xl border border-dashed border-border space-y-3">
+            <div class="w-12 h-12 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 text-muted flex items-center justify-center">
+              <i data-lucide="users" class="w-6 h-6 text-emerald-500"></i>
+            </div>
+            <p class="font-bold text-title text-sm">Nenhum profissional cadastrado</p>
+            <p class="text-xs text-muted max-w-sm mx-auto">Cadastre os membros da sua equipe para gerenciar comissões e atendimentos.</p>
+            <button onclick="openProfessionalModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs">
+              + Cadastrar Profissional
+            </button>
+          </div>
+        `;
+        if(window.lucide) lucide.createIcons();
+        return;
+      }
 
       grid.innerHTML = state.professionals.map(p => {
         const pApps = state.appointments.filter(a => (a.profId || 'prof_leticia') === p.id && a.status === 'CONCLUIDO');
@@ -11671,7 +11695,7 @@
               </a>
               <div class="flex items-center gap-1">
                 <button onclick="openProfessionalModal('${p.id}')" class="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" title="Editar"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                ${p.id !== 'prof_leticia' ? `<button onclick="deleteProfessional('${p.id}')" class="p-1.5 text-slate-500 hover:text-rose-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                <button onclick="deleteProfessional('${p.id}')" class="p-1.5 text-slate-500 hover:text-rose-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" title="Excluir"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
               </div>
             </div>
           </div>
@@ -13031,7 +13055,25 @@
 
     // ============== SERVICES ==============
     function renderServices(){
-      document.getElementById('services-grid').innerHTML=state.services.map(s=>`
+      const grid = document.getElementById('services-grid');
+      if(!grid) return;
+      if(!state.services || state.services.length === 0){
+        grid.innerHTML = `
+          <div class="col-span-full p-8 text-center bg-card rounded-2xl border border-dashed border-border space-y-3">
+            <div class="w-12 h-12 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 text-muted flex items-center justify-center">
+              <i data-lucide="sparkles" class="w-6 h-6 text-emerald-500"></i>
+            </div>
+            <p class="font-bold text-title text-sm">Nenhum procedimento cadastrado</p>
+            <p class="text-xs text-muted">Cadastre seus serviços, preços e tempos de duração para iniciar o atendimento.</p>
+            <button onclick="openServiceModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs">
+              + Novo Procedimento
+            </button>
+          </div>
+        `;
+        if(window.lucide) lucide.createIcons();
+        return;
+      }
+      grid.innerHTML=state.services.map(s=>`
         <div class="glass-card rounded-2xl p-4 flex items-center justify-between">
           <div><b class="text-xs text-title block">${s.name}</b><span class="text-[11px] text-muted font-mono">${s.duration} min</span></div>
           <div class="flex items-center gap-2"><span class="text-sm font-bold font-mono text-title">${fmt(s.price)}</span>
@@ -14831,57 +14873,107 @@
       if (tipo === 'total') {
         const conf = confirm(
           "⚠️ ATENÇÃO: Deseja realizar um RESET TOTAL no sistema?\n\n" +
-          "Todos os agendamentos, clientes, estoque, lançamentos financeiros, pedidos de compras, fornecedores e notas fiscais serão apagados.\n\n" +
-          "Esta ação deixará o Techo PRO 100% limpo, como novo de fábrica.\n\n" +
+          "Todos os agendamentos, clientes, procedimentos/serviços, profissionais da equipe, estoque, lançamentos financeiros, pedidos de compras, fornecedores, cursos, orçamentos e cadastros serão apagados.\n\n" +
+          "Esta ação deixará o Techo PRO 100% zerado e limpo, pronto para criar seus próprios cadastros do zero.\n\n" +
           "Deseja continuar?"
         );
         if (!conf) return;
 
-        // Limpa tudo da Opção 1
+        // Limpeza absoluta de todas as entidades para zero
         state.appointments = [];
         state.clients = [];
-        state.empresaData = JSON.parse(JSON.stringify(DEFAULT_EMPRESA_DATA));
-        if (state.config) {
-          state.config.nome = 'Seu Estúdio';
-          state.config.whatsapp = '(00) 00000-0000';
-          state.config.instagram = '@meuestudio.oficial';
-        }
-        if (state.professionals && state.professionals.length > 0) {
-          state.professionals[0].name = 'Profissional Master';
-          state.professionals[0].role = 'Proprietária & Especialista';
-          state.professionals[0].phone = '(00) 00000-0000';
-        }
+        state.services = [];
+        state.professionals = [];
         state.financial = [];
+        state.stock = [];
+        state.compras = [];
+        state.fornecedores = [];
+        state.cursos = [];
+        state.alunas = [];
         state.caixa = {
-          isOpen: true,
+          isOpen: false,
           number: 1,
           currentBalance: 0,
-          openedAt: '08:00',
+          openedAt: '',
           initialBalance: 0
         };
         state.caixaMovs = [];
         state.caixasFechados = [];
         state.pdvSale = { clientName: '', clientPhone: '', items: [], total: 0 };
+        state.pacotesCliente = [];
+        state.orcamentos = [];
+        state.anamneseTemplates = [];
+        state.camposPersonalizados = [];
+        state.comoConheceu = [];
+        state.equipamentos = [];
+        state.feriados = [];
+        state.gruposServicos = [];
+        state.marcas = [];
+        state.salas = [];
+        state.empresaData = {
+          fantasia: '',
+          razao: '',
+          cnpj: '',
+          ie: '',
+          telefone: '',
+          email: '',
+          endereco: '',
+          instagram: '',
+          slogan: ''
+        };
+        state.config = {
+          nome: '',
+          whatsapp: '',
+          endereco: '',
+          instagram: '',
+          pix: '',
+          banco: '',
+          meta: 0,
+          horaAbre: '08:00',
+          horaFecha: '19:00',
+          intervalo: 30
+        };
+        if (state.accounts && Array.isArray(state.accounts)) {
+          state.accounts.forEach(acc => {
+            acc.initialBalance = 0;
+            acc.currentBalance = 0;
+          });
+        }
+        if (state.nfse && Array.isArray(state.nfse.invoices)) {
+          state.nfse.invoices = [];
+        }
+
+        // Limpa campos do PDV se existirem na tela
         const elPdvTot = document.getElementById('pdv-sale-total');
         if (elPdvTot) elPdvTot.value = 'R$ 0,00';
         const elPdvCli = document.getElementById('pdv-client-name');
         if (elPdvCli) elPdvCli.value = '';
         const elPdvPho = document.getElementById('pdv-client-phone');
         if (elPdvPho) elPdvPho.value = '';
-        state.pacotesCliente = [];
-        state.orcamentos = [];
-        state.alunas = [];
 
-        // Limpa Estoque, Compras, Fornecedores e Cursos
-        state.stock = [];
-        state.compras = [];
-        state.fornecedores = [];
-        state.cursos = [];
-        if (state.nfse && Array.isArray(state.nfse.invoices)) {
-          state.nfse.invoices = [];
-        }
+        // Limpa inputs de Dados da Empresa na tela de configurações
+        ['cfg-emp-fantasia','cfg-emp-razao','cfg-emp-cnpj','cfg-emp-ie','cfg-emp-telefone','cfg-emp-email','cfg-emp-endereco','cfg-emp-instagram','cfg-emp-slogan'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
 
-        // Marca flag
+        // Limpa inputs de Configurações Gerais
+        const cfgNome = document.getElementById('cfg-nome');
+        if (cfgNome) cfgNome.value = '';
+        const cfgWhats = document.getElementById('cfg-whatsapp');
+        if (cfgWhats) cfgWhats.value = '';
+        const cfgEnd = document.getElementById('cfg-endereco');
+        if (cfgEnd) cfgEnd.value = '';
+        const cfgInsta = document.getElementById('cfg-instagram');
+        if (cfgInsta) cfgInsta.value = '';
+        const cfgPix = document.getElementById('cfg-pix');
+        if (cfgPix) cfgPix.value = '';
+        const cfgBanco = document.getElementById('cfg-banco');
+        if (cfgBanco) cfgBanco.value = '';
+        const cfgMeta = document.getElementById('cfg-meta');
+        if (cfgMeta) cfgMeta.value = '0';
+
+        // Marca flag permanente
         localStorage.setItem('zp_painel_resetado', 'true');
 
         // Persiste
@@ -14908,13 +15000,35 @@
         if (typeof renderCompras === 'function') renderCompras();
         if (typeof renderFornecedores === 'function') renderFornecedores();
         if (typeof renderCursos === 'function') renderCursos();
+        if (typeof renderAlunas === 'function') renderAlunas();
+        if (typeof renderServices === 'function') renderServices();
+        if (typeof renderProfessionals === 'function') renderProfessionals();
+        if (typeof populateProfessionalSelects === 'function') populateProfessionalSelects();
+        if (typeof renderConfigDadosEmpresa === 'function') renderConfigDadosEmpresa();
+        if (typeof renderContas === 'function') renderContas();
+        if (typeof updateHeaderUserProfile === 'function') updateHeaderUserProfile();
+
+        // Cadastros gerais
+        if (typeof renderSalas === 'function') renderSalas();
+        if (typeof renderMarcas === 'function') renderMarcas();
+        if (typeof renderEquipamentos === 'function') renderEquipamentos();
+        if (typeof renderGruposServicos === 'function') renderGruposServicos();
+        if (typeof renderComoConheceu === 'function') renderComoConheceu();
+        if (typeof renderFeriados === 'function') renderFeriados();
+        if (typeof renderAnamneseTemplates === 'function') renderAnamneseTemplates();
+        if (typeof renderCamposPersonalizados === 'function') renderCamposPersonalizados();
+        if (typeof renderPacotesCliente === 'function') renderPacotesCliente();
+        if (typeof renderOrcamentos === 'function') renderOrcamentos();
 
         const badgeAgenda = document.getElementById('badge-agenda-count');
         if (badgeAgenda) badgeAgenda.innerText = '0 hoje';
 
+        const badgeCaixa = document.getElementById('badge-caixa-status');
+        if (badgeCaixa) badgeCaixa.innerText = 'FECHADO';
+
         if (window.lucide) lucide.createIcons();
 
-        alert("✨ Reset Geral Concluído com Sucesso!\n\nO sistema foi 100% zerado e está limpo como uma instalação nova de fábrica.");
+        alert("✨ Reset Geral Concluído com Sucesso!\n\nO sistema foi 100% zerado e está limpo, pronto para você criar seus próprios cadastros do zero.");
         switchTab('dashboard');
         return;
       }
