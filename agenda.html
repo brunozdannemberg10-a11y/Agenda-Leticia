@@ -1366,6 +1366,7 @@
         </div>
         <button onclick="switchTab('cursos');closeMobileSidebar()" id="nav-cursos" class="sidebar-menu-btn">
           <span class="flex items-center gap-2.5"><i data-lucide="award" class="w-4 h-4 text-indigo-500"></i><span>Cursos & Alunas</span></span>
+          <span class="text-[9px] font-mono px-1.5 py-0.5 rounded font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30">PRO</span>
         </button>
         <button onclick="switchTab('estoque');closeMobileSidebar()" id="nav-estoque" class="sidebar-menu-btn">
           <span class="flex items-center gap-2.5"><i data-lucide="package" class="w-4 h-4 text-amber-500"></i><span>Estoque & Insumos</span></span>
@@ -1414,6 +1415,7 @@
               <i data-lucide="file-check" class="w-4 h-4 text-sky-500"></i>
               <span>NFS-e</span>
             </span>
+            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30 mr-2">PRO</span>
             <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
           </button>
           <div id="sub-nfse" class="sidebar-submenu hidden">
@@ -8689,6 +8691,11 @@
     }
 
     function selectThemePreset(key) {
+      if (key !== 'emerald' && !isPro()) {
+        requirePro('Temas Exclusivos (Bourbon & Rose Gold)');
+        return;
+      }
+
       const preset = THEME_PRESETS[key];
       if (!preset) return;
 
@@ -9281,11 +9288,21 @@
 
     // ---- Plan limit check ----
     function isPro() {
-      if (!currentSession || !currentSession.assinatura) return false;
+      // Se não há sessão carregada ainda, permite navegação normal
+      if (!currentSession || !currentSession.assinatura) return true;
       const sub = currentSession.assinatura;
-      if (sub.status === 'trial') return true;
-      if (sub.status === 'ativo' && sub.plano === 'pro') return true;
-      return false;
+      // Período de teste gratuito
+      if (sub.status === 'trial') {
+        if (sub.trial_ends_at && new Date(sub.trial_ends_at) < new Date()) {
+          return false; // Trial de 30 dias expirou
+        }
+        return true; // Trial PRO ativo
+      }
+      // Assinatura ativa PRO ou Vitalício
+      if (sub.status === 'ativo' && (sub.plano === 'pro' || sub.plano === 'vitalicio')) {
+        return true;
+      }
+      return false; // Plano Starter ou expirado
     }
 
     function requirePro(featureName) {
@@ -13240,27 +13257,34 @@
     function openModal(id){document.getElementById(id).classList.add('open');lucide.createIcons();}
 
     function switchTab(tabId){
+      // --- BLOQUEIOS PLANO STARTER ---
+      const proOnlyTabs = {
+        'financeiro-dre': 'DRE Financeiro Completo & Relatórios Fiscais',
+        'cursos': 'Módulo de Cursos, Turmas & Alunas',
+        'nfse': 'Emissão de NFS-e Municipal Automática',
+        'nfse-config': 'Configuração de NFS-e Municipal',
+        'nfse-caixa-saida': 'Caixa de Saída de Notas Fiscais',
+        'nfse-servico-municipal': 'Catálogo de Serviços Municipais',
+        'nfse-lc116': 'Tabela de Tributação LC 116',
+        'nfse-cnae': 'Gestão de Atividades CNAE',
+        'analise-metas': 'Gestão de Metas & Indicadores Avançados',
+        'analise-rankings': 'Rankings de Produtividade da Equipe',
+        'analise-previsao-recebimento': 'Previsão de Recebimento Futuro',
+        'compras-pedidos': 'Gestão de Pedidos de Compras',
+        'compras-cotacoes': 'Cotações de Compras com Fornecedores'
+      };
+
+      if (proOnlyTabs[tabId] && !isPro()) {
+        requirePro(proOnlyTabs[tabId]);
+        return;
+      }
+
       state.currentTab=tabId;
       document.querySelectorAll('main > section').forEach(s=>s.classList.add('hidden'));
       const t=document.getElementById('tab-'+tabId);if(t)t.classList.remove('hidden');
       document.querySelectorAll('.sidebar-menu-btn').forEach(b=>b.classList.remove('active'));
       const a=document.getElementById('nav-'+tabId);if(a)a.classList.add('active');
-      // bottom nav
-      document.querySelectorAll('nav button[id^="bnav-"]').forEach(b=>{b.classList.remove('text-emerald-400','font-bold');b.classList.add('text-slate-400');});
-      const bn=document.getElementById('bnav-'+tabId);if(bn){bn.classList.add('text-emerald-400','font-bold');bn.classList.remove('text-slate-400');}
 
-      if(tabId==='migracao-dados')renderMigracaoDados();
-      if(tabId==='nfse-config')renderNfseConfig();
-      if(tabId==='nfse-caixa-saida')renderNfseCaixaSaida();
-      if(tabId==='nfse-servico-municipal')renderNfseServicoMunicipal();
-      if(tabId==='nfse-lc116')renderNfseLc116();
-      if(tabId==='nfse-cnae')renderNfseCnae();
-      if(tabId==='ajuda-agenda-online')renderAjudaAgendaOnline();
-      if(tabId==='ajuda-pacote-sessao')renderAjudaPacoteSessao();
-      if(tabId==='ajuda-ficha-anamnese')renderAjudaFichaAnamnese();
-      if(tabId==='ajuda-faq')renderAjudaFAQ();
-      if(tabId==='ajuda'){toggleSubmenu('sub-ajuda');switchTab('ajuda-agenda-online');}
-      if(tabId==='nfse'){toggleSubmenu('sub-nfse');switchTab('nfse-caixa-saida');}
       if(tabId==='dashboard')renderDashboard();
       if(tabId==='agenda')renderAgenda();
       if(tabId==='clientes')renderClients();
@@ -13317,7 +13341,25 @@
       if(tabId==='config-meios-pagamento')renderConfigMeiosPagamento();
       if(tabId==='config-layout')renderConfigLayout();
       if(tabId==='configuracoes')loadConfig();
-      lucide.createIcons();
+
+      if(tabId==='nfse-config')renderNfseConfig();
+      if(tabId==='nfse-caixa-saida')renderNfseCaixaSaida();
+      if(tabId==='nfse-servico-municipal')renderNfseServicoMunicipal();
+      if(tabId==='nfse-lc116')renderNfseLc116();
+      if(tabId==='nfse-cnae')renderNfseCnae();
+      if(tabId==='ajuda-agenda-online')renderAjudaAgendaOnline();
+      if(tabId==='ajuda-pacote-sessao')renderAjudaPacoteSessao();
+      if(tabId==='ajuda-ficha-anamnese')renderAjudaFichaAnamnese();
+      if(tabId==='ajuda-faq')renderAjudaFAQ();
+      if(tabId==='ajuda'){toggleSubmenu('sub-ajuda');switchTab('ajuda-agenda-online');}
+      if(tabId==='nfse'){toggleSubmenu('sub-nfse');switchTab('nfse-caixa-saida');}
+
+      if(window.lucide) lucide.createIcons();
+
+      // Scroll to top
+      const scrollEl = document.querySelector('main');
+      if(scrollEl) scrollEl.scrollTop = 0;
+      if(window.innerWidth < 768 && typeof closeMobileSidebar === 'function') closeMobileSidebar();
     }
 
     function toggleSubmenu(id){document.getElementById(id).classList.toggle('hidden');}
@@ -14352,6 +14394,12 @@
 
     function openProfessionalModal(id){
       const editId = id || '';
+      // Limite do Plano Starter: máximo 1 profissional
+      if (!editId && !isPro() && (state.professionals || []).length >= 1) {
+        requirePro('Equipe Multi-Profissional (Mais de 1 profissional cadastrado)');
+        return;
+      }
+
       document.getElementById('prof-edit-id').value = editId;
       if(editId){
         const p = state.professionals.find(x => x.id === editId);
@@ -14359,18 +14407,18 @@
         document.getElementById('prof-name').value = p.name || '';
         document.getElementById('prof-role').value = p.role || '';
         document.getElementById('prof-phone').value = p.phone || '';
-        document.getElementById('prof-comissao').value = p.comissao !== undefined ? p.comissao : 50;
+        document.getElementById('prof-comissao').value = p.comissao !== undefined ? p.comissao : 100;
         document.getElementById('prof-color').value = p.color || '#10b981';
         document.getElementById('prof-obs').value = p.obs || '';
-        document.getElementById('prof-modal-title').innerHTML = '<i data-lucide="user-check" class="w-5 h-5 text-teal-500"></i> Editar Profissional';
+        document.getElementById('modal-prof-title').innerText = 'Editar Profissional';
       } else {
         document.getElementById('prof-name').value = '';
-        document.getElementById('prof-role').value = '';
+        document.getElementById('prof-role').value = 'Nail Designer';
         document.getElementById('prof-phone').value = '';
-        document.getElementById('prof-comissao').value = '50';
+        document.getElementById('prof-comissao').value = '100';
         document.getElementById('prof-color').value = '#10b981';
         document.getElementById('prof-obs').value = '';
-        document.getElementById('prof-modal-title').innerHTML = '<i data-lucide="user-plus" class="w-5 h-5 text-teal-500"></i> Nova Profissional';
+        document.getElementById('modal-prof-title').innerText = 'Nova Profissional';
       }
       openModal('modal-professional');
     }
