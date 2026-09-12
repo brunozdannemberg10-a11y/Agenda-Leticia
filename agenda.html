@@ -10082,6 +10082,9 @@
       if (currentSession && currentSession.assinatura) {
         currentSession.assinatura.status = 'ativo';
         currentSession.assinatura.plano = checkoutState.plano;
+        if (typeof updateHeaderWithSession === 'function' && currentSession.empresa) {
+          updateHeaderWithSession(currentSession.empresa, currentSession.assinatura);
+        }
       }
 
       confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });

@@ -28,6 +28,7 @@ loadEnv();
 const ASAAS_KEY = process.env.ASAAS_API_KEY;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const PORT = process.env.PORT || 3000;
+const ASAAS_WEBHOOK_SECRET = process.env.ASAAS_WEBHOOK_SECRET;
 
 // Helper: Make Asaas API request
 function asaasRequest(method, endpoint, data = null) {
@@ -360,8 +361,9 @@ const server = http.createServer(async (req, res) => {
 
       const numInstallments = parseInt(installments, 10);
       if (numInstallments > 1) {
+        delete paymentPayload.value;
+        paymentPayload.totalValue = valor;
         paymentPayload.installmentCount = numInstallments;
-        paymentPayload.installmentValue = +(valor / numInstallments).toFixed(2);
       }
 
       console.log(`[Asaas] Processando Cartão de Crédito R$ ${valor} (${numInstallments}x) para ${customerId}...`);
@@ -380,14 +382,14 @@ const server = http.createServer(async (req, res) => {
       // Se aprovado imediatamente e tiver empresa_id, ativa no Supabase
       if (isPaid && empresa_id) {
         try {
-          await supabaseRequest('POST', '/assinaturas', {
-            empresa_id: empresa_id,
+          await supabaseRequest('PATCH', `/assinaturas?empresa_id=eq.${empresa_id}`, {
             plano: plano.toLowerCase(),
             ciclo: ciclo.toLowerCase(),
             status: 'ativo',
             metodo_pagamento: 'CREDIT_CARD',
             trial_ends_at: null,
-            asaas_subscription_id: paymentData.id
+            asaas_subscription_id: paymentData.id,
+            updated_at: new Date().toISOString()
           });
           console.log(`[Supabase] 🎉 Empresa ${empresa_id} ATIVADA com Cartão no plano ${plano.toUpperCase()} (${ciclo})!`);
         } catch (dbErr) {
@@ -533,17 +535,25 @@ const server = http.createServer(async (req, res) => {
       const billingType = payRes.data?.billingType || 'ASAAS';
       const isPaid = (status === 'RECEIVED' || status === 'CONFIRMED');
 
-      // Se pago e tiver empresaId, ativa a assinatura no Supabase
+      // Validação de posse do pagamento para evitar ativação cruzada
+      if (payRes.data?.externalReference && empresaId && payRes.data.externalReference !== empresaId) {
+        console.warn(`[Asaas Security] Tentativa de ativação cruzada: Fatura=${payRes.data.externalReference} vs Solicitante=${empresaId}`);
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Fatura vinculada a outra empresa.' }));
+        return;
+      }
+
+      // Se pago e tiver empresaId, atualiza a assinatura no Supabase com PATCH
       if (isPaid && empresaId) {
         try {
-          await supabaseRequest('POST', '/assinaturas', {
-            empresa_id: empresaId,
+          await supabaseRequest('PATCH', `/assinaturas?empresa_id=eq.${empresaId}`, {
             plano: plano,
             ciclo: ciclo,
             status: 'ativo',
             metodo_pagamento: billingType,
             trial_ends_at: null,
-            asaas_subscription_id: paymentId
+            asaas_subscription_id: paymentId,
+            updated_at: new Date().toISOString()
           });
           console.log(`[Supabase] 🎉 Empresa ${empresaId} ATIVADA via ${billingType} no plano ${plano.toUpperCase()} (${ciclo})!`);
         } catch (dbErr) {
@@ -574,6 +584,15 @@ const server = http.createServer(async (req, res) => {
   // =========================================================================
   if (pathname === '/api/asaas/webhook' && req.method === 'POST') {
     try {
+      // 1. Validação de autenticidade via token
+      const tokenHeader = req.headers['asaas-access-token'];
+      if (ASAAS_WEBHOOK_SECRET && tokenHeader !== ASAAS_WEBHOOK_SECRET) {
+        console.warn('[Asaas Webhook] ⚠️ Tentativa de acesso não autorizada ao webhook!');
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Acesso não autorizado.' }));
+        return;
+      }
+
       const event = await parseJsonBody(req);
       console.log('[Asaas Webhook] Evento recebido:', event.event, 'ID:', event.payment?.id);
 
@@ -582,14 +601,14 @@ const server = http.createServer(async (req, res) => {
         const empresaId = payment?.externalReference;
         const billingType = payment?.billingType || 'ASAAS';
         if (empresaId) {
-          await supabaseRequest('POST', '/assinaturas', {
-            empresa_id: empresaId,
+          await supabaseRequest('PATCH', `/assinaturas?empresa_id=eq.${empresaId}`, {
             status: 'ativo',
-            plano: 'pro',
             metodo_pagamento: billingType,
-            asaas_subscription_id: payment.id
+            trial_ends_at: null,
+            asaas_subscription_id: payment.id,
+            updated_at: new Date().toISOString()
           });
-          console.log(`[Webhook] Assinatura da empresa ${empresaId} ativada via Webhook Asaas (${billingType})!`);
+          console.log(`[Webhook] 🎉 Assinatura da empresa ${empresaId} ATIVADA via Webhook Asaas (${billingType})!`);
         }
       }
 
