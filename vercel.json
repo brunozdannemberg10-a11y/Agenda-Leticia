@@ -1,0 +1,21 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/landing",
+      "destination": "/landing.html"
+    },
+    {
+      "source": "/agendar",
+      "destination": "/agendar.html"
+    },
+    {
+      "source": "/agenda",
+      "destination": "/agenda.html"
+    },
+    {
+      "source": "/app",
+      "destination": "/index.html"
+    }
+  ]
+}
