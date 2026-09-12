@@ -1,1001 +1,434 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR" class="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#ececeb">
-  <title>Built for Intelligent Performance</title>
+  <title>Techo PRO — A Plataforma Definitiva de Gestão para o Mercado da Beleza</title>
+  <meta name="description" content="Sistema de gestão completo para salões de beleza, barbearias, esmalterias e clínicas de estética. Agendamento online, financeiro DRE, NFS-e e controle de comissões.">
 
-  <!-- FONTS -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-
+  <!-- TAILWIND CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    document.documentElement.classList.add("entrance-active");
-    window.__entranceFailsafe = setTimeout(() => {
-      document.documentElement.classList.remove("entrance-active");
-    }, 3200);
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b',
+              950: '#022c22'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
   </script>
 
+  <!-- FONTS & ICONS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
-    :root {
-      --paper: #ececeb;
-      --ink: #222222;
-      --copy: #4a4a4a;
-      --glass-line: rgba(255,255,255,.36);
-      --card-ref-w: 429;
-      --card-ref-h: 554;
-      --card-radius: 17;
-      --card-count: 3;
-      --gap: clamp(8px, 1.5vw, 23px);
-      --gutter: clamp(14px, 3.6vw, 54px);
-      --content-max: calc(var(--card-count) * var(--card-ref-w) * 1px + (var(--card-count) - 1) * var(--gap));
-      --pad-top: clamp(20px, 9.6vh, 94px);
-      --pad-bottom: clamp(16px, 3vh, 52px);
-      --masthead-gap: clamp(16px, 3vw, 40px);
-      --cards-offset: clamp(14px, 9.4vh, 92px);
+    body {
+      background-color: #090d16;
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
     }
-
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      min-width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      font-optical-sizing: auto;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: geometricPrecision;
-      color: var(--ink);
-      background: var(--paper);
+    .glass-nav {
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
-
-    button, a { font: inherit; }
-
-    .stage {
-      position: relative;
-      isolation: isolate;
-      display: flex;
-      flex-direction: column;
-      height: 100svh;
-      overflow: hidden;
-      padding: var(--pad-top) var(--gutter) var(--pad-bottom);
-      background: linear-gradient(rgba(236,236,234,.10), rgba(236,236,234,.10)),
-                  url("https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/5c3ec08f-2dbf-4c0a-8588-f6106a789443.webp") center / cover no-repeat,
-                  #ececeb;
+    .glass-card {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
-
-    .stage-motion {
+    .glass-card:hover {
+      border-color: rgba(16, 185, 129, 0.3);
+      box-shadow: 0 12px 32px -8px rgba(16, 185, 129, 0.15);
+    }
+    .glow-bg {
       position: absolute;
-      inset: 0;
-      z-index: -2;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+      filter: blur(60px);
       pointer-events: none;
-    }
-
-    .stage-motion--wide { display: block; }
-    .stage-motion--narrow { display: none; }
-
-    .paper-texture {
-      position: absolute;
-      z-index: -1;
-      inset: 0;
-      display: none;
-    }
-
-    .filter-defs {
-      position: absolute;
-      width: 0;
-      height: 0;
-      overflow: hidden;
-    }
-
-    .masthead, .cards {
-      width: min(100%, var(--content-max));
-      margin-inline: auto;
-    }
-
-    /* MASTHEAD */
-    .masthead {
-      display: grid;
-      grid-template-columns: minmax(0,1fr) minmax(0, clamp(260px, 32vw, 483px));
-      gap: var(--masthead-gap);
-      align-items: start;
-      z-index: 2;
-      flex: 0 0 auto;
-    }
-
-    .headline {
-      margin: 0;
-      max-width: 100%;
-      color: #202020;
-      font-size: clamp(24px, min(3.1vw, 5.9vh), 47px);
-      font-weight: 400;
-      letter-spacing: .015em;
-      line-height: 1.223;
-    }
-
-    .headline__line {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: center;
-    }
-
-    .dot-word {
-      display: inline-block;
-      flex: 0 0 auto;
-      width: 4.851em;
-      height: .766em;
-      margin-left: .319em;
-      color: #ad314d;
-      transform: translateY(.085em);
-    }
-
-    .dot-svg {
-      display: block;
-      overflow: visible;
-      fill: currentColor;
-    }
-
-    .intro {
-      container-type: inline-size;
-      width: 100%;
-      margin: .34em 0 0;
-      color: var(--copy);
-      font-size: clamp(13px, min(1.36vw, 2.6vh), 20.6px);
-      font-weight: 400;
-      letter-spacing: -.017em;
-      line-height: 1.62;
-    }
-
-    .desktop-break { display: none; }
-    @container (min-width: 26.5em) {
-      .desktop-break { display: inline; }
-    }
-
-    /* CARDS ROW */
-    .cards {
-      flex: 1 1 auto;
-      container-type: size;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: var(--gap);
-      min-height: 0;
-      margin-top: var(--cards-offset);
-      --card-w: min(
-        (100cqw - (var(--card-count) - 1) * var(--gap)) / var(--card-count),
-        100cqh * var(--card-ref-w) / var(--card-ref-h),
-        var(--card-ref-w) * 1px
-      );
-    }
-
-    .card {
-      container-type: inline-size;
-      position: relative;
-      flex: 0 0 auto;
-      overflow: hidden;
-      width: var(--card-w);
-      aspect-ratio: 429/554;
-      border: 1px solid var(--glass-line);
-      border-radius: calc(var(--card-w) * 17 / 429);
-      background-origin: border-box;
-      color: #fff;
-      --u: calc(100cqw / 429);
-      box-shadow: 0 2px 4px rgba(50,28,39,.30), inset 0 1px 0 rgba(255,255,255,.24);
-    }
-
-    .card__media {
-      position: absolute;
-      inset: 0;
       z-index: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: fill;
-      pointer-events: none;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      mix-blend-mode: screen;
-      pointer-events: none;
-      background: linear-gradient(102deg, rgba(255,255,255,.10), transparent 28%, rgba(255,255,255,.08) 62%, transparent 88%),
-                  radial-gradient(ellipse 85% 34% at 54% 7%, rgba(255,255,255,.24), transparent 72%);
-    }
-
-    .card__grain {
-      position: absolute;
-      z-index: 2;
-      inset: -8%;
-      width: 116%;
-      height: 116%;
-      opacity: .46;
-      mix-blend-mode: soft-light;
-      pointer-events: none;
-    }
-
-    /* CARD 1 — SPEED */
-    .card--speed {
-      background:
-        radial-gradient(ellipse 34% 24% at 50% 2%, rgba(255,220,211,.10) 0%, transparent 76%),
-        radial-gradient(ellipse 44% 34% at 106% 20%, rgba(255,222,211,.10) 0%, transparent 74%),
-        radial-gradient(ellipse 40% 27% at 50% 82%, rgba(255,214,208,.08) 0%, transparent 74%),
-        radial-gradient(ellipse 43% 31% at -7% 61%, rgba(127,31,53,.06) 0%, transparent 74%),
-        radial-gradient(ellipse 47% 34% at 107% 82%, rgba(119,29,49,.07) 0%, transparent 74%),
-        linear-gradient(180deg, rgba(255,246,241,.43) 0%, rgba(255,237,235,.19) 9%, transparent 22%),
-        radial-gradient(ellipse 44% 34% at 50% 111%, rgba(55,0,20,.16) 0%, transparent 74%),
-        radial-gradient(ellipse 105% 32% at 50% 80%, rgba(255,218,204,.20) 0%, rgba(255,205,196,.10) 48%, transparent 78%),
-        radial-gradient(ellipse 55% 22% at -5% 39%, rgba(240,250,200,.15) 0%, transparent 76%),
-        radial-gradient(ellipse 64% 49% at -8% 106%, rgba(255,222,199,.48) 0%, rgba(255,204,192,.25) 49%, transparent 78%),
-        radial-gradient(ellipse 64% 49% at 108% 106%, rgba(255,222,199,.43) 0%, rgba(255,204,192,.22) 49%, transparent 78%),
-        radial-gradient(ellipse 52% 54% at -8% 44%, rgba(255,216,207,.20) 0%, transparent 77%),
-        radial-gradient(ellipse 68% 45% at -4% -3%, rgba(255,235,232,.73) 0%, rgba(255,226,226,.41) 46%, transparent 77%),
-        radial-gradient(ellipse 70% 45% at 104% -4%, rgba(255,238,233,.78) 0%, rgba(255,226,226,.42) 48%, transparent 78%),
-        radial-gradient(ellipse 93% 47% at 106% 58%, rgba(245,247,241,.73) 0%, rgba(246,231,229,.42) 48%, transparent 76%),
-        radial-gradient(ellipse 74% 40% at -8% 73%, rgba(255,210,190,.48) 0%, rgba(255,194,181,.25) 48%, transparent 77%),
-        radial-gradient(ellipse 77% 36% at 57% 58%, rgba(255,226,218,.30) 0%, rgba(255,206,207,.15) 50%, transparent 78%),
-        radial-gradient(ellipse 54% 30% at 50% 17%, rgba(106,8,51,.22) 0%, transparent 78%),
-        linear-gradient(180deg, #bd4468 0%, #ad355b 38%, #a63b50 72%, #8c1320 100%);
-      background-origin: border-box;
-      --entrance-delay: .46s;
-    }
-    .card--speed::before {
-      background: linear-gradient(103deg, rgba(255,255,255,.08), transparent 31%, rgba(255,255,255,.055) 63%, transparent 88%),
-                  radial-gradient(ellipse 92% 19% at 51% 0%, rgba(255,255,255,.08), transparent 78%);
-    }
-    .card--speed .card__grain { opacity: .54; }
-    .card--speed .card__title { top: 6.3%; color: #fff; font-size: calc(22.7 * var(--u)); }
-
-    .gauge {
-      position: absolute;
-      z-index: 2;
-      top: 27.63%;
-      left: 10.5%;
-      width: 79%;
-      height: 59%;
-      overflow: visible;
-    }
-
-    .metric--speed {
-      top: 48.6%;
-    }
-    .metric--speed .dot-number {
-      width: 31.2%;
-    }
-    .metric--speed .dot-svg {
-      transform: translate(calc(4 * var(--u)), calc(2 * var(--u))) scale(.925, 1.018);
-      transform-origin: left top;
-    }
-    .metric--speed .metric__unit {
-      margin-left: 1%;
-      font-size: calc(30.6 * var(--u));
-      transform: translateY(calc(5 * var(--u)));
-    }
-    .card--speed .caption {
-      top: 64.75%;
-      font-size: calc(20.33 * var(--u));
-    }
-
-    /* CARD 2 — CONTEXT */
-    .card--context {
-      background:
-        radial-gradient(ellipse 118% 66% at 48% -8%, rgba(221,232,255,.065), transparent 74%),
-        radial-gradient(ellipse 106% 52% at 48% 112%, rgba(255,155,139,.075), transparent 73%),
-        radial-gradient(ellipse 82% 15% at 50% 29%, rgba(240,204,244,.24), transparent 81%),
-        radial-gradient(ellipse 64% 18% at 50% 61%, rgba(239,177,208,.17), transparent 81%),
-        radial-gradient(ellipse 43% 42% at -5% 30%, rgba(228,220,255,.53), transparent 78%),
-        radial-gradient(ellipse 43% 42% at 105% 30%, rgba(245,200,210,.54), transparent 78%),
-        radial-gradient(ellipse 70% 48% at 70% 110%, rgba(238,204,201,.62), transparent 77%),
-        radial-gradient(ellipse 70% 23% at 78% 1%, rgba(251,208,226,.56), transparent 78%),
-        radial-gradient(ellipse 78% 25% at 15% 8%, rgba(218,211,255,.54), transparent 79%),
-        radial-gradient(ellipse 38% 31% at 80% 90%, rgba(230,190,191,.38), transparent 74%),
-        radial-gradient(ellipse 45% 26% at 47% 78%, rgba(236,184,183,.45), transparent 73%),
-        linear-gradient(164deg, #c9b5e1 0%, #ad80ca 29%, #9d4f72 64%, #793246 100%);
-      background-origin: border-box;
-      --entrance-delay: .58s;
-    }
-    .card--context .card__title {
-      font-size: calc(23 * var(--u));
-      line-height: 1.48;
-    }
-    .card--context .card__grain { opacity: .68; }
-    .card--context::before {
-      mix-blend-mode: multiply;
-      opacity: .54;
-      background:
-        radial-gradient(ellipse 18% 23% at 20% 32%, rgba(103,41,148,.24), transparent 76%),
-        radial-gradient(ellipse 20% 24% at 81% 30%, rgba(121,34,113,.22), transparent 76%),
-        radial-gradient(ellipse 66% 9% at 50% 30%, rgba(103,33,125,.26), transparent 82%),
-        radial-gradient(ellipse 68% 8% at 50% 69%, rgba(86,27,64,.23), transparent 83%),
-        linear-gradient(103deg, rgba(255,255,255,.08), transparent 31%, rgba(255,255,255,.05) 63%, transparent 88%);
-    }
-
-    .context-glow {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
-    .context-backdrop {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-    }
-    .context-backdrop svg {
-      width: 100%;
-      height: 100%;
-      mask: linear-gradient(180deg, #000 0%, #000 54%, rgba(0,0,0,.72) 58%, rgba(0,0,0,.18) 62%, transparent 65%);
-    }
-
-    .context-window {
-      position: absolute;
-      z-index: 3;
-      top: 32.4%;
-      left: 20.4%;
-      width: 59%;
-      height: 30.1%;
-      overflow: hidden;
-      border: none;
-      border-radius: calc(10 * var(--u));
-      background:
-        linear-gradient(0deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,.15) 45%, rgba(255,255,255,0) 80%),
-        linear-gradient(270deg, rgba(213,62,152,.62) 0px, rgba(213,62,152,0) calc(5 * var(--u))),
-        radial-gradient(ellipse 118% 70% at 60% 8%, rgba(255,203,252,.34), transparent 74%),
-        linear-gradient(105deg, rgba(250,232,250,.72) 0%, rgba(238,120,214,.68) 51%, rgba(222,86,177,.82) 100%);
-      box-shadow: 0 calc(13 * var(--u)) calc(25 * var(--u)) rgba(70,17,69,.31), inset 0 1px 0 rgba(255,255,255,.12);
-      backdrop-filter: blur(calc(9 * var(--u))) saturate(1.08);
-    }
-
-    .window-lines {
-      position: absolute;
-      top: 9%;
-      left: 6.7%;
-      width: 87%;
-      height: 24%;
-    }
-    .window-lines .line-1 {
-      display: block;
-      height: calc(6 * var(--u));
-      border-radius: calc(2.5 * var(--u));
-      background: rgba(255,255,255,.72);
-      width: 29%;
-      margin-bottom: calc(3 * var(--u));
-    }
-    .window-lines .line-2 {
-      display: block;
-      width: 100%;
-      height: calc(22 * var(--u));
-      border-radius: calc(6 * var(--u));
-      background: linear-gradient(90deg, rgba(255,240,253,.72), rgba(255,170,242,.75) 42%, rgba(255,108,235,.78));
-    }
-    .window-lines .line-3 {
-      display: block;
-      width: 86%;
-      height: calc(6 * var(--u));
-      border-radius: calc(2.5 * var(--u));
-      background: rgba(255,255,255,.72);
-      margin-top: calc(3 * var(--u));
-      opacity: .64;
-    }
-
-    .metric--context {
-      top: 48.0%;
-      transform: translateX(2.1cqw);
-    }
-    .metric--context .dot-number { width: 30.5%; }
-    .metric--context .dot-svg {
-      transform: translate(calc(-1 * var(--u)), calc(-.5 * var(--u))) scale(.96, 1.02);
-      transform-origin: center;
-    }
-    .card--context .caption {
-      top: 65.72%;
-      color: rgba(255,255,255,.84);
-      font-size: calc(19.1 * var(--u));
-      letter-spacing: calc(-.28 * var(--u));
-      line-height: 1.38;
-    }
-
-    /* CARD 3 — CONNECTIONS */
-    .card--connections {
-      background:
-        radial-gradient(ellipse 54% 14% at 56% 0%, rgba(255,206,190,.16), transparent 76%),
-        radial-gradient(ellipse 38% 24% at 102% 8%, rgba(255,190,164,.24), transparent 75%),
-        radial-gradient(ellipse 28% 24% at -5% 66%, rgba(255,192,174,.30), transparent 74%),
-        radial-gradient(ellipse 46% 30% at 104% 32%, rgba(255,146,52,.42), transparent 74%),
-        radial-gradient(ellipse 80% 36% at 62% 57%, rgba(255,141,36,.62), transparent 72%),
-        radial-gradient(ellipse 58% 30% at 6% 103%, rgba(199,49,45,.38), transparent 76%),
-        radial-gradient(ellipse 60% 32% at 97% 101%, rgba(190,40,44,.42), transparent 76%),
-        linear-gradient(177deg, #d84736 0%, #dd523c 24%, #e8703d 52%, #de5641 78%, #d34239 100%);
-      background-origin: border-box;
-      --entrance-delay: .70s;
-    }
-    .card--connections .card__grain { opacity: .58; }
-    .card--connections::before {
-      background: linear-gradient(102deg, rgba(255,255,255,.07), transparent 30%, rgba(255,255,255,.05) 62%, transparent 88%),
-                  radial-gradient(ellipse 84% 26% at 54% 4%, rgba(255,255,255,.11), transparent 74%);
-    }
-
-    .connections-map {
-      position: absolute;
-      z-index: 2;
-      top: 21.7%;
-      left: 0;
-      width: 100%;
-      height: 43%;
-      opacity: .78;
-      pointer-events: none;
-    }
-    .connections-map svg {
-      width: 100%;
-      height: 100%;
-      mask: linear-gradient(180deg, #000 0%, #000 50%, rgba(0,0,0,.46) 67%, rgba(0,0,0,.15) 83%, transparent 96%);
-    }
-
-    .metric--connections {
-      top: 48.5%;
-      transform: translateX(2.1cqw);
-    }
-    .metric--connections .dot-number { width: 23%; }
-
-    /* SHARED CARD TYPE */
-    .card__title {
-      position: absolute;
-      z-index: 4;
-      top: 6.1%;
-      left: 5%;
-      width: 90%;
-      margin: 0;
-      color: rgba(255,255,255,.96);
-      font-size: calc(22.95 * var(--u));
-      font-weight: 600;
-      letter-spacing: 0;
-      line-height: 1.48;
-      text-align: center;
-      text-shadow: 0 1px 1px rgba(72,28,48,.14);
-    }
-
-    .metric {
-      position: absolute;
-      z-index: 5;
-      left: 0;
-      width: 100%;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      color: rgba(255,255,255,.97);
-      filter: drop-shadow(0 1px 1px rgba(104,27,54,.08));
-    }
-
-    .metric__unit {
-      margin-left: 1.3%;
-      font-size: calc(30.46 * var(--u));
-      font-weight: 400;
-      line-height: 1;
-      letter-spacing: calc(-.8 * var(--u));
-    }
-
-    .caption {
-      position: absolute;
-      z-index: 5;
-      top: 65.1%;
-      left: 10%;
-      width: 80%;
-      color: rgba(255,255,255,.87);
-      font-size: calc(19.95 * var(--u));
-      font-weight: 400;
-      letter-spacing: calc(-.36 * var(--u));
-      line-height: 1.45;
-      text-align: center;
-      text-shadow: 0 1px 2px rgba(60,21,35,.16);
-    }
-
-    .learn-more {
-      position: absolute;
-      z-index: 6;
-      top: 83.75%;
-      left: 50%;
-      width: calc(111 * var(--u));
-      height: calc(45 * var(--u));
-      transform: translateX(-50%);
-      border: 0;
-      border-radius: 999px;
-      color: #2d2d2d;
-      background: rgba(255,255,255,.97);
-      box-shadow: 0 1px 0 rgba(255,255,255,.50) inset, 0 1px 3px rgba(58,25,39,.08);
-      font-size: calc(14 * var(--u));
-      font-weight: 400;
-      letter-spacing: calc(-.25 * var(--u));
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform .18s ease, box-shadow .18s ease;
-    }
-
-    .learn-more:hover {
-      transform: translateX(-50%) translateY(calc(-2 * var(--u)));
-      box-shadow: 0 8px 20px rgba(58,25,39,.16);
-    }
-
-    .learn-more:focus-visible {
-      outline: 3px solid rgba(255,255,255,.78);
-      outline-offset: 3px;
-    }
-
-    /* ENTRANCE ANIMATIONS */
-    html.entrance-active .headline__line,
-    html.entrance-active .intro,
-    html.entrance-active .card,
-    html.entrance-active .card__title,
-    html.entrance-active .gauge,
-    html.entrance-active .context-window,
-    html.entrance-active .connections-map,
-    html.entrance-active .metric,
-    html.entrance-active .caption,
-    html.entrance-active .learn-more {
-      will-change: opacity, translate, scale, clip-path, filter;
-    }
-
-    @keyframes headline-reveal {
-      from { opacity: 0; translate: 0 .52em; clip-path: inset(0 0 56% 0); }
-      to   { opacity: 1; translate: none; clip-path: inset(-8% -2% -8% -2%); }
-    }
-
-    @keyframes support-reveal {
-      from { opacity: 0; translate: 0 8px; }
-      to   { opacity: 1; translate: none; }
-    }
-
-    @keyframes card-establish {
-      from { opacity: .52; translate: 0 10px; scale: .985; }
-      to   { opacity: 1; translate: none; scale: none; }
-    }
-
-    @keyframes card-title-reveal {
-      from { opacity: 0; translate: 0 calc(8 * var(--u)); clip-path: inset(0 0 48% 0); }
-      to   { opacity: 1; translate: none; clip-path: inset(-8% -2% -8% -2%); }
-    }
-
-    @keyframes gauge-resolve {
-      from { opacity: 0; translate: 0 calc(9 * var(--u)); scale: .972; clip-path: inset(0 7% 18% 7%); }
-      to   { opacity: 1; translate: none; scale: none; clip-path: inset(-3%); }
-    }
-
-    @keyframes panel-resolve {
-      from { opacity: 0; translate: 0 calc(10 * var(--u)); scale: .972; clip-path: inset(8% 4% 8% 4%); }
-      to   { opacity: 1; translate: none; scale: none; clip-path: inset(-3%); }
-    }
-
-    @keyframes network-resolve {
-      from { opacity: 0; translate: 0 calc(6 * var(--u)); clip-path: inset(45% 0 45% 0); }
-      to   { opacity: .78; translate: none; clip-path: inset(0); }
-    }
-
-    @keyframes metric-resolve {
-      from { opacity: 0; translate: 0 calc(7 * var(--u)); scale: .985; filter: blur(2.5px); }
-      to   { opacity: 1; translate: none; scale: none; filter: none; }
-    }
-
-    @keyframes control-settle {
-      from { opacity: 0; translate: -50% calc(6 * var(--u)); scale: .975; }
-      to   { opacity: 1; translate: -50% 0; scale: none; }
-    }
-
-    html.entrance-active .headline__line:nth-child(1) {
-      animation: headline-reveal .84s cubic-bezier(.16,1,.3,1) .08s both;
-    }
-    html.entrance-active .headline__line:nth-child(2) {
-      animation: headline-reveal .84s cubic-bezier(.16,1,.3,1) .17s both;
-    }
-    html.entrance-active .intro {
-      animation: support-reveal .72s cubic-bezier(.22,1,.36,1) .25s both;
-    }
-
-    html.entrance-active .card {
-      animation: card-establish .76s cubic-bezier(.16,1,.3,1) var(--entrance-delay) both;
-    }
-
-    html.entrance-active .card .card__title {
-      animation: card-title-reveal .62s cubic-bezier(.22,1,.36,1) calc(var(--entrance-delay) + .14s) both;
-    }
-    html.entrance-active .card .gauge {
-      animation: gauge-resolve .82s cubic-bezier(.16,1,.3,1) calc(var(--entrance-delay) + .30s) both;
-    }
-    html.entrance-active .card .context-window {
-      animation: panel-resolve .82s cubic-bezier(.16,1,.3,1) calc(var(--entrance-delay) + .30s) both;
-    }
-    html.entrance-active .card .connections-map {
-      animation: network-resolve .82s cubic-bezier(.16,1,.3,1) calc(var(--entrance-delay) + .30s) both;
-    }
-    html.entrance-active .card .metric {
-      animation: metric-resolve .66s cubic-bezier(.16,1,.3,1) calc(var(--entrance-delay) + .48s) both;
-    }
-    html.entrance-active .card .caption {
-      animation: support-reveal .54s cubic-bezier(.22,1,.36,1) calc(var(--entrance-delay) + .64s) both;
-    }
-    html.entrance-active .card .learn-more {
-      animation: control-settle .52s cubic-bezier(.16,1,.3,1) calc(var(--entrance-delay) + .80s) both;
-    }
-
-    /* RESPONSIVE */
-    @media (min-width: 768px) and (max-width: 1180px) and (max-aspect-ratio: 6/7) {
-      .cards {
-        display: grid;
-        grid-template-columns: repeat(2, max-content);
-        justify-content: center;
-        align-content: center;
-        --card-w: min( (100cqw - var(--gap)) / 2, (100cqh - var(--gap)) / 2 * 429 / 554, 429px );
-      }
-      .card:last-child {
-        grid-column: 1 / -1;
-        justify-self: center;
-      }
-    }
-
-    @media (max-width: 767px) {
-      html, body {
-        height: auto;
-        overflow: visible;
-      }
-      .stage {
-        height: auto;
-        min-height: 100svh;
-        overflow: visible;
-        background: linear-gradient(rgba(236,236,234,.08), rgba(236,236,234,.08)),
-                    url("https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/0f4926a4-e660-4df2-9195-2bfb3e341bdd.webp") center top / 100% 100% no-repeat,
-                    #e8e8e8;
-      }
-      .stage-motion--wide { display: none; }
-      .stage-motion--narrow { display: block; }
-      .masthead { grid-template-columns: minmax(0, 1fr); }
-      .cards {
-        container-type: inline-size;
-        flex: 0 0 auto;
-        flex-direction: column;
-        align-items: center;
-        --card-w: min(100cqw, 429px);
-      }
-      html.entrance-active .card {
-        --entrance-delay: .40s;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .stage-motion, .card__media { display: none; }
-      html.entrance-active * {
-        animation: none !important;
-        transition-duration: .01ms !important;
-      }
     }
   </style>
 </head>
-<body>
+<body class="selection:bg-emerald-500 selection:text-black">
 
-  <!-- FILTER DEFINITIONS -->
-  <svg class="filter-defs" aria-hidden="true">
-    <defs>
-      <filter id="cardNoise">
-        <feTurbulence type="fractalNoise" baseFrequency=".54" numOctaves="3" seed="27" stitchTiles="stitch"/>
-        <feColorMatrix type="saturate" values="0"/>
-        <feComponentTransfer>
-          <feFuncR type="linear" slope="1.8" intercept="-.25"/>
-          <feFuncG type="linear" slope="1.8" intercept="-.25"/>
-          <feFuncB type="linear" slope="1.8" intercept="-.25"/>
-          <feFuncA type="table" tableValues="0 .52"/>
-        </feComponentTransfer>
-      </filter>
-      <filter id="panelNoiseF">
-        <feTurbulence type="fractalNoise" baseFrequency=".58" numOctaves="2" seed="71" stitchTiles="stitch"/>
-        <feColorMatrix type="saturate" values="0"/>
-      </filter>
-      <filter id="radarSoft"><feGaussianBlur stdDeviation="1.35"/></filter>
-      <filter id="radarHalo"><feGaussianBlur stdDeviation="5.2"/></filter>
-      <filter id="gaugeBlur"><feGaussianBlur stdDeviation="11"/></filter>
-    </defs>
-  </svg>
-
-  <!-- HIDDEN PAPER TEXTURE -->
-  <svg class="paper-texture" aria-hidden="true">
-    <defs>
-      <filter id="paperNoise">
-        <feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="4" seed="8" stitchTiles="stitch"/>
-      </filter>
-      <pattern id="paperFiber" width="100" height="100" patternTransform="rotate(17)" patternUnits="userSpaceOnUse">
-        <rect width="100" height="100" filter="url(#paperNoise)"/>
-      </pattern>
-    </defs>
-  </svg>
-
-  <main class="stage">
-    <!-- WIDE STAGE VIDEO (>=768px) -->
-    <video class="stage-motion stage-motion--wide" autoplay muted loop playsinline preload="auto" aria-hidden="true"
-      poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/5c3ec08f-2dbf-4c0a-8588-f6106a789443.webp"
-      src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_125226_45cb4f38-aa7e-47e1-885d-ae0b69745369.mp4"></video>
-
-    <!-- NARROW STAGE VIDEO (max-width: 767px) -->
-    <video class="stage-motion stage-motion--narrow" autoplay muted loop playsinline preload="none" aria-hidden="true"
-      poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/0f4926a4-e660-4df2-9195-2bfb3e341bdd.webp"
-      src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_125242_daae1570-386d-4bd5-8896-80499e2371e0.mp4"></video>
-
-    <!-- MASTHEAD -->
-    <header class="masthead">
-      <h1 class="headline">
-        <div class="headline__line">
-          Built for <span class="dot-word" data-dots="Intelligent" aria-label="Intelligent"></span>
+  <!-- NAVBAR -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-emerald-500/20">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
         </div>
-        <div class="headline__line">Performance</div>
+        <div>
+          <span class="text-lg font-black tracking-tight text-white flex items-center gap-1.5">
+            Techo <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold border border-emerald-500/30">PRO</span>
+          </span>
+          <p class="text-[10px] text-slate-400 font-mono tracking-wider uppercase">Gestão Inteligente de Beleza</p>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-8 text-xs font-medium text-slate-300">
+        <a href="#recursos" class="hover:text-emerald-400 transition-colors">Recursos</a>
+        <a href="#agendamento" class="hover:text-emerald-400 transition-colors">Agendamento Online</a>
+        <a href="#planos" class="hover:text-emerald-400 transition-colors">Planos & Preços</a>
+        <a href="#diferenciais" class="hover:text-emerald-400 transition-colors">Comparativo</a>
+        <a href="#seguranca" class="hover:text-emerald-400 transition-colors">Segurança</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="px-4 py-2 text-xs font-bold text-slate-300 hover:text-white transition-colors">
+          Entrar
+        </a>
+        <a href="index.html" class="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs tracking-wide shadow-lg shadow-emerald-500/25 transition-all flex items-center gap-2">
+          <span>Criar Conta Grátis</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="relative pt-36 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+    <div class="glow-bg -top-40 left-1/2 -translate-x-1/2"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      
+      <!-- BADGE -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono mb-8">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Novo: Agendamento Direto na Bio do Instagram + NFS-e Nacional
+      </div>
+
+      <!-- HEADLINE -->
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-[1.1] max-w-4xl mx-auto mb-6">
+        A Plataforma de Gestão que faz seu Salão ou Barbearia <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">Faturar Mais</span>.
       </h1>
-      <p class="intro">
-        Every capability is engineered for speed, scale and<br class="desktop-break"> contextual understanding, giving your AI the foundation<br class="desktop-break"> to reason, adapt and perform in production.
+
+      <p class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
+        Abandone cadernos, planilhas confusas e sistemas lentos. Tenha agenda com confirmação no WhatsApp, link de agendamento 24h na Bio, comissões automáticas da equipe e DRE em tempo real.
       </p>
-    </header>
 
-    <!-- CARDS ROW -->
-    <section class="cards" aria-label="Performance capabilities">
+      <!-- CTAS -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <a href="index.html" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm tracking-wide shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2.5">
+          <i data-lucide="zap" class="w-4 h-4 stroke-[2.5]"></i>
+          <span>Começar Teste Grátis de 30 Dias</span>
+        </a>
+        <a href="agendar.html?empresa=83188fab-7bca-4f7b-b5bf-9fed5c667fa0" target="_blank" class="w-full sm:w-auto px-6 py-4 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-white font-bold text-sm border border-slate-700 transition-all flex items-center justify-center gap-2">
+          <i data-lucide="calendar" class="w-4 h-4 text-emerald-400"></i>
+          <span>Ver Demonstração da Agenda Online</span>
+        </a>
+      </div>
 
-      <!-- CARD 1 — SPEED -->
-      <article class="card card--speed">
-        <video class="card__media" autoplay muted loop playsinline preload="auto" aria-hidden="true"
-          poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/167977c6-8539-46b1-9a15-8dba566f50b8.png"
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_130045_1a612b69-4854-4b34-8043-ccb91f2c60af.mp4"></video>
-
-        <svg class="card__grain" viewBox="0 0 429 554"><rect width="100%" height="100%" filter="url(#cardNoise)"/></svg>
-
-        <h2 class="card__title">Inference Speed<br>AI Response Latency</h2>
-
-        <!-- GAUGE -->
-        <svg class="gauge" viewBox="0 0 326 326" aria-hidden="true">
-          <defs>
-            <linearGradient id="gaugeArc" gradientUnits="userSpaceOnUse" x1="7" y1="136" x2="312" y2="109">
-              <stop offset="0" stop-color="#ff9ab7" stop-opacity=".06"/>
-              <stop offset=".08" stop-color="#ff8caf" stop-opacity=".44"/>
-              <stop offset=".34" stop-color="#ff6796" stop-opacity=".94"/>
-              <stop offset=".58" stop-color="#ff6796" stop-opacity="1"/>
-              <stop offset=".82" stop-color="#ffe7ed" stop-opacity=".74"/>
-              <stop offset=".94" stop-color="#fff8fa" stop-opacity=".28"/>
-              <stop offset="1" stop-color="#fff" stop-opacity="0"/>
-            </linearGradient>
-            <linearGradient id="gaugeShadow" gradientUnits="userSpaceOnUse" x1="11" y1="136" x2="308" y2="110">
-              <stop offset="0" stop-color="#6e1639" stop-opacity=".04"/>
-              <stop offset=".09" stop-color="#6e1639" stop-opacity=".17"/>
-              <stop offset=".52" stop-color="#72163d" stop-opacity=".18"/>
-              <stop offset=".78" stop-color="#7b1a43" stop-opacity=".1"/>
-              <stop offset="1" stop-color="#7b1a43" stop-opacity="0"/>
-            </linearGradient>
-            <radialGradient id="radarBeam" cx="163" cy="163" r="145" gradientUnits="userSpaceOnUse">
-              <stop offset=".3" stop-color="#650f35" stop-opacity="0"/>
-              <stop offset=".45" stop-color="#650f35" stop-opacity=".025"/>
-              <stop offset=".7" stop-color="#650f35" stop-opacity=".065"/>
-              <stop offset=".9" stop-color="#650f35" stop-opacity=".08"/>
-              <stop offset="1" stop-color="#650f35" stop-opacity=".05"/>
-            </radialGradient>
-            <linearGradient id="radarBeamEdge" x1="238" y1="33" x2="190.5" y2="115.4" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#ffe7ef" stop-opacity=".19"/>
-              <stop offset=".48" stop-color="#ffd1df" stop-opacity=".11"/>
-              <stop offset=".82" stop-color="#ffc6d7" stop-opacity=".045"/>
-              <stop offset="1" stop-color="#ffc6d7" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          <path d="M11.34 136.26A154 154 0 0 1 307.71 110.33" fill="none" stroke-width="3.2" stroke-linecap="round" stroke="url(#gaugeShadow)"/>
-          <path d="M6.91 135.48A158.5 158.5 0 0 1 311.94 108.79" fill="none" stroke-width="2.2" stroke-linecap="round" stroke="url(#gaugeArc)"/>
-          <path d="M19.22 137.65A146 146 0 0 1 236 36.56" fill="none" stroke-width="1.15" stroke="rgba(255,166,194,.31)"/>
-          <path d="M238 33.1A150 150 0 0 1 277.9 66.6L199.8 119.5A55 55 0 0 0 190.5 115.4Z" fill="#6a1238" opacity=".022" filter="url(#radarHalo)"/>
-          <path d="M238 33.1A150 150 0 0 1 277.9 66.6L199.8 119.5A55 55 0 0 0 190.5 115.4Z" fill="url(#radarBeam)" filter="url(#radarSoft)"/>
-          <path d="M238 33.1L190.5 115.4" stroke="url(#radarBeamEdge)" stroke-width="1.25" stroke-linecap="round" filter="url(#radarSoft)"/>
-          <g id="gaugeTicks"></g>
-          <ellipse cx="225" cy="166" rx="92" ry="76" fill="#fff" opacity=".055" filter="url(#gaugeBlur)"/>
-        </svg>
-
-        <div class="metric metric--speed">
-          <span class="dot-number" data-dots="118"></span>
-          <span class="metric__unit">ms</span>
+      <!-- SOCIAL PROOF / STATS -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-6 border-t border-slate-800 text-left">
+        <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800">
+          <div class="text-2xl font-black text-white font-mono">0%</div>
+          <div class="text-xs text-slate-400">Taxa sobre seus agendamentos</div>
         </div>
-
-        <p class="caption">Average global<br>response</p>
-        <button type="button" class="learn-more">Learn More</button>
-      </article>
-
-      <!-- CARD 2 — CONTEXT -->
-      <article class="card card--context">
-        <video class="card__media" autoplay muted loop playsinline preload="auto" aria-hidden="true"
-          poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/0446d1d5-e65e-4db5-8090-3e30d09afc43.png"
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_130054_dd005674-d693-4d81-80a5-357f7f10b3a3.mp4"></video>
-
-        <svg class="card__grain" viewBox="0 0 429 554"><rect width="100%" height="100%" filter="url(#cardNoise)"/></svg>
-
-        <h2 class="card__title">Context Window<br>Long-form Understanding</h2>
-
-        <!-- CONTEXT BACKDROP -->
-        <div class="context-backdrop">
-          <svg viewBox="0 0 429 554" preserveAspectRatio="none" aria-hidden="true">
-            <g>
-              <rect x="-24" y="22" width="106" height="149" rx="15" fill="rgba(212,176,238,.12)"/>
-              <rect x="88" y="22" width="247" height="150" rx="15" fill="rgba(213,194,255,.24)"/>
-              <rect x="346" y="22" width="111" height="147" rx="15" fill="rgba(255,232,218,.36)"/>
-              <rect x="-24" y="177" width="108" height="174" rx="15" fill="rgba(200,160,240,.18)"/>
-              <rect x="88" y="177" width="247" height="174" rx="15" fill="rgba(220,170,230,.22)"/>
-              <rect x="344" y="175" width="113" height="176" rx="15" fill="rgba(232,88,184,.38)"/>
-            </g>
-          </svg>
+        <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800">
+          <div class="text-2xl font-black text-emerald-400 font-mono">30 Dias</div>
+          <div class="text-xs text-slate-400">Teste grátis completo sem cartão</div>
         </div>
+        <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800">
+          <div class="text-2xl font-black text-white font-mono">100%</div>
+          <div class="text-xs text-slate-400">Emissão de NFS-e Municipal</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800">
+          <div class="text-2xl font-black text-emerald-400 font-mono">&lt; 3 min</div>
+          <div class="text-xs text-slate-400">Para configurar e começar a agendar</div>
+        </div>
+      </div>
 
-        <!-- CONTEXT WINDOW -->
-        <div class="context-window">
-          <svg class="card__grain" viewBox="0 0 252 166"><rect width="100%" height="100%" filter="url(#panelNoiseF)" opacity=".24"/></svg>
-          <div class="window-lines">
-            <span class="line-1"></span>
-            <span class="line-2"></span>
-            <span class="line-3"></span>
+    </div>
+  </section>
+
+  <!-- FEATURES SECTION -->
+  <section id="recursos" class="py-24 border-t border-slate-800/80 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest mb-3">Tudo que seu espaço precisa</h2>
+        <h3 class="text-3xl sm:text-4xl font-black text-white tracking-tight">Construído especificamente para o fluxo de atendimento da beleza</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- CARD 1 -->
+        <div class="glass-card p-8 rounded-3xl space-y-4 transition-all">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+            <i data-lucide="calendar-check" class="w-6 h-6"></i>
           </div>
+          <h4 class="text-lg font-bold text-white">Agenda Inteligente Multi-Profissional</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Visão diária por profissional, semanal e mensal com bloqueio automático de conflitos, tempo de intervalo (buffer time) para higienização e status colorido em tempo real.
+          </p>
         </div>
 
-        <div class="metric metric--context">
-          <span class="dot-number" data-dots="2.4"></span>
-          <span class="metric__unit">M</span>
+        <!-- CARD 2 -->
+        <div class="glass-card p-8 rounded-3xl space-y-4 transition-all">
+          <div class="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-400 flex items-center justify-center">
+            <i data-lucide="instagram" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white">Agendamento Online na Bio 24/7</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Um link exclusivo e elegante para colar na bio do seu Instagram ou WhatsApp. Sua cliente escolhe o procedimento, o profissional e o melhor horário sem você precisar parar o atendimento.
+          </p>
         </div>
 
-        <p class="caption">Tokens processed<br>simultaneously</p>
-        <button type="button" class="learn-more">Learn More</button>
-      </article>
-
-      <!-- CARD 3 — CONNECTIONS -->
-      <article class="card card--connections">
-        <video class="card__media" autoplay muted loop playsinline preload="auto" aria-hidden="true"
-          poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/da8d0242-4dee-4f6d-813f-a5887e86ad77.png"
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_130103_7550f407-f14b-40a6-9616-7a26d7a8bd9f.mp4"></video>
-
-        <svg class="card__grain" viewBox="0 0 429 554"><rect width="100%" height="100%" filter="url(#cardNoise)"/></svg>
-
-        <h2 class="card__title">Intelligent Connections<br>Cross-Source Context</h2>
-
-        <!-- CONNECTIONS MAP -->
-        <div class="connections-map">
-          <svg viewBox="0 0 429 238" preserveAspectRatio="none" aria-hidden="true">
-            <path opacity=".20" stroke="#fff" stroke-width="1" fill="none" d="M0 5H128c27 0 36 7 39 26 2 16 9 22 24 22h106c16 0 23-8 25-25 2-16 10-23 31-23h76"/>
-            <path opacity=".30" stroke="#fff" stroke-width="1" fill="none" d="M0 117h46c15 0 22 8 26 25 5 23 12 31 31 31h174c18 0 25-8 30-31 4-17 11-25 26-25h96"/>
-            <path opacity=".34" stroke="#fff" stroke-width="1" fill="none" d="M0 173h87c15 0 22 7 27 25 4 15 11 22 28 22h140c17 0 25-7 29-22 5-18 12-25 28-25h90"/>
-            <path opacity=".16" stroke="#fff" stroke-width="1" fill="none" d="M0 228h120c17 0 25-5 28-18 4-15 10-20 28-20h81c18 0 25 6 28 20 4 13 11 18 28 18h116"/>
-            <path opacity=".26" stroke="#fff" stroke-width="1" fill="none" d="M0 5H429M0 61H429M0 117H429"/>
-            <path opacity=".09" stroke="#fff" stroke-width="1" fill="none" d="M0 173H429"/>
-            <!-- Warm strokes -->
-            <path stroke="#fff8dd" stroke-width="1.15" opacity=".52" fill="none" d="M0 61h95c14 0 22-6 27-20 4-13 12-20 27-20h115c15 0 23 6 27 20 5 14 13 20 28 20h110"/>
-            <path stroke="#fff8dd" stroke-width="1.15" opacity=".94" fill="none" d="M0 117h88c15 0 22-8 25-25 4-24 12-31 31-31h129c20 0 27 7 31 31 3 17 10 25 26 25h99"/>
-            <!-- Nodes -->
-            <circle cx="45" cy="117" r="6.5" fill="#fff"/>
-            <circle cx="133" cy="61" r="6.5" fill="#fff4a7"/>
-            <circle cx="189" cy="61" r="6.5" fill="#fff1a4"/>
-            <circle cx="319" cy="61" r="6.5" fill="#fff4a6"/>
-            <circle cx="319" cy="117" r="6.5" fill="#fff2a0"/>
-          </svg>
+        <!-- CARD 3 -->
+        <div class="glass-card p-8 rounded-3xl space-y-4 transition-all">
+          <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+            <i data-lucide="trending-up" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white">DRE e Finanças Profissionais</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Demonstrativo de Resultados do Exercício (DRE) automático, fluxo de caixa gaveta, contas bancárias PJ, previsão de recebíveis e relatórios fiscais em um só clique.
+          </p>
         </div>
 
-        <div class="metric metric--connections">
-          <span class="dot-number" data-dots="16"></span>
-          <span class="metric__unit">K</span>
+        <!-- CARD 4 -->
+        <div class="glass-card p-8 rounded-3xl space-y-4 transition-all">
+          <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
+            <i data-lucide="receipt" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white">Emissão de NFS-e Municipal Integrada</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Emita notas fiscais de serviço direto pelo sistema, com cálculo automático de ISS, enquadramento na Lei Complementar 116 e geração instantânea de DANFSE e XML.
+          </p>
         </div>
 
-        <p class="caption">Connected data<br>sources</p>
-        <button type="button" class="learn-more">Learn More</button>
-      </article>
+        <!-- CARD 5 -->
+        <div class="glass-card p-8 rounded-3xl space-y-4 transition-all">
+          <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center">
+            <i data-lucide="file-signature" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white">Fichas de Anamnese Touch & Fotos</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Elimine papéis. Registre anamneses completas de micropigmentação, estética e unhas com assinatura digital na tela do celular e fotos comparativas de Antes e Depois.
+          </p>
+        </div>
 
-    </section>
-  </main>
+        <!-- CARD 6 -->
+        <div class="glass-card p-8 rounded-3xl space-y-4 transition-all">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+            <i data-lucide="palette" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white">Identidade Visual Personalizável</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Alterne instantaneamente entre os temas exclusivos <strong>Emerald</strong> (Salões e Clínicas), <strong>Bourbon Vintage</strong> (Barbearias clássicas) e <strong>Rose Gold</strong> (Esmalterias de luxo).
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PRICING SECTION (INTEGRADO COM ASAAS) -->
+  <section id="planos" class="py-24 bg-slate-950/60 border-t border-slate-800/80 relative">
+    <div class="glow-bg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest mb-3">Transparência Total</h2>
+        <h3 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Planos Acessíveis que Cabem no seu Bolso</h3>
+        <p class="text-xs sm:text-sm text-slate-400 mt-3">Sem fidelidade, sem taxa de cancelamento e sem comissão sobre suas vendas.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        
+        <!-- PLANO STARTER -->
+        <div class="glass-card p-8 sm:p-10 rounded-3xl border border-slate-800 relative flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-mono text-xs font-bold uppercase">Starter</span>
+              <span class="text-xs text-slate-400 font-mono">Para Solo-Profissionais</span>
+            </div>
+            
+            <div class="flex items-baseline gap-1 mb-6">
+              <span class="text-4xl sm:text-5xl font-black text-white font-mono">R$ 29,90</span>
+              <span class="text-xs text-slate-400 font-mono">/mês</span>
+            </div>
+
+            <p class="text-xs text-slate-400 leading-relaxed mb-8">
+              Ideal para barbeiros, cabeleireiros, manicures e esteticistas autônomos que desejam organizar a agenda e acabar com as faltas.
+            </p>
+
+            <ul class="space-y-3.5 text-xs text-slate-300 mb-8">
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Até 1 Profissional Ativo</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Agendamentos Ilimitados</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Página de Agendamento Online na Bio</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Controle de Caixa e PDV Básico</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Cadastro Ilimitado de Clientes</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Suporte via WhatsApp</span>
+              </li>
+            </ul>
+          </div>
+
+          <a href="index.html" class="w-full py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs text-center transition-all block">
+            Experimentar Starter Grátis
+          </a>
+        </div>
+
+        <!-- PLANO PRO -->
+        <div class="glass-card p-8 sm:p-10 rounded-3xl border-2 border-emerald-500 shadow-2xl shadow-emerald-500/10 relative flex flex-col justify-between">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-emerald-500 text-slate-950 font-black font-mono text-[11px] uppercase tracking-wider shadow-md">
+            Mais Escolhido por Espaços
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-xs font-bold uppercase border border-emerald-500/30">Techo PRO</span>
+              <span class="text-xs text-emerald-400 font-mono">Espaços & Equipes</span>
+            </div>
+            
+            <div class="flex items-baseline gap-1 mb-6">
+              <span class="text-4xl sm:text-5xl font-black text-emerald-400 font-mono">R$ 59,90</span>
+              <span class="text-xs text-slate-400 font-mono">/mês</span>
+            </div>
+
+            <p class="text-xs text-slate-400 leading-relaxed mb-8">
+              Para salões de beleza, estúdios e barbearias com múltiplos profissionais que buscam gestão financeira completa e conformidade fiscal.
+            </p>
+
+            <ul class="space-y-3.5 text-xs text-slate-200 mb-8">
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <strong class="text-white">Equipe e Profissionais Ilimitados</strong>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Cálculo Automático de Comissões & Lei do Salão Parceiro</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Emissor Integrado de NFS-e Municipal</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>DRE Completo & Fechamento de Caixa Cego</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Fichas de Anamnese Touch com Assinatura Digital</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Controle de Estoque com Alerta de Reposição</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Todos os Temas Exclusivos Desbloqueados</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Ativação Instantânea via Pix Asaas</span>
+              </li>
+            </ul>
+          </div>
+
+          <a href="index.html" class="w-full py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs text-center tracking-wide shadow-lg shadow-emerald-500/25 transition-all block">
+            Garantir Techo PRO com 30 Dias Grátis
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ SECTION -->
+  <section class="py-24 border-t border-slate-800">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest mb-3">Dúvidas Frequentes</h2>
+        <h3 class="text-3xl font-black text-white">Perguntas comuns sobre o Techo PRO</h3>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="glass-card p-5 rounded-2xl">
+          <h4 class="font-bold text-sm text-white mb-2">Preciso cadastrar cartão de crédito para começar o teste?</h4>
+          <p class="text-slate-400 leading-relaxed">Não! O teste de 30 dias é 100% gratuito e não exige nenhum dado financeiro. Você só escolhe assinar se o sistema realmente transformar sua rotina.</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl">
+          <h4 class="font-bold text-sm text-white mb-2">Como funciona o pagamento com o Asaas?</h4>
+          <p class="text-slate-400 leading-relaxed">O Techo PRO é integrado diretamente ao Asaas (instituição regulada pelo Banco Central). Ao assinar, você gera um QR Code Pix instantâneo ou código Copia e Cola. Assim que o pagamento é reconhecido, sua conta é liberada no mesmo segundo.</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl">
+          <h4 class="font-bold text-sm text-white mb-2">Minha cliente precisa baixar algum aplicativo para agendar?</h4>
+          <p class="text-slate-400 leading-relaxed">Não! Esse é um dos maiores diferenciais. O link da sua bio abre direto no navegador do celular da cliente, leve, rápido e sem exigir senhas ou downloads demorados.</p>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl">
+          <h4 class="font-bold text-sm text-white mb-2">Os dados do meu salão estão seguros?</h4>
+          <p class="text-slate-400 leading-relaxed">Sim! Nossa arquitetura multi-tenant conta com Row Level Security (RLS) avançado no banco PostgreSQL/Supabase, blindagem contra invasão cross-tenant, backups automáticos e estrita conformidade com a LGPD.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-12 border-t border-slate-900 text-center text-xs text-slate-500 space-y-4">
+    <div class="flex items-center justify-center gap-2">
+      <div class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-black">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+      </div>
+      <span class="text-white font-bold text-sm tracking-tight">Techo PRO</span>
+    </div>
+    <p>© 2026 Techo PRO • Gestão Inteligente para Salões e Barbearias. Todos os direitos reservados.</p>
+    <div class="flex items-center justify-center gap-6 text-[11px] text-slate-400">
+      <a href="index.html" class="hover:text-white">Acessar App</a>
+      <a href="agendar.html?empresa=83188fab-7bca-4f7b-b5bf-9fed5c667fa0" class="hover:text-white">Agenda Online</a>
+      <a href="#planos" class="hover:text-white">Planos</a>
+      <a href="mailto:contato@techopro.com.br" class="hover:text-white">Suporte</a>
+    </div>
+  </footer>
 
   <script>
-    // 1. GENERATE GAUGE TICKS (CARD 1)
-    (function initGaugeTicks() {
-      const g = document.getElementById("gaugeTicks");
-      if (!g) return;
-      const center = 163;
-      for (let i = 0; i <= 22; i++) {
-        const angle = (190 + i * 5) * Math.PI / 180;
-        const outer = 142;
-        const inner = i % 5 === 0 ? 129 : 133;
-        const x1 = center + outer * Math.cos(angle);
-        const y1 = center + outer * Math.sin(angle);
-        const x2 = center + inner * Math.cos(angle);
-        const y2 = center + inner * Math.sin(angle);
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", x1);
-        line.setAttribute("y1", y1);
-        line.setAttribute("x2", x2);
-        line.setAttribute("y2", y2);
-        line.setAttribute("stroke", "rgba(255,188,210,.34)");
-        line.setAttribute("stroke-width", i % 5 === 0 ? "1.5" : "1");
-        line.setAttribute("class", "tick");
-        g.appendChild(line);
-      }
-    })();
-
-    // 2. LED DOT TYPE SYSTEM
-    (function initDotType() {
-      const glyphs = {
-        "0": ["01110", "10001", "10011", "10101", "11001", "10001", "01110"],
-        "1": ["010", "110", "010", "010", "010", "010", "111"],
-        "2": ["01110", "10001", "00001", "00010", "00100", "01000", "11111"],
-        "3": ["11110", "00001", "00001", "01110", "00001", "00001", "11110"],
-        "4": ["00010", "00110", "01010", "10010", "11111", "00010", "00010"],
-        "5": ["11111", "10000", "10000", "11110", "00001", "00001", "11110"],
-        "6": ["01110", "10000", "10000", "11110", "10001", "10001", "01110"],
-        "7": ["11111", "00001", "00010", "00100", "01000", "01000", "01000"],
-        "8": ["01110", "10001", "10001", "01110", "10001", "10001", "01110"],
-        "9": ["01110", "10001", "10001", "01111", "00001", "00001", "01110"],
-        ".": ["0", "0", "0", "0", "0", "0", "1"],
-        "I": ["111", "010", "010", "010", "010", "010", "111"],
-        "a": ["00000", "00000", "01110", "00001", "01111", "10001", "01111"],
-        "e": ["00000", "00000", "01110", "10001", "11111", "10000", "01110"],
-        "g": ["00000", "00000", "01111", "10001", "01111", "00001", "01110"],
-        "i": ["1", "0", "1", "1", "1", "1", "1"],
-        "l": ["10", "10", "10", "10", "10", "10", "01"],
-        "n": ["00000", "00000", "11110", "10001", "10001", "10001", "10001"],
-        "t": ["010", "010", "111", "010", "010", "010", "001"],
-        "r": ["00000", "00000", "10110", "11001", "10000", "10000", "10000"]
-      };
-
-      document.querySelectorAll("[data-dots]").forEach(el => {
-        const text = el.getAttribute("data-dots");
-        const isDotWord = el.classList.contains("dot-word");
-        const isContextMetric = !!el.closest(".metric--context");
-
-        const pitchX = isDotWord ? 4 : 5;
-        const pitchY = 4;
-        const gap = 1;
-        const dotRadius = isDotWord ? 1.8 : (isContextMetric ? 2.32 : 1.55);
-
-        let curX = 0;
-        let circlesSvg = "";
-
-        for (let char of text) {
-          const pattern = glyphs[char];
-          if (!pattern) {
-            curX += pitchX * 2;
-            continue;
-          }
-          const charCols = pattern[0].length;
-          for (let row = 0; row < pattern.length; row++) {
-            const rowStr = pattern[row];
-            for (let col = 0; col < rowStr.length; col++) {
-              if (rowStr[col] === "1") {
-                const cx = curX + col * pitchX + 1.55;
-                const cy = row * pitchY + 1.55;
-                circlesSvg += `<circle cx="${cx}" cy="${cy}" r="${dotRadius}"/>`;
-              }
-            }
-          }
-          curX += charCols * pitchX + gap;
-        }
-
-        const totalWidth = curX;
-        el.innerHTML = `<svg class="dot-svg" viewBox="0 0 ${totalWidth} 28" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${circlesSvg}</svg>`;
-      });
-    })();
-
-    // 3. ENTRANCE ANIMATION COMPLETION
-    (function handleEntrance() {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        document.documentElement.classList.remove("entrance-active");
-        clearTimeout(window.__entranceFailsafe);
-        return;
-      }
-
-      const isMobile = window.innerWidth < 768;
-      const targetSelector = isMobile ? ".card--speed .learn-more" : ".card--connections .learn-more";
-      const targetBtn = document.querySelector(targetSelector);
-
-      if (targetBtn) {
-        targetBtn.addEventListener("animationend", () => {
-          clearTimeout(window.__entranceFailsafe);
-          document.documentElement.classList.remove("entrance-active");
-        }, { once: true });
-      }
-    })();
+    if (window.lucide) {
+      lucide.createIcons();
+    }
   </script>
 </body>
 </html>

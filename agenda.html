@@ -9148,11 +9148,11 @@
       try {
         // Load all entity tables for this empresa in parallel
         const [agendsRes, clientsRes, servicosRes, profisRes, finRes, configRes] = await Promise.all([
-          supabaseClient.from('agendamentos').select('*').eq('empresa_id', empresaId),
-          supabaseClient.from('clientes').select('*').eq('empresa_id', empresaId),
-          supabaseClient.from('servicos').select('*').eq('empresa_id', empresaId),
-          supabaseClient.from('profissionais').select('*').eq('empresa_id', empresaId),
-          supabaseClient.from('financeiro').select('*').eq('empresa_id', empresaId),
+          supabaseClient.from('agendamentos').select('*').eq('empresa_id', empresaId).is('deleted_at', null),
+          supabaseClient.from('clientes').select('*').eq('empresa_id', empresaId).is('deleted_at', null),
+          supabaseClient.from('servicos').select('*').eq('empresa_id', empresaId).is('deleted_at', null),
+          supabaseClient.from('profissionais').select('*').eq('empresa_id', empresaId).is('deleted_at', null),
+          supabaseClient.from('financeiro').select('*').eq('empresa_id', empresaId).is('deleted_at', null),
           supabaseClient.from('configuracoes').select('*').eq('empresa_id', empresaId).single()
         ]);
 
@@ -9457,7 +9457,7 @@
       if (!supabaseClient || !currentSession || !currentSession.empresa) return;
       try {
         if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
-          await supabaseClient.from('agendamentos').delete().eq('id', id);
+          await supabaseClient.from('agendamentos').update({ deleted_at: new Date().toISOString() }).eq('id', id);
         }
       } catch(e) {
         console.warn('Delete appt error:', e);
@@ -9489,7 +9489,7 @@
       if (!supabaseClient || !currentSession || !currentSession.empresa) return;
       try {
         if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
-          await supabaseClient.from('clientes').delete().eq('id', id);
+          await supabaseClient.from('clientes').update({ deleted_at: new Date().toISOString() }).eq('id', id);
         }
       } catch(e) {
         console.warn('Delete client error:', e);
@@ -9520,7 +9520,7 @@
       if (!supabaseClient || !currentSession || !currentSession.empresa) return;
       try {
         if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
-          await supabaseClient.from('servicos').delete().eq('id', id);
+          await supabaseClient.from('servicos').update({ deleted_at: new Date().toISOString() }).eq('id', id);
         }
       } catch(e) {
         console.warn('Delete service error:', e);
@@ -9552,7 +9552,7 @@
       if (!supabaseClient || !currentSession || !currentSession.empresa) return;
       try {
         if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
-          await supabaseClient.from('profissionais').delete().eq('id', id);
+          await supabaseClient.from('profissionais').update({ deleted_at: new Date().toISOString() }).eq('id', id);
         }
       } catch(e) {
         console.warn('Delete prof error:', e);
@@ -9585,7 +9585,7 @@
       if (!supabaseClient || !currentSession || !currentSession.empresa) return;
       try {
         if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
-          await supabaseClient.from('financeiro').delete().eq('id', id);
+          await supabaseClient.from('financeiro').update({ deleted_at: new Date().toISOString() }).eq('id', id);
         }
       } catch(e) {
         console.warn('Delete fin error:', e);
@@ -9661,10 +9661,181 @@
       }
     }
 
+    let checkoutState = {
+      plano: 'pro',
+      ciclo: 'mensal',
+      paymentId: null,
+      pollInterval: null
+    };
+
+    function formatCpfCnpj(input) {
+      let v = input.value.replace(/\D/g, '');
+      if (v.length <= 11) {
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      } else {
+        v = v.replace(/^(\d{2})(\d)/, '$1.$2');
+        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+        v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
+        v = v.replace(/(\d{4})(\d)/, '$1-$2');
+      }
+      input.value = v;
+    }
+
     function requestPlanUpgrade(plano) {
-      const nomePlano = plano.toUpperCase();
-      const zapMsg = encodeURIComponent(`Olá! Gostaria de assinar o Plano ${nomePlano} do Techo PRO no ciclo ${currentBillingCycle.toUpperCase()}. Minha empresa é: ${currentSession?.empresa?.nome || 'Minha Empresa'}`);
-      window.open(`https://api.whatsapp.com/send?phone=5551999999999&text=${zapMsg}`, '_blank');
+      checkoutState.plano = plano.toLowerCase();
+      checkoutState.ciclo = (currentBillingCycle || 'mensal').toLowerCase();
+      
+      // Reset steps
+      document.getElementById('checkout-form-step').classList.remove('hidden');
+      document.getElementById('checkout-pix-step').classList.add('hidden');
+      document.getElementById('checkout-success-step').classList.add('hidden');
+
+      if (checkoutState.pollInterval) {
+        clearInterval(checkoutState.pollInterval);
+        checkoutState.pollInterval = null;
+      }
+
+      // Populate plan details
+      const isPro = checkoutState.plano === 'pro';
+      const prices = {
+        'starter': { 'mensal': 'R$ 29,90', 'semestral': 'R$ 149,40', 'anual': 'R$ 262,80' },
+        'pro': { 'mensal': 'R$ 59,90', 'semestral': 'R$ 299,40', 'anual': 'R$ 538,80' }
+      };
+
+      document.getElementById('checkout-modal-title').textContent = isPro ? 'Assinar Plano PRO' : 'Assinar Plano Starter';
+      document.getElementById('checkout-plan-badge').textContent = `PLANO ${checkoutState.plano.toUpperCase()} • ${checkoutState.ciclo.toUpperCase()}`;
+      document.getElementById('checkout-plan-price').textContent = prices[checkoutState.plano][checkoutState.ciclo];
+      document.getElementById('checkout-plan-period').textContent = checkoutState.ciclo === 'mensal' ? '/mês' : `/${checkoutState.ciclo}`;
+
+      // Prefill user/empresa data
+      if (currentSession) {
+        if (document.getElementById('checkout-name')) {
+          document.getElementById('checkout-name').value = currentSession.user?.user_metadata?.nome || currentSession.empresa?.responsavel || currentSession.empresa?.nome || '';
+        }
+        if (document.getElementById('checkout-phone')) {
+          document.getElementById('checkout-phone').value = currentSession.empresa?.telefone || '';
+        }
+      }
+
+      openModal('modal-checkout-asaas');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    async function generateAsaasPix() {
+      const name = document.getElementById('checkout-name').value.trim();
+      const cpf = document.getElementById('checkout-cpf').value.trim();
+      const phone = document.getElementById('checkout-phone').value.trim();
+
+      if (!name) return alert('Por favor, informe seu nome completo.');
+      if (!cpf || cpf.replace(/\D/g, '').length < 11) return alert('Por favor, informe um CPF ou CNPJ válido.');
+
+      const btn = document.getElementById('btn-generate-pix');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="animate-spin inline-block mr-2">⏳</span> Gerando Pix com o Asaas...';
+
+      try {
+        const payload = {
+          empresa_id: currentSession?.empresa?.id || null,
+          plano: checkoutState.plano,
+          ciclo: checkoutState.ciclo,
+          cliente_nome: name,
+          cliente_cpf: cpf,
+          cliente_email: currentSession?.user?.email || 'contato@techopro.com.br',
+          cliente_telefone: phone
+        };
+
+        const res = await fetch('/api/asaas/create-pix', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!data.success) {
+          throw new Error(data.message || 'Erro ao gerar Pix.');
+        }
+
+        checkoutState.paymentId = data.paymentId;
+
+        // Transition to Pix step
+        document.getElementById('checkout-form-step').classList.add('hidden');
+        document.getElementById('checkout-pix-step').classList.remove('hidden');
+
+        // Set QR image and payload
+        const qrImg = document.getElementById('checkout-pix-qr');
+        if (data.encodedImage) {
+          qrImg.src = 'data:image/png;base64,' + data.encodedImage;
+        }
+        document.getElementById('checkout-pix-payload').value = data.pixCopiaCola || '';
+
+        // Start polling for payment confirmation
+        startPaymentPolling(data.paymentId);
+
+      } catch (err) {
+        console.error('Erro ao gerar Pix:', err);
+        alert('Não foi possível gerar o Pix: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="zap" class="w-4 h-4"></i> Gerar QR Code Pix Instantâneo';
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    function copyPixPayload() {
+      const input = document.getElementById('checkout-pix-payload');
+      if (input) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(input.value);
+        }
+        const btn = document.getElementById('btn-copy-pix');
+        btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> Copiado!';
+        setTimeout(() => {
+          btn.innerHTML = '<i data-lucide="copy" class="w-3.5 h-3.5"></i> Copiar';
+          if (window.lucide) lucide.createIcons();
+        }, 2500);
+      }
+    }
+
+    function startPaymentPolling(paymentId) {
+      if (checkoutState.pollInterval) clearInterval(checkoutState.pollInterval);
+
+      checkoutState.pollInterval = setInterval(async () => {
+        try {
+          const empresaId = currentSession?.empresa?.id || '';
+          const res = await fetch(`/api/asaas/check-status?paymentId=${paymentId}&empresaId=${empresaId}&plano=${checkoutState.plano}&ciclo=${checkoutState.ciclo}`);
+          const data = await res.json();
+
+          if (data.success && (data.status === 'RECEIVED' || data.status === 'CONFIRMED')) {
+            clearInterval(checkoutState.pollInterval);
+            checkoutState.pollInterval = null;
+
+            // Success Transition
+            document.getElementById('checkout-pix-step').classList.add('hidden');
+            document.getElementById('checkout-success-step').classList.remove('hidden');
+
+            if (currentSession && currentSession.assinatura) {
+              currentSession.assinatura.status = 'ativo';
+              currentSession.assinatura.plano = checkoutState.plano;
+            }
+
+            // Confetti
+            confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
+            if (window.lucide) lucide.createIcons();
+          }
+        } catch (e) {
+          console.warn('Polling check error:', e);
+        }
+      }, 4000);
+    }
+
+    function finishCheckoutSuccess() {
+      closeModal('modal-checkout-asaas');
+      if (currentSession?.empresa?.id) {
+        loadTenantData(currentSession.empresa.id);
+      }
+      switchTab('dashboard');
     }
 
     // ---- Guia Rápido de Migração Modal ----
@@ -13439,6 +13610,7 @@
       if(tabId==='ajuda-faq')renderAjudaFAQ();
       if(tabId==='ajuda'){toggleSubmenu('sub-ajuda');switchTab('ajuda-agenda-online');}
       if(tabId==='nfse'){toggleSubmenu('sub-nfse');switchTab('nfse-caixa-saida');}
+      if(tabId==='migracao-dados')renderMigracaoDados();
 
       if(window.lucide) lucide.createIcons();
 
@@ -18797,6 +18969,98 @@
       <div class="pt-2 flex justify-end">
         <button onclick="closeModal('modal-guia-migracao')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">
           Entendi, fechar guia
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================= MODAL CHECKOUT ASAAS PIX ========================= -->
+  <div id="modal-checkout-asaas" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)closeModal('modal-checkout-asaas')">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-md"></div>
+    <div class="relative z-10 glass-card rounded-3xl max-w-md w-full p-6 space-y-4 border border-emerald-500/30 shadow-2xl">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b border-border pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black">
+            <i data-lucide="qr-code" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-sm text-title" id="checkout-modal-title">Assinar Techo PRO</h3>
+            <p class="text-[11px] text-muted font-mono" id="checkout-modal-subtitle">Pagamento instantâneo via Pix Asaas</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-checkout-asaas')" class="p-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 text-muted hover:text-title">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Card do Plano Selecionado -->
+      <div class="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/20 flex items-center justify-between">
+        <div>
+          <div class="text-[10px] font-mono text-emerald-400 uppercase font-bold" id="checkout-plan-badge">PLANO PRO • MENSAL</div>
+          <div class="text-xs text-muted" id="checkout-plan-desc">Acesso total liberado imediatamente</div>
+        </div>
+        <div class="text-right">
+          <div class="text-xl font-black font-mono text-emerald-400" id="checkout-plan-price">R$ 59,90</div>
+          <div class="text-[10px] text-muted font-mono" id="checkout-plan-period">/mês</div>
+        </div>
+      </div>
+
+      <!-- State 1: Formulário de Confirmação (Nome & CPF) -->
+      <div id="checkout-form-step" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-muted mb-1">Nome Completo / Razão Social *</label>
+          <input type="text" id="checkout-name" class="input-box w-full p-2.5 rounded-xl" placeholder="Seu nome">
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">CPF ou CNPJ para Emissão do Pix *</label>
+          <input type="text" id="checkout-cpf" maxlength="18" oninput="formatCpfCnpj(this)" class="input-box w-full p-2.5 rounded-xl font-mono" placeholder="000.000.000-00">
+          <p class="text-[10px] text-muted mt-1">Exigido pelo Banco Central para gerar o QR Code Pix.</p>
+        </div>
+        <div>
+          <label class="block font-bold text-muted mb-1">WhatsApp de Contato *</label>
+          <input type="tel" id="checkout-phone" class="input-box w-full p-2.5 rounded-xl font-mono" placeholder="(00) 00000-0000">
+        </div>
+
+        <button type="button" onclick="generateAsaasPix()" id="btn-generate-pix" class="btn-primary w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 mt-2">
+          <i data-lucide="zap" class="w-4 h-4"></i> Gerar QR Code Pix Instantâneo
+        </button>
+      </div>
+
+      <!-- State 2: QR Code Pix Gerado -->
+      <div id="checkout-pix-step" class="space-y-3.5 text-xs hidden text-center">
+        <div class="p-3 rounded-2xl bg-white mx-auto w-fit shadow-md border border-slate-200">
+          <img id="checkout-pix-qr" src="" alt="QR Code Pix" class="w-44 h-44 mx-auto">
+        </div>
+
+        <div class="space-y-1">
+          <p class="font-bold text-title">Escaneie o QR Code com o app do seu banco</p>
+          <p class="text-[11px] text-muted">Ou copie o código Pix abaixo para colar no seu banco:</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <input type="text" id="checkout-pix-payload" readonly class="input-box w-full p-2.5 rounded-xl font-mono text-[11px] bg-slate-100 dark:bg-slate-900 select-all">
+          <button type="button" onclick="copyPixPayload()" id="btn-copy-pix" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shrink-0 flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copiar
+          </button>
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-border flex items-center justify-center gap-2 text-muted text-[11px] font-mono">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span id="checkout-polling-status">Aguardando confirmação do pagamento...</span>
+        </div>
+      </div>
+
+      <!-- State 3: Pagamento Confirmado -->
+      <div id="checkout-success-step" class="space-y-3 text-center hidden py-4">
+        <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center border-2 border-emerald-500 shadow-lg">
+          <i data-lucide="check" class="w-7 h-7 stroke-[3]"></i>
+        </div>
+        <h4 class="font-bold text-base text-title">🎉 Pagamento Confirmado!</h4>
+        <p class="text-xs text-muted">Seu plano foi ativado com sucesso! Todos os recursos já estão desbloqueados.</p>
+        <button onclick="finishCheckoutSuccess()" class="btn-primary w-full py-2.5 rounded-xl font-bold text-xs mt-2">
+          Acessar Meus Recursos
         </button>
       </div>
     </div>
