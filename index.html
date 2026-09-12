@@ -2,7 +2,11 @@
 <html lang="pt-BR" class="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Techo PRO - Sistema inteligente de gestão, agendamentos online e controle financeiro para salões, barbearias, clínicas e profissionais da beleza.">
+  <meta property="og:title" content="Techo PRO • Sistema de Gestão & Agenda">
+  <meta property="og:description" content="Gerencie sua agenda, equipe, clientes e faturamento em um só lugar.">
+  <meta property="og:type" content="website">
   <title>Techo PRO • Sistema de Gestão & Agenda Inteligente</title>
   <script>
     (function(){
@@ -1012,6 +1016,13 @@
         </div>
       </div>
 
+      <!-- Loading State (shown while checking session) -->
+      <div id="auth-loading-state" class="py-6 flex flex-col items-center justify-center gap-3">
+        <div class="w-9 h-9 border-3 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+        <p class="text-xs text-slate-400 font-mono animate-pulse">Carregando seu espaço...</p>
+      </div>
+
+      <div id="auth-main-container" class="hidden">
       <!-- Tabs: Login / Cadastro -->
       <div class="flex gap-1 bg-slate-800/60 p-1 rounded-2xl mb-5" id="auth-tabs">
         <button class="auth-tab-btn active" id="auth-tab-login" onclick="switchAuthTab('login')">
@@ -1036,7 +1047,7 @@
           <label class="auth-label">Senha</label>
           <div class="relative">
             <input type="password" id="login-password" class="auth-input pr-10" placeholder="••••••••" required autocomplete="current-password">
-            <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+            <button type="button" onclick="togglePasswordVisibility('login-password')" aria-label="Ver ou ocultar senha" title="Ver ou ocultar senha" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
@@ -1046,6 +1057,9 @@
             <input type="checkbox" id="login-remember" class="rounded" checked>
             <span>Lembrar de mim</span>
           </label>
+          <button type="button" onclick="handleForgotPassword()" class="text-xs text-emerald-400 hover:text-emerald-300 hover:underline">
+            Esqueci a senha
+          </button>
         </div>
         <button type="submit" class="auth-btn-primary mt-2" id="btn-login-submit">
           <i data-lucide="log-in" class="w-4 h-4"></i>
@@ -1091,7 +1105,7 @@
           <label class="auth-label">Senha (mínimo 6 caracteres)</label>
           <div class="relative">
             <input type="password" id="signup-password" class="auth-input pr-10" placeholder="••••••••" required minlength="6" autocomplete="new-password">
-            <button type="button" onclick="togglePasswordVisibility('signup-password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+            <button type="button" onclick="togglePasswordVisibility('signup-password')" aria-label="Ver ou ocultar senha" title="Ver ou ocultar senha" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
@@ -1111,6 +1125,7 @@
           <button type="button" onclick="switchAuthTab('login')" class="text-emerald-400 font-bold hover:underline ml-1">Entrar</button>
         </p>
       </form>
+      </div><!-- /auth-main-container -->
     </div>
   </div>
 
@@ -4347,62 +4362,125 @@
       </section>
 
       <!-- ===================== CONFIG: 2. MEU PLANO ===================== -->
-      <section id="tab-config-meu-plano" class="hidden space-y-4">
+      <section id="tab-config-meu-plano" class="hidden space-y-5">
+        <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">CONFIGURAÇÕES</span>
-              <span class="text-xs font-mono text-muted">Assinatura & Licenciamento</span>
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">ASSINATURA</span>
+              <span class="text-xs font-mono text-muted">Planos & Licenciamento</span>
             </div>
             <h2 class="text-base font-bold text-title flex items-center gap-2 mt-0.5">
-              <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
+              <i data-lucide="crown" class="w-5 h-5 text-amber-500"></i>
               <span>Meu Plano: Techo PRO</span>
             </h2>
-            <p class="text-xs text-muted">Status da licença, recursos premium habilitados e capacidade contratada</p>
+            <p class="text-xs text-muted">Gerencie sua assinatura, consulte recursos e escolha o plano ideal para seu negócio</p>
           </div>
-          <span class="px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-mono text-xs font-bold border border-emerald-500/30 flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> PLANO ATIVO (Vitalício / Pro)
-          </span>
+          <div id="meu-plano-status-badge">
+            <span class="px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-500 dark:text-amber-400 font-mono text-xs font-bold border border-amber-500/30 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+              <span id="meu-plano-status-text">PERÍODO DE TESTE (PRO)</span>
+            </span>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="glass-card rounded-2xl p-5 space-y-3 border-2 border-emerald-500 relative">
-            <span class="absolute top-3 right-3 text-[9px] bg-emerald-500 text-white font-bold font-mono px-2 py-0.5 rounded">ATUAL</span>
-            <h3 class="font-bold text-title text-base">Techo PRO - Gestão Total</h3>
-            <p class="text-xs text-muted">Versão completa projetada para estúdios de unhas, estética avançada e cursos profissionalizantes.</p>
-            <div class="text-2xl font-black font-mono text-title pt-2">R$ 0,00 <span class="text-xs font-normal text-muted">/ licença perpétua</span></div>
-            <ul class="text-xs text-muted space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <li class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> Agendamentos ilimitados</li>
-              <li class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> Prontuário & Anamnese completa</li>
-              <li class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> DRE & Controle de Comissões</li>
-              <li class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> Gestão de Cursos & Alunas</li>
-              <li class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold"><i data-lucide="check" class="w-4 h-4"></i> 100% Offline & Backup Local</li>
-            </ul>
+        <!-- Ciclo Switcher -->
+        <div class="flex items-center justify-center">
+          <div class="inline-flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-border">
+            <button type="button" onclick="setBillingCycle('mensal')" id="cycle-btn-mensal" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-white dark:bg-slate-700 text-title shadow-xs">
+              Mensal
+            </button>
+            <button type="button" onclick="setBillingCycle('semestral')" id="cycle-btn-semestral" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-muted hover:text-title flex items-center gap-1">
+              Semestral <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-500 font-mono">15% OFF</span>
+            </button>
+            <button type="button" onclick="setBillingCycle('anual')" id="cycle-btn-anual" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-muted hover:text-title flex items-center gap-1">
+              Anual <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500 text-white font-mono">25% OFF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cards de Planos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto">
+          <!-- PLANO STARTER -->
+          <div class="glass-card rounded-3xl p-6 space-y-4 border border-border relative flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-mono font-bold text-muted uppercase tracking-wider">Para Profissionais Autônomos</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-muted font-bold">STARTER</span>
+              </div>
+              <h3 class="text-lg font-black text-title">Plano Starter</h3>
+              <p class="text-xs text-muted mt-1">Ideal para quem atende sozinho e precisa de organização impecável na agenda e no caixa.</p>
+              
+              <div class="pt-4 pb-2">
+                <div class="flex items-baseline gap-1">
+                  <span class="text-3xl font-black font-mono text-title" id="price-starter">R$ 29,90</span>
+                  <span class="text-xs text-muted" id="period-starter">/mês</span>
+                </div>
+                <div class="text-[11px] text-muted font-mono mt-0.5" id="subtext-starter">Cobrado mensalmente</div>
+              </div>
+
+              <ul class="text-xs space-y-2.5 pt-4 border-t border-border">
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> 1 Profissional / Usuário</li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Agendamentos ilimitados</li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Cadastro de clientes e serviços</li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Controle de caixa e PDV rápido</li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Lembretes automáticos via WhatsApp</li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Tema Esmeralda com Modo Escuro/Claro</li>
+                <li class="flex items-center gap-2 text-muted line-through"><i data-lucide="x" class="w-4 h-4 text-muted shrink-0"></i> Equipe com múltiplos profissionais</li>
+                <li class="flex items-center gap-2 text-muted line-through"><i data-lucide="x" class="w-4 h-4 text-muted shrink-0"></i> DRE e comissões automáticas</li>
+                <li class="flex items-center gap-2 text-muted line-through"><i data-lucide="x" class="w-4 h-4 text-muted shrink-0"></i> Módulo de Cursos & Alunas</li>
+              </ul>
+            </div>
+
+            <div class="pt-4">
+              <button onclick="requestPlanUpgrade('starter')" class="w-full py-2.5 rounded-xl border-2 border-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all flex items-center justify-center gap-2">
+                <i data-lucide="check" class="w-4 h-4"></i> Escolher Starter
+              </button>
+            </div>
           </div>
 
-          <div class="glass-card rounded-2xl p-5 space-y-3 opacity-70">
-            <h3 class="font-bold text-title text-base">Plano Básico</h3>
-            <p class="text-xs text-muted">Apenas agenda simples e cadastro de clientes.</p>
-            <div class="text-2xl font-black font-mono text-muted pt-2">R$ 59,90 <span class="text-xs font-normal">/ mês</span></div>
-            <ul class="text-xs text-muted space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Até 100 agendamentos</li>
-              <li class="flex items-center gap-2 text-rose-400"><i data-lucide="x" class="w-4 h-4"></i> Sem DRE ou Financeiro</li>
-            </ul>
-          </div>
+          <!-- PLANO PRO -->
+          <div class="glass-card rounded-3xl p-6 space-y-4 border-2 border-emerald-500 relative flex flex-col justify-between shadow-lg">
+            <span class="absolute -top-3 right-6 text-[10px] bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black font-mono px-3 py-1 rounded-full shadow-xs uppercase tracking-wider">
+              ⭐ Mais Popular
+            </span>
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-mono font-bold text-emerald-500 uppercase tracking-wider">Gestão Completa de Negócio</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">PRO</span>
+              </div>
+              <h3 class="text-lg font-black text-title">Plano PRO</h3>
+              <p class="text-xs text-muted mt-1">Para estúdios, salões, clínicas e negócios que querem crescer com equipe e gestão avançada.</p>
+              
+              <div class="pt-4 pb-2">
+                <div class="flex items-baseline gap-1">
+                  <span class="text-3xl font-black font-mono text-title" id="price-pro">R$ 59,90</span>
+                  <span class="text-xs text-muted" id="period-pro">/mês</span>
+                </div>
+                <div class="text-[11px] text-muted font-mono mt-0.5" id="subtext-pro">Cobrado mensalmente</div>
+              </div>
 
-          <div class="glass-card rounded-2xl p-5 space-y-3 opacity-70">
-            <h3 class="font-bold text-title text-base">Rede Multi-Salões</h3>
-            <p class="text-xs text-muted">Para redes com mais de 3 filiais simultâneas.</p>
-            <div class="text-2xl font-black font-mono text-muted pt-2">R$ 299,00 <span class="text-xs font-normal">/ mês</span></div>
-            <ul class="text-xs text-muted space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Filiais ilimitadas</li>
-              <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4"></i> Servidor em nuvem dedicado</li>
-            </ul>
+              <ul class="text-xs space-y-2.5 pt-4 border-t border-border">
+                <li class="flex items-center gap-2 text-title font-semibold"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> <strong>Tudo do Plano Starter, mais:</strong></li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> <strong>Equipe ilimitada</strong> com agenda por profissional</li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Cálculo automático de comissões por serviço</li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> <strong>DRE Financeiro completo</strong> e fluxo de caixa anual</li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Módulo de <strong>Cursos, Turmas & Alunas</strong></li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Emissão e Gestão de <strong>NFS-e Municipal</strong></li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Todos os temas visuais (Bourbon, Rose Gold, Esmeralda)</li>
+                <li class="flex items-center gap-2 text-title"><i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i> Backup em nuvem contínuo e prioritário</li>
+              </ul>
+            </div>
+
+            <div class="pt-4">
+              <button onclick="requestPlanUpgrade('pro')" class="btn-primary w-full py-3 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2">
+                <i data-lucide="crown" class="w-4 h-4"></i> Assinar Plano PRO
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- ===================== CONFIG: 3. CONFIGURAÇÃO GERAL ===================== -->
       <section id="tab-config-geral" class="hidden space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -9260,11 +9338,332 @@
       document.getElementById('terms-modal').classList.add('hidden');
     }
 
-    // ---- syncToSupabase (legacy kept for backward compat) ----
-    async function syncToSupabase() {
-      // Now handled per-entity via sync functions above
-      // This is a no-op stub to avoid breaking any existing calls
+    // ============================================================
+    // ROBUST UUID & REAL-TIME SUPABASE PERSISTENCE ENGINE
+    // ============================================================
+    function generateUUID() {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
     }
+
+    function ensureValidUUID(id) {
+      if (typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+        return id;
+      }
+      return generateUUID();
+    }
+
+    async function syncAppointmentToSupabase(appt) {
+      if (!supabaseClient || !currentSession || !currentSession.empresa) return;
+      try {
+        const empresa_id = currentSession.empresa.id;
+        const validId = ensureValidUUID(appt.id);
+        appt.id = validId;
+        await supabaseClient.from('agendamentos').upsert({
+          id: validId,
+          empresa_id,
+          cliente_nome: appt.clientName || 'Cliente',
+          cliente_telefone: appt.clientPhone || '',
+          prof_nome: appt.profId || '',
+          servicos: appt.serviceNames || '',
+          data: appt.date || todayStr,
+          hora: appt.time || '08:00',
+          duracao: parseInt(appt.duration) || 60,
+          preco: parseFloat(appt.price) || 0,
+          status: appt.status || 'AGENDADO',
+          obs: appt.obs || ''
+        });
+      } catch(e) {
+        console.warn('Sync appt error:', e);
+      }
+    }
+
+    async function deleteAppointmentFromSupabase(id) {
+      if (!supabaseClient || !currentSession || !currentSession.empresa) return;
+      try {
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+          await supabaseClient.from('agendamentos').delete().eq('id', id);
+        }
+      } catch(e) {
+        console.warn('Delete appt error:', e);
+      }
+    }
+
+    async function syncClientToSupabase(client) {
+      if (!supabaseClient || !currentSession || !currentSession.empresa) return;
+      try {
+        const empresa_id = currentSession.empresa.id;
+        const validId = ensureValidUUID(client.id);
+        client.id = validId;
+        await supabaseClient.from('clientes').upsert({
+          id: validId,
+          empresa_id,
+          nome: client.name || 'Cliente',
+          telefone: client.phone || '',
+          email: client.email || '',
+          nascimento: client.birth || null,
+          cpf: client.cpf || '',
+          notas: client.notes || ''
+        });
+      } catch(e) {
+        console.warn('Sync client error:', e);
+      }
+    }
+
+    async function deleteClientFromSupabase(id) {
+      if (!supabaseClient || !currentSession || !currentSession.empresa) return;
+      try {
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+          await supabaseClient.from('clientes').delete().eq('id', id);
+        }
+      } catch(e) {
+        console.warn('Delete client error:', e);
+      }
+    }
+
+    async function syncServiceToSupabase(svc) {
+      if (!supabaseClient || !currentSession || !currentSession.empresa) return;
+      try {
+        const empresa_id = currentSession.empresa.id;
+        const validId = ensureValidUUID(svc.id);
+        svc.id = validId;
+        await supabaseClient.from('servicos').upsert({
+          id: validId,
+          empresa_id,
+          nome: svc.name || 'Procedimento',
+          categoria: svc.category || 'Geral',
+          duracao: parseInt(svc.duration) || 60,
+          preco: parseFloat(svc.price) || 0,
+          ativo: svc.active !== false
+        });
+      } catch(e) {
+        console.warn('Sync service error:', e);
+      }
+    }
+
+    async function deleteServiceFromSupabase(id) {
+      if (!supabaseClient || !currentSession || !currentSession.empresa) return;
+      try {
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+          await supabaseClient.from('servicos').delete().eq('id', id);
+        }
+      } catch(e) {
+        console.warn('Delete service error:', e);
+      }
+    }
+
+    async function syncProfissionalToSupabase(prof) {
+      if (!supabaseClient || !currentSession || !currentSession.empresa) return;
+      try {
+        const empresa_id = currentSession.empresa.id;
+        const validId = ensureValidUUID(prof.id);
+        prof.id = validId;
+        await supabaseClient.from('profissionais').upsert({
+          id: validId,
+          empresa_id,
+          nome: prof.name || 'Profissional',
+          cargo: prof.role || 'Profissional',
+          telefone: prof.phone || '',
+          comissao: parseFloat(prof.comissao) || 0,
+          cor: prof.color || '#10b981',
+          ativo: prof.active !== false
+        });
+      } catch(e) {
+        console.warn('Sync prof error:', e);
+      }
+    }
+
+    async function deleteProfessionalFromSupabase(id) {
+      if (!supabaseClient || !currentSession || !currentSession.empresa) return;
+      try {
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+          await supabaseClient.from('profissionais').delete().eq('id', id);
+        }
+      } catch(e) {
+        console.warn('Delete prof error:', e);
+      }
+    }
+
+    async function syncFinanceiroToSupabase(lanc) {
+      if (!supabaseClient || !currentSession || !currentSession.empresa) return;
+      try {
+        const empresa_id = currentSession.empresa.id;
+        const validId = ensureValidUUID(lanc.id);
+        lanc.id = validId;
+        await supabaseClient.from('financeiro').upsert({
+          id: validId,
+          empresa_id,
+          tipo: lanc.type || 'RECEITA',
+          descricao: lanc.desc || 'Lançamento',
+          categoria: lanc.category || 'Geral',
+          valor: parseFloat(lanc.value) || 0,
+          data: lanc.date || todayStr,
+          forma_pagamento: lanc.paymentMethod || lanc.method || 'PIX',
+          status: lanc.status || 'PAGO'
+        });
+      } catch(e) {
+        console.warn('Sync fin error:', e);
+      }
+    }
+
+    async function deleteFinanceiroFromSupabase(id) {
+      if (!supabaseClient || !currentSession || !currentSession.empresa) return;
+      try {
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+          await supabaseClient.from('financeiro').delete().eq('id', id);
+        }
+      } catch(e) {
+        console.warn('Delete fin error:', e);
+      }
+    }
+
+    // ---- Forgot Password Flow ----
+    async function handleForgotPassword() {
+      const emailInput = document.getElementById('login-email');
+      let email = emailInput ? emailInput.value.trim() : '';
+      if (!email) {
+        email = prompt('Digite seu e-mail cadastrado para redefinir a senha:');
+      }
+      if (!email) return;
+
+      try {
+        if (!supabaseClient) throw new Error('Sem conexão com o servidor.');
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin
+        });
+        if (error) throw error;
+        showAuthSuccess('Link de recuperação enviado para ' + email + '! Verifique sua caixa de entrada.');
+      } catch(err) {
+        showAuthError('Erro ao solicitar recuperação: ' + (err.message || 'Tente novamente.'));
+      }
+    }
+
+    // ---- Billing Cycle Switcher ----
+    let currentBillingCycle = 'mensal';
+    function setBillingCycle(cycle) {
+      currentBillingCycle = cycle;
+      const cycles = ['mensal', 'semestral', 'anual'];
+      cycles.forEach(c => {
+        const btn = document.getElementById('cycle-btn-' + c);
+        if (btn) {
+          if (c === cycle) {
+            btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-white dark:bg-slate-700 text-title shadow-xs';
+          } else {
+            btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-muted hover:text-title flex items-center gap-1';
+          }
+        }
+      });
+
+      const pStarter = document.getElementById('price-starter');
+      const perStarter = document.getElementById('period-starter');
+      const subStarter = document.getElementById('subtext-starter');
+
+      const pPro = document.getElementById('price-pro');
+      const perPro = document.getElementById('period-pro');
+      const subPro = document.getElementById('subtext-pro');
+
+      if (cycle === 'mensal') {
+        if (pStarter) pStarter.textContent = 'R$ 29,90';
+        if (perStarter) perStarter.textContent = '/mês';
+        if (subStarter) subStarter.textContent = 'Cobrado mensalmente';
+        if (pPro) pPro.textContent = 'R$ 59,90';
+        if (perPro) perPro.textContent = '/mês';
+        if (subPro) subPro.textContent = 'Cobrado mensalmente';
+      } else if (cycle === 'semestral') {
+        if (pStarter) pStarter.textContent = 'R$ 24,90';
+        if (perStarter) perStarter.textContent = '/mês';
+        if (subStarter) subStarter.textContent = 'Total semestral: R$ 149,40 (15% OFF)';
+        if (pPro) pPro.textContent = 'R$ 49,90';
+        if (perPro) perPro.textContent = '/mês';
+        if (subPro) subPro.textContent = 'Total semestral: R$ 299,40 (15% OFF)';
+      } else if (cycle === 'anual') {
+        if (pStarter) pStarter.textContent = 'R$ 21,90';
+        if (perStarter) perStarter.textContent = '/mês';
+        if (subStarter) subStarter.textContent = 'Total anual: R$ 262,80 (25% OFF)';
+        if (pPro) pPro.textContent = 'R$ 44,90';
+        if (perPro) perPro.textContent = '/mês';
+        if (subPro) subPro.textContent = 'Total anual: R$ 538,80 (25% OFF)';
+      }
+    }
+
+    function requestPlanUpgrade(plano) {
+      const nomePlano = plano.toUpperCase();
+      const zapMsg = encodeURIComponent(`Olá! Gostaria de assinar o Plano ${nomePlano} do Techo PRO no ciclo ${currentBillingCycle.toUpperCase()}. Minha empresa é: ${currentSession?.empresa?.nome || 'Minha Empresa'}`);
+      window.open(`https://api.whatsapp.com/send?phone=5551999999999&text=${zapMsg}`, '_blank');
+    }
+
+    // ---- Guia Rápido de Migração Modal ----
+    function exibirGuiaRapidoModal(tipo) {
+      const modal = document.getElementById('modal-guia-migracao');
+      const title = document.getElementById('guia-migracao-title');
+      const body = document.getElementById('guia-migracao-body');
+      if (!modal || !title || !body) return;
+
+      const guias = {
+        'simples-agenda': {
+          title: 'Migração do Simples Agenda para o Techo PRO',
+          content: `
+            <div class="space-y-2.5">
+              <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-medium">
+                💡 Você pode importar seus clientes do Simples Agenda em menos de 1 minuto!
+              </div>
+              <ol class="list-decimal pl-4 space-y-1.5 text-slate-700 dark:text-slate-300">
+                <li>No Simples Agenda, acesse <strong>Clientes > Relatórios ou Exportar</strong>.</li>
+                <li>Exporte a lista no formato <strong>CSV ou Excel</strong>.</li>
+                <li>Aqui no Techo PRO, clique em <strong>Importar Clientes (CSV)</strong> nesta mesma tela.</li>
+                <li>Selecione o arquivo baixado e confirme a importação automática!</li>
+              </ol>
+            </div>`
+        },
+        'trinks': {
+          title: 'Migração do Trinks para o Techo PRO',
+          content: `
+            <div class="space-y-2.5">
+              <ol class="list-decimal pl-4 space-y-1.5 text-slate-700 dark:text-slate-300">
+                <li>No Trinks, vá em <strong>Administração > Clientes > Relatório Geral</strong>.</li>
+                <li>Gere o relatório com Nome, Telefone e E-mail e clique em <strong>Exportar XLS/CSV</strong>.</li>
+                <li>No Techo PRO, use o botão <strong>Importar Clientes</strong> para carregar todos os dados.</li>
+              </ol>
+            </div>`
+        },
+        'avec': {
+          title: 'Migração do Avec / Belle / AppBarber',
+          content: `
+            <div class="space-y-2.5">
+              <ol class="list-decimal pl-4 space-y-1.5 text-slate-700 dark:text-slate-300">
+                <li>No seu sistema anterior, procure pelo menu <strong>Relatórios > Cadastros de Clientes</strong>.</li>
+                <li>Selecione a opção de exportar para <strong>Excel (.xlsx) ou .CSV</strong>.</li>
+                <li>No Techo PRO, selecione o arquivo gerado no botão de importação.</li>
+              </ol>
+            </div>`
+        },
+        'celular': {
+          title: 'Importar Contatos do Celular / WhatsApp',
+          content: `
+            <div class="space-y-2.5">
+              <ol class="list-decimal pl-4 space-y-1.5 text-slate-700 dark:text-slate-300">
+                <li>No seu celular, abra o app <strong>Contatos</strong>.</li>
+                <li>Acesse <strong>Configurações dos Contatos > Exportar Contatos (.vcf ou .csv)</strong>.</li>
+                <li>Importe diretamente no Techo PRO ou use o botão de cadastro rápido!</li>
+              </ol>
+            </div>`
+        }
+      };
+
+      const guia = guias[tipo] || guias['simples-agenda'];
+      title.textContent = guia.title;
+      body.innerHTML = guia.content;
+      modal.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // ---- syncToSupabase legacy stub ----
+    async function syncToSupabase() {}
 
 
     async function loadFromSupabase(){
@@ -13267,7 +13666,7 @@
       let client=state.clients.find(c=>c.name.toLowerCase()===clientName.toLowerCase());
       if(!client){
         client={
-          id:'c_'+Date.now(),
+          id: generateUUID(),
           name:clientName,
           phone:clientPhone,
           email:'',
@@ -13281,14 +13680,15 @@
           returnDue:calcReturnDate(date,20)
         };
         state.clients.push(client);
+        syncClientToSupabase(client);
       } else if(clientPhone && !client.phone) {
         client.phone=clientPhone;
+        syncClientToSupabase(client);
       }
 
       const profId = document.getElementById('quick-appt-prof')?.value || 'prof_leticia';
-
-      state.appointments.push({
-        id:'app_'+Date.now(),
+      const newQuickAppt = {
+        id: generateUUID(),
         clientName,
         clientPhone:clientPhone||client.phone||'',
         serviceNames:svcName,
@@ -13297,14 +13697,17 @@
         price,
         duration,
         status:'AGENDADO',
-        profId,
-        obs
-      });
+        obs,
+        profId
+      };
+
+      state.appointments.push(newQuickAppt);
+      syncAppointmentToSupabase(newQuickAppt);
 
       persistState();
-      clearQuickBookingForm();
+      closeModal('modal-quick-appointment');
       renderAgenda();
-      confetti({particleCount:35,spread:45});
+      confetti({particleCount:30,spread:60});
     }
 
     function renderDayView(dayApps){
@@ -13778,16 +14181,23 @@
       if(!clientName)return alert('Informe o nome da cliente.');
       if(!date||!time)return alert('Informe data e hora.');
 
+      let targetAppt = null;
       if(editId){
         const a=state.appointments.find(x=>x.id===editId);
-        if(a){Object.assign(a,{clientName,clientPhone,serviceNames:svcName,date,time,price,duration,status,obs,profId});}
+        if(a){
+          Object.assign(a,{clientName,clientPhone,serviceNames:svcName,date,time,price,duration,status,obs,profId});
+          targetAppt = a;
+        }
       }else{
-        state.appointments.push({id:'app_'+Date.now(),clientName,clientPhone,serviceNames:svcName,date,time,price,duration,status,obs,profId});
+        targetAppt = {id: generateUUID(),clientName,clientPhone,serviceNames:svcName,date,time,price,duration,status,obs,profId};
+        state.appointments.push(targetAppt);
       }
-      persistState();closeModal('modal-appointment');renderAgenda();
+      persistState();
+      if(targetAppt) syncAppointmentToSupabase(targetAppt);
+      closeModal('modal-appointment');renderAgenda();
       confetti({particleCount:25,spread:40});
     }
-    function deleteAppointment(id){if(confirm('Excluir este agendamento?')){state.appointments=state.appointments.filter(x=>x.id!==id);persistState();renderAgenda();}}
+    function deleteAppointment(id){if(confirm('Excluir este agendamento?')){state.appointments=state.appointments.filter(x=>x.id!==id);persistState();renderAgenda();deleteAppointmentFromSupabase(id);}}
 
     function updateAppStatus(id,status){
       const a=state.appointments.find(x=>x.id===id);
@@ -13795,26 +14205,25 @@
         a.status=status;
         if(status === 'CONCLUIDO' && (a.price || 0) > 0 && !a.financialPosted){
           a.financialPosted = true;
-          const finId = 'f_app_' + a.id;
+          const finId = ensureValidUUID(a.id);
           if(!state.financial.some(f => f.id === finId)){
-            state.financial.push({
+            const newFinAppt = {
               id: finId,
               date: a.date || todayStr,
               type: 'RECEITA',
               category: 'Atendimentos',
               desc: `${a.clientName} - ${a.serviceNames || 'Procedimento'}`,
-              method: 'PIX',
-              value: a.price || 0,
-              profId: a.profId || 'prof_leticia'
-            });
-            if(state.caixa && state.caixa.isOpen){
-              state.caixa.currentBalance = (state.caixa.currentBalance || 0) + (a.price || 0);
-            }
+              method: 'Cartão de Crédito',
+              value: Number(a.price || 0),
+              status: 'PAGO'
+            };
+            state.financial.push(newFinAppt);
+            syncFinanceiroToSupabase(newFinAppt);
           }
         }
         persistState();
         renderAgenda();
-        if(state.currentTab === 'dashboard') renderDashboard();
+        syncAppointmentToSupabase(a);
       }
     }
 
@@ -13977,29 +14386,31 @@
 
       if(!name) return alert('Por favor, informe o nome completo da profissional.');
 
+      let targetProf = null;
       if(editId){
         const p = state.professionals.find(x => x.id === editId);
         if(p){
           Object.assign(p, { name, role, phone, comissao, color, obs });
+          targetProf = p;
         }
       } else {
-        state.professionals.push({
-          id: 'prof_' + Date.now(),
+        targetProf = {
+          id: generateUUID(),
           name,
           role,
           phone,
           comissao,
           color,
-          active: true,
-          obs
-        });
+          obs,
+          active: true
+        };
+        state.professionals.push(targetProf);
       }
-
       persistState();
+      if(targetProf) syncProfissionalToSupabase(targetProf);
       closeModal('modal-professional');
       renderProfessionals();
       populateProfessionalSelects();
-      alert('Profissional salva com sucesso! 👥✨');
     }
 
     function deleteProfessional(id){
@@ -14008,6 +14419,7 @@
       persistState();
       renderProfessionals();
       populateProfessionalSelects();
+      deleteProfessionalFromSupabase(id);
     }
 
     // ============== CONSULTAS & RELATÓRIOS ==============
@@ -14201,11 +14613,19 @@
       const isAluna=document.getElementById('client-aluna-check').checked;
       const notes=document.getElementById('client-notes-input').value.trim();
       if(!name)return alert('Informe o nome da cliente.');
-      if(editId){const c=state.clients.find(x=>x.id===editId);if(c)Object.assign(c,{name,phone,email,birth,cpf,credit,isVip,isAluna,notes});}
-      else{state.clients.push({id:'c_'+Date.now(),name,phone,email,birth,cpf,credit,isVip,isAluna,notes,lastVisit:todayStr,returnDue:calcReturnDate(todayStr,20)});}
-      persistState();closeModal('modal-client');renderClients();confetti({particleCount:25,spread:40});
+      let targetClient = null;
+      if(editId){
+        const c=state.clients.find(x=>x.id===editId);
+        if(c){ Object.assign(c,{name,phone,email,birth,cpf,credit,isVip,isAluna,notes}); targetClient = c; }
+      } else {
+        targetClient = {id: generateUUID(),name,phone,email,birth,cpf,credit,isVip,isAluna,notes,lastVisit:todayStr,returnDue:calcReturnDate(todayStr,20)};
+        state.clients.push(targetClient);
+      }
+      persistState();
+      if(targetClient) syncClientToSupabase(targetClient);
+      closeModal('modal-client');renderClients();confetti({particleCount:25,spread:40});
     }
-    function deleteClient(id){if(confirm('Excluir esta cliente?')){state.clients=state.clients.filter(x=>x.id!==id);persistState();renderClients();}}
+    function deleteClient(id){if(confirm('Excluir esta cliente?')){state.clients=state.clients.filter(x=>x.id!==id);persistState();renderClients();deleteClientFromSupabase(id);}}
     function calcReturnDate(dateStr,days){const d=new Date(dateStr+'T00:00:00');d.setDate(d.getDate()+days);return d.toISOString().split('T')[0];}
     function zapReminder(phone,name){window.open(`https://api.whatsapp.com/send?phone=55${phone.replace(/\D/g,'')}&text=${encodeURIComponent(`Olá ${name}! ✨ Passando para confirmar seu horário no nosso estúdio. Podemos confirmar? 💅`)}`,'_blank');}
 
@@ -14261,7 +14681,10 @@
       const method=document.getElementById('pdv-payment-method').value;
       const clientName=document.getElementById('pdv-client-name').value.trim()||'Cliente Avulso';
       // Register financial
-      state.financial.push({id:'f_'+Date.now(),date:todayStr,type:'RECEITA',category:'Atendimentos',desc:clientName+' — PDV',method,value:state.pdvSale.total});
+      const pdvFinId = generateUUID();
+      const newPdvFin = {id: pdvFinId,date:todayStr,type:'RECEITA',category:'Atendimentos',desc:clientName+' — PDV',method,value:state.pdvSale.total};
+      state.financial.push(newPdvFin);
+      syncFinanceiroToSupabase(newPdvFin);
       state.caixa.currentBalance+=state.pdvSale.total;
       resetPDVSale();persistState();renderPDV();
       confetti({particleCount:40,spread:60});alert('Venda finalizada com sucesso! ✅');
@@ -14489,55 +14912,46 @@
 
       if(!desc || value <= 0) return alert('Preencha a descrição e informe um valor válido maior que zero.');
 
-      // Atualiza saldos da conta correspondente
-      const acc = (state.accounts||[]).find(a => a.id === accountId);
-
+      let targetFin = null;
       if(editId){
         const f = state.financial.find(x => x.id === editId);
         if(f){
-          // Reverter saldo antigo
           const oldAcc = (state.accounts||[]).find(a => a.id === f.accountId);
           if(oldAcc){
             if(f.type === 'RECEITA') oldAcc.currentBalance -= Number(f.value||0);
             else oldAcc.currentBalance += Number(f.value||0);
           }
-          // Aplicar novos dados
-          Object.assign(f, { type, desc, value, date, category, method, accountId });
-          // Aplicar novo saldo
-          if(acc){
-            if(type === 'RECEITA') acc.currentBalance += value;
-            else acc.currentBalance -= value;
-          }
+          Object.assign(f, { desc, value, date, category, paymentMethod: method, accountId, type });
+          targetFin = f;
         }
       } else {
-        state.financial.push({
-          id: 'f_' + Date.now(),
-          date,
-          type,
-          category,
+        targetFin = {
+          id: generateUUID(),
           desc,
-          method,
+          value,
+          date,
+          category,
+          paymentMethod: method,
           accountId,
-          value
-        });
-        if(acc){
-          if(type === 'RECEITA') acc.currentBalance += value;
-          else acc.currentBalance -= value;
-        }
+          type,
+          status: 'PAGO'
+        };
+        state.financial.push(targetFin);
       }
 
-      // Se for receita em dinheiro na gaveta, incrementa gaveta do caixa atual
-      if(type === 'RECEITA' && (method.toUpperCase().includes('DINHEIRO') || accountId === 'acc_loja')){
-        state.caixa.currentBalance = (state.caixa.currentBalance || 0) + value;
+      const acc = (state.accounts||[]).find(a => a.id === accountId);
+      if(acc){
+        if(type === 'RECEITA') acc.currentBalance += Number(value||0);
+        else acc.currentBalance -= Number(value||0);
       }
 
       persistState();
-      closeModal('modal-financial');
+      if(targetFin) syncFinanceiroToSupabase(targetFin);
+      closeModal('modal-financial-movement');
       renderFinancialScreen();
       if(state.currentTab === 'dashboard') renderDashboard();
       if(state.currentTab === 'fechamento-caixa') renderMeusCaixas();
-      if(state.currentTab === 'financeiro-contas') renderContas();
-      confetti({ particleCount: 35, spread: 50 });
+      if(state.currentTab === 'financeiro-contas') renderContasBancarias();
     }
 
     function deleteFinancialMovement(id){
@@ -14552,6 +14966,7 @@
         }
         state.financial = state.financial.filter(x => x.id !== id);
         persistState();
+        deleteFinanceiroFromSupabase(id);
         renderFinancialScreen();
         if(state.currentTab === 'dashboard') renderDashboard();
         if(state.currentTab === 'fechamento-caixa') renderMeusCaixas();
@@ -15337,11 +15752,19 @@
       const price=parseFloat(document.getElementById('service-price').value)||0;
       const duration=parseInt(document.getElementById('service-duration').value)||60;
       if(!name)return alert('Informe o nome do procedimento.');
-      if(editId){const s=state.services.find(x=>x.id===editId);if(s)Object.assign(s,{name,price,duration});}
-      else{state.services.push({id:'s_'+Date.now(),name,price,duration});}
-      persistState();closeModal('modal-service');renderServices();
+      let targetService = null;
+      if(editId){
+        const s=state.services.find(x=>x.id===editId);
+        if(s){ Object.assign(s,{name,price,duration}); targetService = s; }
+      } else {
+        targetService = {id: generateUUID(),name,price,duration};
+        state.services.push(targetService);
+      }
+      persistState();
+      if(targetService) syncServiceToSupabase(targetService);
+      closeModal('modal-service');renderServices();
     }
-    function deleteService(id){if(confirm('Excluir este procedimento?')){state.services=state.services.filter(x=>x.id!==id);persistState();renderServices();}}
+    function deleteService(id){if(confirm('Excluir este procedimento?')){state.services=state.services.filter(x=>x.id!==id);persistState();renderServices();deleteServiceFromSupabase(id);}}
 
     // ============== STOCK ==============
     function renderStock(){
@@ -18155,12 +18578,24 @@
       applyTheme();
       applyCustomLayoutTheme();
 
-      // Hide main app until authenticated
-      document.querySelector('header').style.display = 'none';
-      document.querySelector('aside').style.display = 'none';
-      document.querySelector('main').style.display = 'none';
+      // Ensure app elements are hidden while authenticating
+      const headerEl = document.querySelector('header');
+      const asideEl = document.querySelector('aside');
+      const mainEl = document.querySelector('main');
       const bNav = document.getElementById('bottom-nav');
+      if (headerEl) headerEl.style.display = 'none';
+      if (asideEl) asideEl.style.display = 'none';
+      if (mainEl) mainEl.style.display = 'none';
       if (bNav) bNav.style.display = 'none';
+
+      // Ensure auth overlay is visible in loading state
+      const authOverlay = document.getElementById('auth-overlay');
+      const authLoading = document.getElementById('auth-loading-state');
+      const authMain = document.getElementById('auth-main-container');
+
+      if (authOverlay) authOverlay.classList.remove('hidden');
+      if (authLoading) authLoading.classList.remove('hidden');
+      if (authMain) authMain.classList.add('hidden');
 
       // Set original text on buttons
       const loginBtn = document.getElementById('btn-login-submit');
@@ -18168,23 +18603,66 @@
       const signupBtn = document.getElementById('btn-signup-submit');
       if (signupBtn) signupBtn.dataset.originalText = 'Criar Empresa & Começar Grátis';
 
-      // Check for existing session
+      // Setup auth state change listener
       if (supabaseClient) {
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_OUT') {
+            currentSession = null;
+            if (authOverlay) authOverlay.classList.remove('hidden');
+            if (authLoading) authLoading.classList.add('hidden');
+            if (authMain) authMain.classList.remove('hidden');
+            if (headerEl) headerEl.style.display = 'none';
+            if (asideEl) asideEl.style.display = 'none';
+            if (mainEl) mainEl.style.display = 'none';
+          }
+        });
+
+        // Check for existing session
         try {
           const { data: { session } } = await supabaseClient.auth.getSession();
           if (session && session.user) {
             await loadUserSession(session.user);
-            return; // auth overlay stays hidden
+            return;
           }
         } catch(e) {
           console.warn('Could not check existing session:', e);
         }
       }
 
-      // No active session, show auth overlay
-      document.getElementById('auth-overlay').classList.remove('hidden');
+      // No active session: transition from loading to login form
+      if (authLoading) authLoading.classList.add('hidden');
+      if (authMain) authMain.classList.remove('hidden');
       if (window.lucide) lucide.createIcons();
     };
   </script>
+
+  <!-- ========================= MODAL GUIA MIGRACAO ========================= -->
+  <div id="modal-guia-migracao" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)closeModal('modal-guia-migracao')">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div class="relative z-10 glass-card rounded-2xl max-w-lg w-full p-6 space-y-4 border border-border shadow-2xl">
+      <div class="flex items-center justify-between border-b border-border pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-500 flex items-center justify-center">
+            <i data-lucide="help-circle" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 id="guia-migracao-title" class="font-bold text-sm text-title">Passo a Passo de Migração</h3>
+            <p class="text-[10px] text-muted font-mono">Como exportar seus dados e trazer para o Techo PRO</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-guia-migracao')" class="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-muted hover:text-title">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div id="guia-migracao-body" class="text-xs text-muted leading-relaxed space-y-3">
+      </div>
+      <div class="pt-2 flex justify-end">
+        <button onclick="closeModal('modal-guia-migracao')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">
+          Entendi, fechar guia
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
