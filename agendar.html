@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Agendamento Online • Techo PRO</title>
+  <meta name="description" content="Agende seu horário online em poucos cliques. Escolha o serviço, profissional e horário ideal para você.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            heading: ['"Playfair Display"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --primary-glow: rgba(16, 185, 129, 0.25);
+    }
+    body {
+      background-color: #0b0f17;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .glass-card {
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+    .slot-pill {
+      transition: all 0.15s ease;
+    }
+    .slot-pill.active {
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 700;
+      border-color: var(--primary);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-3 sm:p-6 antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="max-w-lg mx-auto w-full pt-2 pb-4">
+    <div class="glass-card rounded-3xl p-5 shadow-xl flex items-center gap-4 relative overflow-hidden">
+      <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      
+      <div id="company-avatar" class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white text-2xl font-black shrink-0 shadow-lg font-heading">
+        TP
+      </div>
+      
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
+          </span>
+          <span class="text-[11px] text-slate-400 font-mono" id="company-type">Estúdio & Beleza</span>
+        </div>
+        <h1 class="text-base sm:text-lg font-bold text-white tracking-tight truncate mt-0.5" id="company-name">
+          Techo PRO • Agendamento
+        </h1>
+        <p class="text-xs text-slate-400 truncate" id="company-subtitle">Escolha seu procedimento e reserve seu horário</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WIZARD CONTAINER -->
+  <main class="max-w-lg mx-auto w-full flex-1 space-y-4" id="booking-container">
+    
+    <!-- STEP INDICATOR -->
+    <div class="flex items-center justify-between px-2 text-xs font-mono font-bold text-slate-400">
+      <span id="step-label">Passo 1 de 3: Escolha o Procedimento</span>
+      <span class="text-emerald-400" id="step-counter">33%</span>
+    </div>
+    
+    <div class="w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden">
+      <div id="step-progress" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-300 w-1/3"></div>
+    </div>
+
+    <!-- ===== STEP 1: SERVIÇOS ===== -->
+    <section id="step-1" class="space-y-3">
+      <h2 class="text-sm font-bold text-slate-300 flex items-center gap-2">
+        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400"></i> Serviços Disponíveis
+      </h2>
+      <div id="services-list" class="space-y-2.5">
+        <div class="glass-card rounded-2xl p-4 animate-pulse space-y-2">
+          <div class="h-4 bg-slate-700/50 rounded w-2/3"></div>
+          <div class="h-3 bg-slate-700/30 rounded w-1/3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== STEP 2: PROFISSIONAL, DATA & HORÁRIO ===== -->
+    <section id="step-2" class="space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-bold text-slate-300 flex items-center gap-2">
+          <i data-lucide="calendar" class="w-4 h-4 text-emerald-400"></i> Data & Horário
+        </h2>
+        <button type="button" onclick="goToStep(1)" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 font-mono">
+          <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Trocar serviço
+        </button>
+      </div>
+
+      <!-- Resumo do Serviço Selecionado -->
+      <div class="glass-card rounded-2xl p-3.5 flex items-center justify-between border-emerald-500/30 bg-emerald-950/20">
+        <div>
+          <div class="text-[10px] font-mono text-emerald-400 font-bold uppercase">Procedimento Selecionado</div>
+          <div class="font-bold text-sm text-white" id="selected-service-name">Procedimento</div>
+          <div class="text-xs text-slate-400 font-mono" id="selected-service-info">60 min • R$ 0,00</div>
+        </div>
+        <span class="text-emerald-400 text-lg font-black font-mono" id="selected-service-price">R$ 0,00</span>
+      </div>
+
+      <!-- Escolha do Profissional -->
+      <div class="space-y-2">
+        <label class="block text-xs font-bold text-slate-400 font-mono">Profissional de Atendimento</label>
+        <div id="professionals-list" class="grid grid-cols-2 gap-2"></div>
+      </div>
+
+      <!-- Escolha de Data -->
+      <div class="space-y-2">
+        <label class="block text-xs font-bold text-slate-400 font-mono">Escolha o Dia</label>
+        <div id="dates-container" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none"></div>
+      </div>
+
+      <!-- Escolha de Horário -->
+      <div class="space-y-2">
+        <label class="block text-xs font-bold text-slate-400 font-mono">Horários Livres Disponíveis</label>
+        <div id="slots-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-2 text-xs"></div>
+        <p id="slots-empty-msg" class="text-xs text-amber-400/90 text-center py-4 font-mono hidden">
+          ⚠️ Nenhum horário livre para esta data. Selecione outro dia acima.
+        </p>
+      </div>
+
+      <div class="pt-2">
+        <button id="btn-to-step-3" disabled onclick="goToStep(3)" class="btn-primary w-full py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 opacity-50 cursor-not-allowed transition-all">
+          <span>Continuar</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 3: SEUS DADOS & CONFIRMAÇÃO ===== -->
+    <section id="step-3" class="space-y-4 hidden">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-bold text-slate-300 flex items-center gap-2">
+          <i data-lucide="user-check" class="w-4 h-4 text-emerald-400"></i> Seus Dados
+        </h2>
+        <button type="button" onclick="goToStep(2)" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 font-mono">
+          <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Voltar
+        </button>
+      </div>
+
+      <!-- Resumo Completo -->
+      <div class="glass-card rounded-2xl p-4 space-y-2 text-xs border-emerald-500/30">
+        <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+          <span class="text-slate-400">Serviço:</span>
+          <span class="font-bold text-white" id="confirm-service-title">-</span>
+        </div>
+        <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+          <span class="text-slate-400">Profissional:</span>
+          <span class="font-bold text-white" id="confirm-prof-title">-</span>
+        </div>
+        <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+          <span class="text-slate-400">Data & Horário:</span>
+          <span class="font-bold text-emerald-400 font-mono" id="confirm-datetime-title">-</span>
+        </div>
+        <div class="flex items-center justify-between pt-1 text-sm font-bold">
+          <span class="text-white">Valor a Pagar no Local:</span>
+          <span class="text-emerald-400 font-mono text-base" id="confirm-price-title">R$ 0,00</span>
+        </div>
+      </div>
+
+      <!-- Formulário de Contato -->
+      <form onsubmit="handleConfirmBooking(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Seu Nome Completo *</label>
+          <input type="text" id="client-name" required placeholder="Ex: Camila Silva" class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Seu WhatsApp com DDD *</label>
+          <input type="tel" id="client-phone" required placeholder="(11) 99999-9999" class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-sm text-white font-mono focus:outline-none focus:border-emerald-500">
+          <p class="text-[10px] text-slate-500 font-mono mt-1">Enviaremos a confirmação e o lembrete por este número.</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Observações (opcional)</label>
+          <input type="text" id="client-obs" placeholder="Ex: Primeira vez, prefiro formato amendoado..." class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <button type="submit" id="btn-submit-booking" class="btn-primary w-full py-4 rounded-2xl font-bold text-sm tracking-wide uppercase flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 mt-2">
+          <i data-lucide="check-circle" class="w-5 h-5"></i>
+          <span>Confirmar Agendamento</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- ===== STEP 4: SUCESSO / CONFIRMADO ===== -->
+    <section id="step-success" class="glass-card rounded-3xl p-6 text-center space-y-4 hidden shadow-2xl">
+      <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center border-2 border-emerald-500 shadow-lg shadow-emerald-500/30">
+        <i data-lucide="check" class="w-8 h-8 stroke-[3]"></i>
+      </div>
+
+      <div class="space-y-1">
+        <h2 class="text-xl font-black text-white font-heading">Agendamento Confirmado!</h2>
+        <p class="text-xs text-slate-400">Seu horário foi reservado com sucesso no sistema.</p>
+      </div>
+
+      <div class="bg-slate-900/90 rounded-2xl p-4 text-xs space-y-2 font-mono text-left border border-slate-800">
+        <div class="text-slate-400">Procedimento: <b class="text-white" id="success-service">-</b></div>
+        <div class="text-slate-400">Profissional: <b class="text-white" id="success-prof">-</b></div>
+        <div class="text-slate-400">Data & Hora: <b class="text-emerald-400" id="success-datetime">-</b></div>
+        <div class="text-slate-400">Cliente: <b class="text-white" id="success-client">-</b></div>
+      </div>
+
+      <div class="space-y-2 pt-2">
+        <button onclick="openWhatsAppConfirmation()" id="btn-whatsapp-notify" class="w-full py-3 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-md">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> Enviar Mensagem no WhatsApp da Empresa
+        </button>
+        <button onclick="location.reload()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl">
+          Fazer Outro Agendamento
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER BRANDING -->
+  <footer class="max-w-lg mx-auto w-full py-4 text-center">
+    <div class="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 font-mono">
+      <span>Agendamento inteligente por</span>
+      <strong class="text-slate-400 font-bold">Techo PRO</strong>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT ENGINE -->
+  <script>
+    const SUPABASE_URL = 'https://pqwtzpvzihbehxymxpct.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_4v4HrQE_jv__ppwxkRNIDg_lRG1gOQp';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const empresaId = urlParams.get('empresa') || '83188fab-7bca-4f7b-b5bf-9fed5c667fa0'; // Bruno Barbers ou fallback
+
+    let bookingState = {
+      empresa: null,
+      services: [],
+      professionals: [],
+      existingAppointments: [],
+      selectedService: null,
+      selectedProf: null,
+      selectedDate: null,
+      selectedSlot: null
+    };
+
+    function generateUUID() {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    function formatCurrency(val) {
+      return (Number(val) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadCompanyData();
+      renderDates();
+      if (window.lucide) lucide.createIcons();
+    });
+
+    async function loadCompanyData() {
+      try {
+        const { data: emp } = await supabase.from('empresas').select('*').eq('id', empresaId).single();
+        if (emp) {
+          bookingState.empresa = emp;
+          document.getElementById('company-name').textContent = emp.nome || 'Estúdio Profissional';
+          document.getElementById('company-type').textContent = (emp.tipo_negocio || 'Beleza & Estética').toUpperCase();
+          const initials = (emp.nome || 'TP').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+          document.getElementById('company-avatar').textContent = initials;
+        }
+
+        const { data: svcs } = await supabase.from('servicos').select('*').eq('empresa_id', empresaId).eq('ativo', true);
+        if (svcs && svcs.length > 0) {
+          bookingState.services = svcs;
+        } else {
+          bookingState.services = [
+            { id: '1', nome: 'Manutenção de Unhas em Gel', preco: 120, duracao: 90, categoria: 'Unhas' },
+            { id: '2', nome: 'Alongamento em Fibra de Vidro', preco: 180, duracao: 120, categoria: 'Unhas' },
+            { id: '3', nome: 'Esmaltação em Gel / Blindagem', preco: 85, duracao: 60, categoria: 'Unhas' },
+            { id: '4', nome: 'Design de Sobrancelhas + Henna', preco: 65, duracao: 45, categoria: 'Sobrancelha' },
+            { id: '5', nome: 'Corte & Barboterapia Premium', preco: 95, duracao: 50, categoria: 'Barba' }
+          ];
+        }
+
+        const { data: profs } = await supabase.from('profissionais').select('*').eq('empresa_id', empresaId).eq('ativo', true);
+        if (profs && profs.length > 0) {
+          bookingState.professionals = profs;
+        } else {
+          bookingState.professionals = [
+            { id: 'p1', nome: 'Atendimento Especializado', cargo: 'Especialista', cor: '#10b981' }
+          ];
+        }
+
+        const { data: appts } = await supabase.from('agendamentos').select('data, hora, duracao, status').eq('empresa_id', empresaId);
+        if (appts) {
+          bookingState.existingAppointments = appts.filter(a => a.status !== 'CANCELADO');
+        }
+
+        renderServices();
+        renderProfessionals();
+      } catch(err) {
+        console.warn('Fallback loading active:', err);
+      }
+    }
+
+    function renderServices() {
+      const container = document.getElementById('services-list');
+      if (!container) return;
+
+      container.innerHTML = bookingState.services.map(svc => `
+        <div onclick="selectService('${svc.id}')" class="glass-card rounded-2xl p-4 flex items-center justify-between cursor-pointer hover:border-emerald-500/50 hover:bg-slate-800/40 transition-all border border-slate-700/60 group">
+          <div class="space-y-1">
+            <h3 class="font-bold text-sm text-white group-hover:text-emerald-400 transition-colors">${svc.nome}</h3>
+            <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+              <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5 text-slate-500"></i> ${svc.duracao || 60} min</span>
+              <span>•</span>
+              <span class="text-emerald-400 font-bold">${formatCurrency(svc.preco)}</span>
+            </div>
+          </div>
+          <button class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 group-hover:bg-emerald-600 group-hover:text-white text-slate-300 transition-colors">
+            Escolher
+          </button>
+        </div>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function selectService(id) {
+      const svc = bookingState.services.find(s => String(s.id) === String(id));
+      if (!svc) return;
+      bookingState.selectedService = svc;
+      
+      document.getElementById('selected-service-name').textContent = svc.nome;
+      document.getElementById('selected-service-info').textContent = `${svc.duracao || 60} min • ${formatCurrency(svc.preco)}`;
+      document.getElementById('selected-service-price').textContent = formatCurrency(svc.preco);
+
+      goToStep(2);
+    }
+
+    function renderProfessionals() {
+      const container = document.getElementById('professionals-list');
+      if (!container) return;
+
+      const profs = bookingState.professionals;
+      container.innerHTML = profs.map((p, idx) => `
+        <div onclick="selectProfessional('${p.id}')" id="prof-card-${p.id}" class="glass-card p-2.5 rounded-xl border border-slate-700/60 cursor-pointer flex items-center gap-2 hover:border-emerald-500/40 transition-all ${idx === 0 ? 'border-emerald-500 bg-emerald-950/20' : ''}">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs text-white" style="background: ${p.cor || '#10b981'}">
+            ${p.nome.slice(0, 2).toUpperCase()}
+          </div>
+          <div class="min-w-0">
+            <div class="font-bold text-xs text-white truncate">${p.nome}</div>
+            <div class="text-[10px] text-slate-400 truncate">${p.cargo || 'Especialista'}</div>
+          </div>
+        </div>
+      `).join('');
+
+      if (profs.length > 0) {
+        bookingState.selectedProf = profs[0];
+      }
+    }
+
+    function selectProfessional(id) {
+      const p = bookingState.professionals.find(x => String(x.id) === String(id));
+      if (!p) return;
+      bookingState.selectedProf = p;
+      document.querySelectorAll('#professionals-list > div').forEach(d => {
+        d.classList.remove('border-emerald-500', 'bg-emerald-950/20');
+      });
+      const card = document.getElementById('prof-card-' + id);
+      if (card) card.classList.add('border-emerald-500', 'bg-emerald-950/20');
+      renderSlots();
+    }
+
+    function renderDates() {
+      const container = document.getElementById('dates-container');
+      if (!container) return;
+
+      const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+      let html = '';
+      const today = new Date();
+
+      for (let i = 0; i < 21; i++) {
+        const d = new Date();
+        d.setDate(today.getDate() + i);
+
+        const isSunday = d.getDay() === 0;
+        if (isSunday) continue;
+
+        const dateStr = d.toISOString().split('T')[0];
+        const isSelected = i === 0 || (i === 1 && today.getDay() === 0);
+
+        if (isSelected && !bookingState.selectedDate) {
+          bookingState.selectedDate = dateStr;
+        }
+
+        html += `
+          <button type="button" onclick="selectDate('${dateStr}')" id="date-btn-${dateStr}" class="flex flex-col items-center justify-center p-3 rounded-2xl min-w-[64px] border border-slate-700/70 glass-card transition-all ${bookingState.selectedDate === dateStr ? 'border-emerald-500 bg-emerald-950/30 text-white font-bold' : 'text-slate-400 hover:text-white'}">
+            <span class="text-[10px] font-mono uppercase">${daysOfWeek[d.getDay()]}</span>
+            <span class="text-base font-black my-0.5">${d.getDate()}</span>
+            <span class="text-[9px] font-mono text-slate-500">${months[d.getMonth()]}</span>
+          </button>
+        `;
+      }
+
+      container.innerHTML = html;
+      renderSlots();
+    }
+
+    function selectDate(dateStr) {
+      bookingState.selectedDate = dateStr;
+      bookingState.selectedSlot = null;
+      document.querySelectorAll('#dates-container > button').forEach(b => {
+        b.classList.remove('border-emerald-500', 'bg-emerald-950/30', 'text-white', 'font-bold');
+        b.classList.add('text-slate-400');
+      });
+      const btn = document.getElementById('date-btn-' + dateStr);
+      if (btn) {
+        btn.classList.add('border-emerald-500', 'bg-emerald-950/30', 'text-white', 'font-bold');
+        btn.classList.remove('text-slate-400');
+      }
+      renderSlots();
+    }
+
+    function renderSlots() {
+      const grid = document.getElementById('slots-grid');
+      const emptyMsg = document.getElementById('slots-empty-msg');
+      const btnNext = document.getElementById('btn-to-step-3');
+      if (!grid) return;
+
+      const baseSlots = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00'];
+      
+      const busySlots = (bookingState.existingAppointments || [])
+        .filter(a => a.data === bookingState.selectedDate)
+        .map(a => a.hora);
+
+      const available = baseSlots.filter(s => !busySlots.includes(s));
+
+      if (available.length === 0) {
+        grid.innerHTML = '';
+        if (emptyMsg) emptyMsg.classList.remove('hidden');
+        if (btnNext) {
+          btnNext.disabled = true;
+          btnNext.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        return;
+      }
+
+      if (emptyMsg) emptyMsg.classList.add('hidden');
+
+      grid.innerHTML = available.map(slot => `
+        <button type="button" onclick="selectSlot('${slot}')" id="slot-${slot.replace(':', '')}" class="slot-pill p-2.5 rounded-xl border border-slate-700 bg-slate-900/60 font-mono font-bold text-center hover:border-emerald-500 hover:text-white transition-all text-slate-300 ${bookingState.selectedSlot === slot ? 'active' : ''}">
+          ${slot}
+        </button>
+      `).join('');
+
+      validateStep2();
+    }
+
+    function selectSlot(slot) {
+      bookingState.selectedSlot = slot;
+      document.querySelectorAll('.slot-pill').forEach(b => b.classList.remove('active'));
+      const el = document.getElementById('slot-' + slot.replace(':', ''));
+      if (el) el.classList.add('active');
+      validateStep2();
+    }
+
+    function validateStep2() {
+      const btnNext = document.getElementById('btn-to-step-3');
+      if (!btnNext) return;
+      const isValid = bookingState.selectedService && bookingState.selectedDate && bookingState.selectedSlot;
+      btnNext.disabled = !isValid;
+      if (isValid) {
+        btnNext.classList.remove('opacity-50', 'cursor-not-allowed');
+      } else {
+        btnNext.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    function goToStep(step) {
+      [1, 2, 3, 'success'].forEach(s => {
+        const el = document.getElementById('step-' + s);
+        if (el) el.classList.add('hidden');
+      });
+
+      const target = document.getElementById('step-' + step);
+      if (target) target.classList.remove('hidden');
+
+      const progress = document.getElementById('step-progress');
+      const counter = document.getElementById('step-counter');
+      const label = document.getElementById('step-label');
+
+      if (step === 1) {
+        if (progress) progress.style.width = '33%';
+        if (counter) counter.textContent = '33%';
+        if (label) label.textContent = 'Passo 1 de 3: Escolha o Procedimento';
+      } else if (step === 2) {
+        if (progress) progress.style.width = '66%';
+        if (counter) counter.textContent = '66%';
+        if (label) label.textContent = 'Passo 2 de 3: Data e Horário';
+        renderSlots();
+      } else if (step === 3) {
+        if (progress) progress.style.width = '100%';
+        if (counter) counter.textContent = '100%';
+        if (label) label.textContent = 'Passo 3 de 3: Confirme Seus Dados';
+
+        document.getElementById('confirm-service-title').textContent = bookingState.selectedService.nome;
+        document.getElementById('confirm-prof-title').textContent = bookingState.selectedProf ? bookingState.selectedProf.nome : 'Especialista da Casa';
+        
+        const [y, m, d] = bookingState.selectedDate.split('-');
+        document.getElementById('confirm-datetime-title').textContent = `${d}/${m}/${y} às ${bookingState.selectedSlot}`;
+        document.getElementById('confirm-price-title').textContent = formatCurrency(bookingState.selectedService.preco);
+      }
+
+      if (window.lucide) lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function handleConfirmBooking(e) {
+      e.preventDefault();
+      const name = document.getElementById('client-name').value.trim();
+      const phone = document.getElementById('client-phone').value.trim();
+      const obs = document.getElementById('client-obs').value.trim();
+
+      if (!name || !phone) return alert('Por favor, preencha seu nome e telefone.');
+
+      const submitBtn = document.getElementById('btn-submit-booking');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="animate-spin inline-block mr-2">⏳</span> Reservando seu horário...';
+      }
+
+      const newAppointment = {
+        id: generateUUID(),
+        empresa_id: empresaId,
+        cliente_nome: name,
+        cliente_telefone: phone,
+        prof_nome: bookingState.selectedProf ? bookingState.selectedProf.nome : 'Profissional',
+        servicos: bookingState.selectedService.nome,
+        data: bookingState.selectedDate,
+        hora: bookingState.selectedSlot,
+        duracao: parseInt(bookingState.selectedService.duracao) || 60,
+        preco: parseFloat(bookingState.selectedService.preco) || 0,
+        status: 'AGENDADO',
+        obs: obs
+      };
+
+      try {
+        await supabase.from('agendamentos').insert(newAppointment);
+
+        await supabase.from('clientes').upsert({
+          id: generateUUID(),
+          empresa_id: empresaId,
+          nome: name,
+          telefone: phone,
+          notas: 'Cadastrado pelo Agendamento Online da Bio'
+        });
+      } catch(err) {
+        console.warn('Saved with fallback:', err);
+      }
+
+      document.getElementById('step-3').classList.add('hidden');
+      document.getElementById('step-success').classList.remove('hidden');
+
+      const [y, m, d] = bookingState.selectedDate.split('-');
+      document.getElementById('success-service').textContent = bookingState.selectedService.nome;
+      document.getElementById('success-prof').textContent = bookingState.selectedProf ? bookingState.selectedProf.nome : 'Profissional';
+      document.getElementById('success-datetime').textContent = `${d}/${m}/${y} às ${bookingState.selectedSlot}`;
+      document.getElementById('success-client').textContent = name;
+
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function openWhatsAppConfirmation() {
+      const emp = bookingState.empresa;
+      const phone = emp && emp.telefone ? emp.telefone.replace(/\D/g, '') : '5511999999999';
+      const svc = bookingState.selectedService.nome;
+      const [y, m, d] = bookingState.selectedDate.split('-');
+      const hora = bookingState.selectedSlot;
+      const nome = document.getElementById('client-name').value.trim();
+
+      const text = encodeURIComponent(`Olá! Acabei de fazer um agendamento online pelo Techo PRO:\n\n👤 *Cliente:* ${nome}\n💅 *Procedimento:* ${svc}\n📅 *Data:* ${d}/${m}/${y}\n⏰ *Horário:* ${hora}\n\nGostaria de confirmar o agendamento! ✨`);
+      window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${text}`, '_blank');
+    }
+  </script>
+</body>
+</html>

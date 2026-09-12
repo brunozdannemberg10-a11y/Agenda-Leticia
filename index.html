@@ -6497,12 +6497,27 @@
   </div>
 
   <!-- BOTTOM NAV MOBILE -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#1e293b] border-t border-slate-700 z-40 flex justify-around py-1.5 px-2 safe-area-pb">
-    <button onclick="switchTab('dashboard')" id="bnav-dashboard" class="flex-1 py-1 flex flex-col items-center justify-center text-emerald-400 font-bold"><i data-lucide="layout-dashboard" class="w-5 h-5 mb-0.5"></i><span class="text-[10px]">Home</span></button>
-    <button onclick="switchTab('agenda')" id="bnav-agenda" class="flex-1 py-1 flex flex-col items-center justify-center text-slate-400 hover:text-emerald-400"><i data-lucide="calendar" class="w-5 h-5 mb-0.5"></i><span class="text-[10px]">Agenda</span></button>
-    <button onclick="switchTab('caixa')" id="bnav-caixa" class="flex-1 py-1 flex flex-col items-center justify-center text-slate-400 hover:text-emerald-400"><i data-lucide="shopping-cart" class="w-5 h-5 mb-0.5"></i><span class="text-[10px]">PDV</span></button>
-    <button onclick="switchTab('financeiro-lancamentos')" id="bnav-financeiro-lancamentos" class="flex-1 py-1 flex flex-col items-center justify-center text-slate-400 hover:text-emerald-400"><i data-lucide="dollar-sign" class="w-5 h-5 mb-0.5"></i><span class="text-[10px]">Financeiro</span></button>
-    <button onclick="toggleMobileSidebar()" class="flex-1 py-1 flex flex-col items-center justify-center text-slate-400 hover:text-emerald-400"><i data-lucide="menu" class="w-5 h-5 mb-0.5"></i><span class="text-[10px]">Mais</span></button>
+  <nav id="bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 glass-header border-t border-border z-40 flex justify-around py-2 px-1 safe-area-pb shadow-lg backdrop-blur-md">
+    <button onclick="switchTab('dashboard')" id="bnav-dashboard" class="flex-1 py-1 flex flex-col items-center justify-center text-emerald-500 font-bold transition-colors">
+      <i data-lucide="layout-dashboard" class="w-5 h-5 mb-0.5"></i>
+      <span class="text-[10px]">Início</span>
+    </button>
+    <button onclick="switchTab('agenda')" id="bnav-agenda" class="flex-1 py-1 flex flex-col items-center justify-center text-slate-400 hover:text-emerald-500 transition-colors">
+      <i data-lucide="calendar" class="w-5 h-5 mb-0.5"></i>
+      <span class="text-[10px]">Agenda</span>
+    </button>
+    <button onclick="switchTab('clientes')" id="bnav-clientes" class="flex-1 py-1 flex flex-col items-center justify-center text-slate-400 hover:text-emerald-500 transition-colors">
+      <i data-lucide="users" class="w-5 h-5 mb-0.5"></i>
+      <span class="text-[10px]">Clientes</span>
+    </button>
+    <button onclick="switchTab('caixa')" id="bnav-caixa" class="flex-1 py-1 flex flex-col items-center justify-center text-slate-400 hover:text-emerald-500 transition-colors">
+      <i data-lucide="shopping-bag" class="w-5 h-5 mb-0.5"></i>
+      <span class="text-[10px]">PDV / Caixa</span>
+    </button>
+    <button onclick="openMobileSidebar()" id="bnav-menu" class="flex-1 py-1 flex flex-col items-center justify-center text-slate-400 hover:text-emerald-500 transition-colors">
+      <i data-lucide="menu" class="w-5 h-5 mb-0.5"></i>
+      <span class="text-[10px]">Menu</span>
+    </button>
   </nav>
 
   <!-- ==================== MODALS ==================== -->
@@ -13100,15 +13115,14 @@
     }
 
     function saveConfigGeral(){
-      if(!state.config) state.config = {};
       state.config.horaAbre = document.getElementById('cfg-geral-hora-abre').value;
       state.config.horaFecha = document.getElementById('cfg-geral-hora-fecha').value;
-      state.config.intervalo = parseInt(document.getElementById('cfg-geral-intervalo').value) || 30;
-      state.config.meta = parseFloat(document.getElementById('cfg-geral-meta').value) || 8000;
-      state.config.pix = document.getElementById('cfg-geral-pix').value.trim();
-      state.config.banco = document.getElementById('cfg-geral-banco').value.trim();
+      state.config.metaFaturamento = parseFloat(document.getElementById('cfg-geral-meta').value)||0;
+      state.config.bufferTime = parseInt(document.getElementById('cfg-geral-buffer-time')?.value || '15');
+      state.config.minNotice = parseInt(document.getElementById('cfg-geral-min-notice')?.value || '2');
+      state.config.maxFuture = parseInt(document.getElementById('cfg-geral-max-future')?.value || '30');
       persistState();
-      alert('Configurações operacionais salvas com sucesso! ✅');
+      alert('Configurações operacionais salvas com sucesso!');
     }
 
     // 4. SMS
@@ -13137,17 +13151,42 @@
       lucide.createIcons();
     }
 
-    function saveConfigAlterarSenha(){
-      const nova = document.getElementById('cfg-pwd-nova').value;
-      const confirma = document.getElementById('cfg-pwd-confirma').value;
+    async function saveConfigAlterarSenha(){
+      const nova = document.getElementById('cfg-pwd-nova')?.value || '';
+      const confirma = document.getElementById('cfg-pwd-confirma')?.value || '';
       if(!nova || nova.length < 6){
         return alert('A nova senha deve ter no mínimo 6 dígitos.');
       }
       if(nova !== confirma){
         return alert('A confirmação da nova senha não confere.');
       }
-      alert('Senha atualizada com sucesso! ✅');
-      renderConfigAlterarSenha();
+
+      const btn = event?.target?.closest('button');
+      if(btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="animate-spin inline-block mr-2">⏳</span> Atualizando...';
+      }
+
+      try {
+        if(!supabaseClient) throw new Error('Serviço de autenticação não inicializado.');
+        const { error } = await supabaseClient.auth.updateUser({ password: nova });
+        if(error) throw error;
+        
+        if(document.getElementById('cfg-pwd-atual')) document.getElementById('cfg-pwd-atual').value = '';
+        if(document.getElementById('cfg-pwd-nova')) document.getElementById('cfg-pwd-nova').value = '';
+        if(document.getElementById('cfg-pwd-confirma')) document.getElementById('cfg-pwd-confirma').value = '';
+        
+        alert('🎉 Senha alterada com sucesso no Techo PRO!');
+      } catch(err) {
+        console.error('Erro ao alterar senha:', err);
+        alert('Não foi possível alterar a senha: ' + (err.message || 'Verifique sua conexão.'));
+      } finally {
+        if(btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i data-lucide="shield-check" class="w-4 h-4"></i> Atualizar Senha com Segurança';
+          if(window.lucide) lucide.createIcons();
+        }
+      }
     }
 
     // 7. TUTORIAL
@@ -18540,9 +18579,10 @@
     ];
 
     function renderAjudaAgendaOnline(){
-      const linkEl = document.getElementById('ajuda-link-agenda-input');
-      if (linkEl) {
-        linkEl.value = 'https://techopro.vercel.app/agendar/meu-estudio-vip';
+      const linkInput = document.getElementById('ajuda-link-agenda-input');
+      if (linkInput) {
+        const empresaId = currentSession?.empresa?.id || 'demo';
+        linkInput.value = window.location.origin + '/agendar.html?empresa=' + empresaId;
       }
       if (window.lucide) lucide.createIcons();
     }
@@ -18550,10 +18590,13 @@
     function copiarLinkAgendaOnline(){
       const linkEl = document.getElementById('ajuda-link-agenda-input');
       if (linkEl) {
+        const empresaId = currentSession?.empresa?.id || 'demo';
+        const realLink = window.location.origin + '/agendar.html?empresa=' + empresaId;
+        linkEl.value = realLink;
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(linkEl.value);
+          navigator.clipboard.writeText(realLink);
         }
-        alert('📋 Link da sua Agenda Online copiado para a área de transferência!\n\nCole na bio do Instagram ou envie para suas clientes no WhatsApp.');
+        alert('📋 Link da sua Agenda Online copiado com sucesso!\n\n' + realLink + '\n\nCole na bio do Instagram ou envie para suas clientes no WhatsApp.');
       }
     }
 
