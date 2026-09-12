@@ -146,6 +146,49 @@ function parseJsonBody(req) {
   });
 }
 
+// Helper: Obter ou cadastrar cliente no Asaas com deduplicação por CPF/CNPJ
+async function getOrCreateAsaasCustomer({ name, email, cpfCnpj, phone, postalCode, addressNumber }) {
+  const cleanCpf = (cpfCnpj || '').replace(/\D/g, '');
+  const cleanPhone = phone ? phone.replace(/\D/g, '') : undefined;
+  const cleanCep = postalCode ? postalCode.replace(/\D/g, '') : undefined;
+
+  // 1. Busca por CPF/CNPJ existente
+  if (cleanCpf) {
+    const findCust = await asaasRequest('GET', `/customers?cpfCnpj=${cleanCpf}`);
+    if (findCust.data?.data && findCust.data.data.length > 0) {
+      const existing = findCust.data.data[0];
+      if (cleanCep || addressNumber) {
+        await asaasRequest('POST', `/customers/${existing.id}`, {
+          postalCode: cleanCep || existing.postalCode,
+          addressNumber: addressNumber || existing.addressNumber
+        });
+      }
+      return existing.id;
+    }
+  }
+
+  // 2. Criação de novo cliente
+  const custRes = await asaasRequest('POST', '/customers', {
+    name: name || 'Cliente Techo PRO',
+    email: email || 'contato@techopro.com.br',
+    cpfCnpj: cleanCpf,
+    mobilePhone: cleanPhone || undefined,
+    postalCode: cleanCep || undefined,
+    addressNumber: addressNumber || undefined,
+    notificationDisabled: true
+  });
+
+  if (custRes.data?.id) {
+    return custRes.data.id;
+  }
+
+  if (custRes.data?.errors) {
+    throw new Error(custRes.data.errors[0]?.description || 'Erro ao cadastrar cliente no Asaas.');
+  }
+
+  throw new Error('Falha ao processar cliente no Asaas.');
+}
+
 const server = http.createServer(async (req, res) => {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -175,32 +218,17 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
-      const cleanCpf = cliente_cpf.replace(/\D/g, '');
-      const cleanPhone = cliente_telefone ? cliente_telefone.replace(/\D/g, '') : '';
       const planPrices = PLAN_PRICES[plano.toLowerCase()] || PLAN_PRICES.pro;
       const valor = planPrices[ciclo.toLowerCase()] || planPrices.mensal;
       const descPlano = `Assinatura Plano ${plano.toUpperCase()} (${ciclo.toUpperCase()}) - Techo PRO`;
 
-      // 1. Criar ou Obter Cliente no Asaas
-      console.log(`[Asaas] Criando/buscando cliente: ${cliente_nome} (${cleanCpf})...`);
-      const custRes = await asaasRequest('POST', '/customers', {
-        name: cliente_nome || 'Cliente Techo PRO',
-        email: cliente_email || 'cliente@techopro.com.br',
-        cpfCnpj: cleanCpf,
-        mobilePhone: cleanPhone || undefined,
-        notificationDisabled: true
+      // 1. Obter ou Criar Cliente no Asaas
+      const customerId = await getOrCreateAsaasCustomer({
+        name: cliente_nome,
+        email: cliente_email,
+        cpfCnpj: cliente_cpf,
+        phone: cliente_telefone
       });
-
-      let customerId = custRes.data?.id;
-      if (!customerId && custRes.data?.errors) {
-        console.log('[Asaas] Cliente já existente ou erro, buscando pelo CPF...');
-        const findCust = await asaasRequest('GET', `/customers?cpfCnpj=${cleanCpf}`);
-        if (findCust.data?.data && findCust.data.data.length > 0) {
-          customerId = findCust.data.data[0].id;
-        } else {
-          throw new Error(custRes.data.errors[0]?.description || 'Erro ao cadastrar cliente no Asaas.');
-        }
-      }
 
       // 2. Criar Cobrança Pix no Asaas
       const dueDate = new Date(Date.now() + 86400000).toISOString().split('T')[0]; // Vence amanhã
@@ -249,6 +277,242 @@ const server = http.createServer(async (req, res) => {
   }
 
   // =========================================================================
+  // API ROUTE: Processar Pagamento com Cartão de Crédito no Asaas
+  // =========================================================================
+  if (pathname === '/api/asaas/create-card' && req.method === 'POST') {
+    try {
+      const body = await parseJsonBody(req);
+      const {
+        empresa_id,
+        plano = 'pro',
+        ciclo = 'mensal',
+        cliente_nome,
+        cliente_cpf,
+        cliente_email,
+        cliente_telefone,
+        card_number,
+        card_holder,
+        card_expiry_month,
+        card_expiry_year,
+        card_ccv,
+        postal_code,
+        address_number,
+        installments = 1
+      } = body;
+
+      if (!card_number || !card_holder || !card_expiry_month || !card_expiry_year || !card_ccv) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'Preencha todos os dados do cartão de crédito (número, titular, validade e CVV).' }));
+        return;
+      }
+
+      if (!cliente_cpf || cliente_cpf.replace(/\D/g, '').length < 11) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'CPF ou CNPJ do titular é obrigatório.' }));
+        return;
+      }
+
+      const planPrices = PLAN_PRICES[plano.toLowerCase()] || PLAN_PRICES.pro;
+      const valor = planPrices[ciclo.toLowerCase()] || planPrices.mensal;
+      const descPlano = `Assinatura Plano ${plano.toUpperCase()} (${ciclo.toUpperCase()}) - Techo PRO`;
+
+      // 1. Obter ou cadastrar cliente com dados de faturamento
+      const customerId = await getOrCreateAsaasCustomer({
+        name: cliente_nome || card_holder,
+        email: cliente_email,
+        cpfCnpj: cliente_cpf,
+        phone: cliente_telefone,
+        postalCode: postal_code,
+        addressNumber: address_number
+      });
+
+      // 2. Preparar dados do cartão
+      const cleanCardNumber = card_number.replace(/\D/g, '');
+      const cleanCpf = cliente_cpf.replace(/\D/g, '');
+      const cleanPhone = cliente_telefone ? cliente_telefone.replace(/\D/g, '') : '11999999999';
+      const cleanCep = postal_code ? postal_code.replace(/\D/g, '') : '01310100';
+      const formattedYear = String(card_expiry_year).trim().length === 2 ? `20${String(card_expiry_year).trim()}` : String(card_expiry_year).trim();
+      const formattedMonth = String(card_expiry_month).trim().padStart(2, '0');
+
+      const paymentPayload = {
+        customer: customerId,
+        billingType: 'CREDIT_CARD',
+        value: valor,
+        dueDate: new Date().toISOString().split('T')[0],
+        description: descPlano,
+        externalReference: empresa_id || undefined,
+        creditCard: {
+          holderName: card_holder.trim().toUpperCase(),
+          number: cleanCardNumber,
+          expiryMonth: formattedMonth,
+          expiryYear: formattedYear,
+          ccv: String(card_ccv).trim()
+        },
+        creditCardHolderInfo: {
+          name: card_holder.trim().toUpperCase(),
+          email: cliente_email || 'contato@techopro.com.br',
+          cpfCnpj: cleanCpf,
+          postalCode: cleanCep,
+          addressNumber: (address_number || '100').trim(),
+          phone: cleanPhone
+        }
+      };
+
+      const numInstallments = parseInt(installments, 10);
+      if (numInstallments > 1) {
+        paymentPayload.installmentCount = numInstallments;
+        paymentPayload.installmentValue = +(valor / numInstallments).toFixed(2);
+      }
+
+      console.log(`[Asaas] Processando Cartão de Crédito R$ ${valor} (${numInstallments}x) para ${customerId}...`);
+      const payRes = await asaasRequest('POST', '/payments', paymentPayload);
+
+      if (!payRes.data?.id) {
+        const errorMsg = payRes.data?.errors?.[0]?.description || 'Transação não autorizada. Verifique os dados do cartão ou limite disponível.';
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: errorMsg }));
+        return;
+      }
+
+      const paymentData = payRes.data;
+      const isPaid = (paymentData.status === 'CONFIRMED' || paymentData.status === 'RECEIVED');
+
+      // Se aprovado imediatamente e tiver empresa_id, ativa no Supabase
+      if (isPaid && empresa_id) {
+        try {
+          await supabaseRequest('POST', '/assinaturas', {
+            empresa_id: empresa_id,
+            plano: plano.toLowerCase(),
+            ciclo: ciclo.toLowerCase(),
+            status: 'ativo',
+            metodo_pagamento: 'CREDIT_CARD',
+            trial_ends_at: null,
+            asaas_subscription_id: paymentData.id
+          });
+          console.log(`[Supabase] 🎉 Empresa ${empresa_id} ATIVADA com Cartão no plano ${plano.toUpperCase()} (${ciclo})!`);
+        } catch (dbErr) {
+          console.warn('[Supabase] Aviso ao registrar assinatura:', dbErr.message);
+        }
+      }
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: true,
+        paymentId: paymentData.id,
+        status: paymentData.status,
+        isPaid: isPaid,
+        invoiceUrl: paymentData.invoiceUrl,
+        brand: paymentData.creditCard?.creditCardBrand || 'Cartão de Crédito',
+        lastDigits: paymentData.creditCard?.creditCardNumber || cleanCardNumber.slice(-4),
+        valor: valor,
+        installments: numInstallments
+      }));
+
+    } catch (err) {
+      console.error('[API Error /create-card]:', err.message);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, message: err.message || 'Erro ao processar cartão de crédito.' }));
+    }
+    return;
+  }
+
+  // =========================================================================
+  // API ROUTE: Criar Boleto Bancário no Asaas
+  // =========================================================================
+  if (pathname === '/api/asaas/create-boleto' && req.method === 'POST') {
+    try {
+      const body = await parseJsonBody(req);
+      const {
+        empresa_id,
+        plano = 'pro',
+        ciclo = 'mensal',
+        cliente_nome,
+        cliente_cpf,
+        cliente_email,
+        cliente_telefone,
+        postal_code,
+        address_number
+      } = body;
+
+      if (!cliente_cpf || cliente_cpf.replace(/\D/g, '').length < 11) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: 'CPF ou CNPJ válido é obrigatório para emissão de boleto.' }));
+        return;
+      }
+
+      const planPrices = PLAN_PRICES[plano.toLowerCase()] || PLAN_PRICES.pro;
+      const valor = planPrices[ciclo.toLowerCase()] || planPrices.mensal;
+      const descPlano = `Assinatura Plano ${plano.toUpperCase()} (${ciclo.toUpperCase()}) - Techo PRO`;
+
+      // 1. Obter ou cadastrar cliente com endereço
+      const customerId = await getOrCreateAsaasCustomer({
+        name: cliente_nome,
+        email: cliente_email,
+        cpfCnpj: cliente_cpf,
+        phone: cliente_telefone,
+        postalCode: postal_code,
+        addressNumber: address_number
+      });
+
+      // 2. Data de vencimento: 3 dias úteis
+      const due = new Date();
+      due.setDate(due.getDate() + 3);
+      const dueDate = due.toISOString().split('T')[0];
+
+      console.log(`[Asaas] Emitindo Boleto de R$ ${valor} para cliente ${customerId}...`);
+      const payRes = await asaasRequest('POST', '/payments', {
+        customer: customerId,
+        billingType: 'BOLETO',
+        value: valor,
+        dueDate: dueDate,
+        description: descPlano,
+        externalReference: empresa_id || undefined
+      });
+
+      if (!payRes.data?.id) {
+        throw new Error(payRes.data?.errors?.[0]?.description || 'Erro ao emitir boleto no Asaas.');
+      }
+
+      const paymentId = payRes.data.id;
+      const bankSlipUrl = payRes.data.bankSlipUrl;
+      const invoiceUrl = payRes.data.invoiceUrl;
+
+      // 3. Obter linha digitável e código de barras
+      let identificationField = '';
+      let barCode = '';
+      try {
+        const idfRes = await asaasRequest('GET', `/payments/${paymentId}/identificationField`);
+        if (idfRes.data) {
+          identificationField = idfRes.data.identificationField || '';
+          barCode = idfRes.data.barCode || '';
+        }
+      } catch (e) {
+        console.warn('[Asaas] Aviso ao obter linha digitável:', e.message);
+      }
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: true,
+        paymentId: paymentId,
+        bankSlipUrl: bankSlipUrl,
+        invoiceUrl: invoiceUrl,
+        identificationField: identificationField,
+        barCode: barCode,
+        valor: valor,
+        plano: plano,
+        ciclo: ciclo,
+        dueDate: dueDate
+      }));
+
+    } catch (err) {
+      console.error('[API Error /create-boleto]:', err.message);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, message: err.message || 'Erro ao emitir boleto bancário.' }));
+    }
+    return;
+  }
+
+  // =========================================================================
   // API ROUTE: Verificar Status do Pagamento
   // =========================================================================
   if (pathname === '/api/asaas/check-status' && req.method === 'GET') {
@@ -266,6 +530,7 @@ const server = http.createServer(async (req, res) => {
 
       const payRes = await asaasRequest('GET', `/payments/${paymentId}`);
       const status = payRes.data?.status || 'PENDING';
+      const billingType = payRes.data?.billingType || 'ASAAS';
       const isPaid = (status === 'RECEIVED' || status === 'CONFIRMED');
 
       // Se pago e tiver empresaId, ativa a assinatura no Supabase
@@ -276,10 +541,11 @@ const server = http.createServer(async (req, res) => {
             plano: plano,
             ciclo: ciclo,
             status: 'ativo',
+            metodo_pagamento: billingType,
             trial_ends_at: null,
             asaas_subscription_id: paymentId
           });
-          console.log(`[Supabase] 🎉 Empresa ${empresaId} ATIVADA no plano ${plano.toUpperCase()} (${ciclo})!`);
+          console.log(`[Supabase] 🎉 Empresa ${empresaId} ATIVADA via ${billingType} no plano ${plano.toUpperCase()} (${ciclo})!`);
         } catch (dbErr) {
           console.warn('[Supabase] Aviso ao atualizar assinatura:', dbErr.message);
         }
@@ -290,6 +556,7 @@ const server = http.createServer(async (req, res) => {
         success: true,
         paymentId: paymentId,
         status: status,
+        billingType: billingType,
         isPaid: isPaid,
         active: isPaid
       }));
@@ -313,14 +580,16 @@ const server = http.createServer(async (req, res) => {
       if (event.event === 'PAYMENT_RECEIVED' || event.event === 'PAYMENT_CONFIRMED') {
         const payment = event.payment;
         const empresaId = payment?.externalReference;
+        const billingType = payment?.billingType || 'ASAAS';
         if (empresaId) {
           await supabaseRequest('POST', '/assinaturas', {
             empresa_id: empresaId,
             status: 'ativo',
             plano: 'pro',
+            metodo_pagamento: billingType,
             asaas_subscription_id: payment.id
           });
-          console.log(`[Webhook] Assinatura da empresa ${empresaId} ativada via Webhook Asaas!`);
+          console.log(`[Webhook] Assinatura da empresa ${empresaId} ativada via Webhook Asaas (${billingType})!`);
         }
       }
 
