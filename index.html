@@ -4525,6 +4525,44 @@
             </div>
           </div>
 
+          <!-- Regras da Agenda Online & Buffer Time -->
+          <div class="glass-card rounded-2xl p-5 space-y-3">
+            <h3 class="font-bold text-title text-xs uppercase font-mono border-b border-slate-200 dark:border-slate-800 pb-2">Regras de Agendamento & Intervalos (Buffer)</h3>
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block font-bold text-muted mb-1">Tempo de Intervalo / Buffer entre Atendimentos</label>
+                <select id="cfg-geral-buffer-time" class="input-box w-full p-2.5 rounded-xl font-bold">
+                  <option value="0">Sem intervalo (0 min)</option>
+                  <option value="10">10 minutos (Higienização rápida)</option>
+                  <option value="15" selected>15 minutos (Recomendado)</option>
+                  <option value="20">20 minutos (Esterilização & descanso)</option>
+                  <option value="30">30 minutos (Transição completa)</option>
+                </select>
+                <span class="text-[10px] text-muted">Tempo reservado após cada procedimento para limpeza e preparo de material.</span>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-bold text-muted mb-1">Antecedência Mínima</label>
+                  <select id="cfg-geral-min-notice" class="input-box w-full p-2.5 rounded-xl font-bold">
+                    <option value="1">1 hora antes</option>
+                    <option value="2" selected>2 horas antes</option>
+                    <option value="4">4 horas antes</option>
+                    <option value="24">24 horas antes</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block font-bold text-muted mb-1">Janela Máxima Futura</label>
+                  <select id="cfg-geral-max-future" class="input-box w-full p-2.5 rounded-xl font-bold">
+                    <option value="15">15 dias</option>
+                    <option value="30" selected>30 dias (1 mês)</option>
+                    <option value="60">60 dias (2 meses)</option>
+                    <option value="90">90 dias (3 meses)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="glass-card rounded-2xl p-5 space-y-3">
             <h3 class="font-bold text-title text-xs uppercase font-mono border-b border-slate-200 dark:border-slate-800 pb-2">Metas & Cobrança Rápida</h3>
             <div class="space-y-3 text-xs">
@@ -13108,21 +13146,30 @@
       if(document.getElementById('cfg-geral-hora-abre')) document.getElementById('cfg-geral-hora-abre').value = c.horaAbre || '08:00';
       if(document.getElementById('cfg-geral-hora-fecha')) document.getElementById('cfg-geral-hora-fecha').value = c.horaFecha || '19:00';
       if(document.getElementById('cfg-geral-intervalo')) document.getElementById('cfg-geral-intervalo').value = c.intervalo || '30';
-      if(document.getElementById('cfg-geral-meta')) document.getElementById('cfg-geral-meta').value = c.meta || 8000;
+      if(document.getElementById('cfg-geral-buffer-time')) document.getElementById('cfg-geral-buffer-time').value = c.bufferTime !== undefined ? c.bufferTime : '15';
+      if(document.getElementById('cfg-geral-min-notice')) document.getElementById('cfg-geral-min-notice').value = c.minNotice !== undefined ? c.minNotice : '2';
+      if(document.getElementById('cfg-geral-max-future')) document.getElementById('cfg-geral-max-future').value = c.maxFuture !== undefined ? c.maxFuture : '30';
+      if(document.getElementById('cfg-geral-meta')) document.getElementById('cfg-geral-meta').value = c.meta || c.metaFaturamento || 8000;
       if(document.getElementById('cfg-geral-pix')) document.getElementById('cfg-geral-pix').value = c.pix || 'contato@meuestudio.com.br';
       if(document.getElementById('cfg-geral-banco')) document.getElementById('cfg-geral-banco').value = c.banco || 'Banco Inter / Nubank PJ';
       lucide.createIcons();
     }
 
     function saveConfigGeral(){
-      state.config.horaAbre = document.getElementById('cfg-geral-hora-abre').value;
-      state.config.horaFecha = document.getElementById('cfg-geral-hora-fecha').value;
-      state.config.metaFaturamento = parseFloat(document.getElementById('cfg-geral-meta').value)||0;
+      if(!state.config) state.config = {};
+      state.config.horaAbre = document.getElementById('cfg-geral-hora-abre')?.value || '08:00';
+      state.config.horaFecha = document.getElementById('cfg-geral-hora-fecha')?.value || '19:00';
+      state.config.intervalo = parseInt(document.getElementById('cfg-geral-intervalo')?.value || '30');
       state.config.bufferTime = parseInt(document.getElementById('cfg-geral-buffer-time')?.value || '15');
       state.config.minNotice = parseInt(document.getElementById('cfg-geral-min-notice')?.value || '2');
       state.config.maxFuture = parseInt(document.getElementById('cfg-geral-max-future')?.value || '30');
+      const metaVal = parseFloat(document.getElementById('cfg-geral-meta')?.value) || 8000;
+      state.config.meta = metaVal;
+      state.config.metaFaturamento = metaVal;
+      state.config.pix = document.getElementById('cfg-geral-pix')?.value?.trim() || '';
+      state.config.banco = document.getElementById('cfg-geral-banco')?.value?.trim() || '';
       persistState();
-      alert('Configurações operacionais salvas com sucesso!');
+      alert('Configurações operacionais salvas com sucesso! ✅');
     }
 
     // 4. SMS
